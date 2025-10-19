@@ -17,4 +17,25 @@ protected $table = 'school_year';
         
         
     ];
+
+
+    public function subject()
+{
+    return $this->belongsTo(Subjects::class, 'subject_id');
+}
+public function section()
+{
+    return $this->belongsTo(Section::class, 'section_id');
+}
+
+public function classroom()
+{
+    return $this->belongsTo(Classroom::class, 'classroom_id');
+}
+
+public function semesters()
+{
+    return $this->hasMany(Semester::class, 'school_year_id');
+}
+
 }

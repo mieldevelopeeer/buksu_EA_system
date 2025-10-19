@@ -30,7 +30,7 @@ public function index()
 }
 
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////
     public function store(Request $request)
     {
         $request->validate([
@@ -54,6 +54,7 @@ public function index()
         return response()->json($course);
     }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
     
     public function update(Request $request, $id)
     {

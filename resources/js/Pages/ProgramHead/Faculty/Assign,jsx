@@ -1,0 +1,289 @@
+import React, { useState, useEffect } from "react";
+import ProgramHeadLayout from "@/Layouts/ProgramHeadLayout";
+import { Head } from "@inertiajs/react";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { PlusCircle, ArrowLeft, ArrowRight } from "phosphor-react";
+
+export default function AssignFaculty({ faculties = [], sections = [], subjects = [], yearLevels = [] }) {
+  const [schedules, setSchedules] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [facultySearch, setFacultySearch] = useState("");
+  const [fabMenuOpen, setFabMenuOpen] = useState(false);
+
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [selectedSection, setSelectedSection] = useState(null);
+
+  // Prepare schedules grouped by Year -> Section -> Subject
+  useEffect(() => {
+    const grouped = yearLevels.map((yl) => {
+      const secData = sections
+        .filter((sec) => Number(sec.year_level_id) === yl.id)
+        .map((sec) => {
+          const secSched = subjects
+            .filter((sub) =>
+              sub.curriculum_subjects?.some((cs) => Number(cs.year_level_id) === yl.id)
+            )
+            .map((sub) => ({
+              subject_id: sub.id,
+              subject_title: sub.descriptive_title,
+              semester: sub.semester?.semester_name,
+              day: "",
+              start_time: "",
+              end_time: "",
+              faculty_id: null,
+            }));
+          return { section_id: sec.id, section_name: sec.section, subjects: secSched };
+        });
+      return { year_level_id: yl.id, year_level: yl.year_level, sections: secData };
+    });
+    setSchedules(grouped);
+  }, [yearLevels, sections, subjects]);
+
+  const onDragEnd = (result) => {
+    const { destination, draggableId } = result;
+    if (!destination || destination.droppableId === "faculty-list") return;
+
+    const facultyId = Number(draggableId);
+    const [yearIndex, sectionIndex, subjectIndex] = destination.droppableId
+      .split("-")
+      .map(Number);
+
+    const updatedSchedules = [...schedules];
+    updatedSchedules[yearIndex].sections[sectionIndex].subjects[subjectIndex].faculty_id = facultyId;
+    setSchedules(updatedSchedules);
+  };
+
+  const getFacultyName = (id) => {
+    const fac = faculties.find((f) => f.id === id);
+    return fac ? `${fac.fName} ${fac.lName}` : "-";
+  };
+
+  const filteredFaculties = faculties.filter(
+    (f) =>
+      f.fName.toLowerCase().includes(facultySearch.toLowerCase()) ||
+      f.lName.toLowerCase().includes(facultySearch.toLowerCase())
+  );
+
+  // Get sections based on selected year
+  const availableSections = selectedYear
+    ? schedules.find((y) => y.year_level_id === Number(selectedYear))?.sections || []
+    : [];
+
+  const displayedSchedule =
+    selectedYear && selectedSection
+      ? schedules
+          .filter((y) => y.year_level_id === Number(selectedYear))
+          .map((y) => ({
+            ...y,
+            sections: y.sections.filter((s) => s.section_id === Number(selectedSection)),
+          }))
+      : [];
+
+  return (
+    <ProgramHeadLayout>
+      <Head title="Class Schedules" />
+
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-semibold text-gray-800">Class Schedules</h1>
+      </div>
+
+      {/* Year and Section Filters */}
+      <div className="flex gap-4 mb-4">
+        <select
+          value={selectedYear || ""}
+          onChange={(e) => {
+            setSelectedYear(e.target.value);
+            setSelectedSection(null);
+          }}
+          className="border rounded px-2 py-1 text-sm"
+        >
+          <option value="">Select Year Level</option>
+          {yearLevels.map((y) => (
+            <option key={y.id} value={y.id}>
+              {y.year_level}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={selectedSection || ""}
+          onChange={(e) => setSelectedSection(e.target.value)}
+          className="border rounded px-2 py-1 text-sm"
+          disabled={!selectedYear}
+        >
+          <option value="">Select Section</option>
+          {availableSections.map((s) => (
+            <option key={s.section_id} value={s.section_id}>
+              {s.section_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex gap-4 h-[80vh]">
+          {/* Faculty Sidebar */}
+          <div
+            className={`bg-gray-50 p-4 rounded-lg shadow-md transition-all ${
+              sidebarOpen ? "w-64" : "w-12"
+            }`}
+          >
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="mb-4 text-gray-600 hover:text-gray-800"
+            >
+              {sidebarOpen ? <ArrowLeft size={20} /> : <ArrowRight size={20} />}
+            </button>
+            {sidebarOpen && (
+              <>
+                <h2 className="text-lg font-semibold mb-3">Faculties</h2>
+                <input
+                  type="text"
+                  placeholder="Search faculty"
+                  value={facultySearch}
+                  onChange={(e) => setFacultySearch(e.target.value)}
+                  className="w-full mb-3 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                />
+                <Droppable droppableId="faculty-list">
+                  {(provided) => (
+                    <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
+                      {filteredFaculties.map((fac, index) => (
+                        <Draggable key={fac.id} draggableId={fac.id.toString()} index={index}>
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className={`bg-white p-2 rounded shadow cursor-pointer text-sm transition ${
+                                snapshot.isDragging ? "bg-blue-100 scale-105" : "hover:bg-blue-50"
+                              }`}
+                            >
+                              {fac.fName} {fac.lName}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </>
+            )}
+          </div>
+
+          {/* Schedule Table (scrollable) */}
+          <div className="w-full overflow-auto p-2 border border-gray-200 rounded-lg shadow-sm">
+            {displayedSchedule.map((year, yIndex) => (
+              <div key={year.year_level_id} className="mb-6">
+                <h2 className="text-xl font-semibold mb-2">{year.year_level}</h2>
+                {year.sections.map((sec, sIndex) => (
+                  <div key={sec.section_id} className="mb-4 border border-gray-200 rounded-lg p-2 shadow-sm">
+                    <h3 className="font-medium mb-1">Section: {sec.section_name}</h3>
+                    <div className="mb-2 text-sm font-medium text-gray-700">
+                      Semester: {Array.from(new Set(sec.subjects.map((subj) => subj.semester))).join(", ") || "-"}
+                    </div>
+                    <table className="w-full text-sm border border-gray-300 rounded-lg">
+                      <thead className="bg-gray-100 rounded-t-lg">
+                        <tr>
+                          <th className="border p-1 text-left text-xs">Subject</th>
+                          <th className="border p-1 text-left text-xs">Day</th>
+                          <th className="border p-1 text-left text-xs">Start</th>
+                          <th className="border p-1 text-left text-xs">End</th>
+                          <th className="border p-1 text-left text-xs">Faculty</th>
+                          <th className="border p-1 text-center text-xs">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sec.subjects.map((subj, subjIndex) => (
+                          <Droppable key={subj.subject_id} droppableId={`${yIndex}-${sIndex}-${subjIndex}`}>
+                            {(provided, snapshot) => (
+                              <tr
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className={`border-t transition hover:bg-gray-50 relative ${
+                                  snapshot.isDraggingOver ? "bg-blue-50" : ""
+                                }`}
+                              >
+                                <td className="border p-1 text-xs">{subj.subject_title}</td>
+                               <td className="border p-1 text-xs">
+  <select
+    value={subj.day}
+    onChange={(e) => {
+      const newSchedules = [...schedules];
+      newSchedules[yIndex].sections[sIndex].subjects[subjIndex].day =
+        e.target.value;
+      setSchedules(newSchedules);
+    }}
+    className="w-full border rounded px-1 py-0.5 text-xs"
+  >
+    <option value="">Select Day</option>
+    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+      <option key={d} value={d}>
+        {d}
+      </option>
+    ))}
+  </select>
+</td>
+
+                                <td className="border p-1 text-xs">
+                                  <input
+                                    type="time"
+                                    value={subj.start_time}
+                                    onChange={(e) => {
+                                      const newSchedules = [...schedules];
+                                      newSchedules[yIndex].sections[sIndex].subjects[subjIndex].start_time =
+                                        e.target.value;
+                                      setSchedules(newSchedules);
+                                    }}
+                                    className="w-full border rounded px-1 py-0.5 text-xs"
+                                  />
+                                </td>
+                                <td className="border p-1 text-xs">
+                                  <input
+                                    type="time"
+                                    value={subj.end_time}
+                                    onChange={(e) => {
+                                      const newSchedules = [...schedules];
+                                      newSchedules[yIndex].sections[sIndex].subjects[subjIndex].end_time =
+                                        e.target.value;
+                                      setSchedules(newSchedules);
+                                    }}
+                                    className="w-full border rounded px-1 py-0.5 text-xs"
+                                  />
+                                </td>
+                                <td className="border p-1 text-xs bg-gray-50">{getFacultyName(subj.faculty_id)}</td>
+                                <td className="border p-1 text-center text-xs"></td>
+                                {provided.placeholder}
+                              </tr>
+                            )}
+                          </Droppable>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </DragDropContext>
+
+      {/* Compact Floating FAB */}
+      <div className="fixed bottom-4 right-4 flex flex-col items-end">
+        {fabMenuOpen && (
+          <div className="mb-1 flex flex-col bg-white border rounded shadow-md overflow-hidden">
+            <button className="px-5 py-1 text-xs hover:bg-green-500 hover:text-white transition" onClick={() => console.log("Save all schedules")}>
+              Save
+            </button>
+            <button className="px-5 py-1 text-xs hover:bg-blue-500 hover:text-white transition" onClick={() => console.log("Update all schedules")}>
+              Update
+            </button>
+          </div>
+        )}
+        <button className="bg-blue-600 text-white p-3.5 rounded-full shadow-lg hover:bg-blue-700 hover:scale-105 transition transform" onClick={() => setFabMenuOpen(!fabMenuOpen)}>
+          <PlusCircle size={18} />
+        </button>
+      </div>
+    </ProgramHeadLayout>
+  );
+}

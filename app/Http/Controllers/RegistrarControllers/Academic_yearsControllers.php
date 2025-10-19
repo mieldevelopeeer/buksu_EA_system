@@ -15,8 +15,9 @@ class Academic_yearsControllers extends Controller
 
         return Inertia::render('Registrar/SySemester/Academic_Year', [
             'academicYears' => $academicYear,
-        ]);
+        ]);     
     }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public function store(Request $request)
     {
@@ -32,6 +33,9 @@ class Academic_yearsControllers extends Controller
 
         return redirect()->route('registrar.academic_year.index')->with('success', 'Academic Year created successfully.');
     }
+    
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 public function update(Request $request, $id)
 {
     $academicYear = AcademicYear::findOrFail($id);

@@ -25,5 +25,23 @@ class courses extends Model
 {
     return $this->belongsTo(Department::class);
 }
+public function majors()
+{
+    return $this->hasMany(Major::class, 'courses_id');
+}
+
+// App\Models\Curriculum_Subject.php
+public function subject() {
+    return $this->belongsTo(Subject::class);
+}
+public function curriculum()
+{
+    return $this->hasOne(Curricula::class, 'courses_id'); 
+    // or hasMany if a course can have multiple curricula
+}
+
+public function getFullCourseCodeAttribute() {
+    return $this->code . ($this->major ? '-' . $this->major : '');
+}
 
 }

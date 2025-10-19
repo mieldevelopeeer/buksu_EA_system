@@ -18,9 +18,18 @@ class subjects extends Model
     
     ];
 
-    public function department()
-{
-    return $this->belongsTo(Department::class);
-}
+ public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 
+    public function curriculumSubjects()
+    {
+        return $this->hasMany(Curriculum_Subject::class, 'subject_id');
+    }
+
+     public function class_schedules()
+    {
+        return $this->hasMany(Class_Schedules::class, 'subject_id');
+    }
 }

@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
 import RegistrarLayout from '@/Layouts/RegistrarLayout';
 import { useForm, usePage, router } from '@inertiajs/react';
-import { Plus, X, CheckCircle, XCircle, Eye, PencilSimple } from 'phosphor-react';
+import { 
+  Plus, 
+  X, 
+  CheckCircle, 
+  XCircle, 
+  Eye, 
+  PencilSimple,
+  CaretDown,
+  CaretUp,
+  Folder,
+  FileText
+} from "phosphor-react";
+
 import { motion, AnimatePresence } from 'framer-motion';
 import Swal from 'sweetalert2';
 
@@ -9,8 +21,15 @@ export default function Courses() {
   const { courses, departments, degreeTypes } = usePage().props;
   const [showModal, setShowModal] = useState(false);
   const [viewModal, setViewModal] = useState(false);
+  const [majorsModal, setMajorsModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
+
+    // 🔹 Filter states
+  const [search, setSearch] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("");
+  const [degreeTypeFilter, setDegreeTypeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const form = useForm({
     code: '',
@@ -18,9 +37,28 @@ export default function Courses() {
     description: '',
     department_id: '',
     degree_type: '',
-
-
   });
+
+  // 🔹 Apply filtering on courses
+  const filteredCourses = courses.data.filter((course) => {
+    const matchesSearch =
+      course.name.toLowerCase().includes(search.toLowerCase()) ||
+      course.code.toLowerCase().includes(search.toLowerCase());
+
+    const matchesDepartment =
+      !departmentFilter || course.department_id == departmentFilter;
+
+    const matchesDegree =
+      !degreeTypeFilter || course.degree_type === degreeTypeFilter;
+
+    const matchesStatus =
+      !statusFilter ||
+      (statusFilter === "active" && course.status === 1) ||
+      (statusFilter === "inactive" && course.status === 0);
+
+    return matchesSearch && matchesDepartment && matchesDegree && matchesStatus;
+  });
+
   const showToast = (message, icon = "success") => {
     Swal.fire({
       toast: true,
@@ -57,6 +95,23 @@ export default function Courses() {
     setSelectedCourse(course);
     setViewModal(true);
   };
+
+const openMajorsModal = (course) => {
+  router.get(
+    route("registrar.courses.majors.index", course.id),
+    {},
+    {
+      preserveScroll: true,
+      onSuccess: (page) => {
+        setSelectedCourse({
+          ...course,
+          majors: page.props.majors, // fetched majors
+        });
+        setMajorsModal(true);
+      },
+    }
+  );
+};
 
   const submit = (e) => {
     e.preventDefault();
@@ -102,8 +157,7 @@ export default function Courses() {
 
     Swal.fire({
       title: "Are you sure?",
-      text: `Would you like to ${newStatus === 1 ? "activate" : "deactivate"
-        } this course?`,
+      text: `Would you like to ${newStatus === 1 ? "activate" : "deactivate"} this course?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Yes, proceed",
@@ -130,13 +184,12 @@ export default function Courses() {
     });
   };
 
-
-
   return (
     <RegistrarLayout>
       <div className="text-gray-800 px-6 py-4 font-[Poppins]">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold tracking-wide">Courses List</h1>
+          
           <button
             onClick={openAddModal}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 shadow transition"
@@ -144,72 +197,103 @@ export default function Courses() {
             <Plus size={18} /> Add Course
           </button>
         </div>
-
-        <div className="overflow-x-auto bg-white rounded shadow">
-          <table className="min-w-full text-sm">
-            <thead className="bg-blue-100 text-left uppercase text-gray-600">
-              <tr>
-                <th className="p-3">#</th>
-                <th className="p-3">Degree Type</th>
-                <th className="p-3">Code</th>
-                <th className="p-3">Course Name</th>
-                <th className="p-3">Department</th>
-                <th className="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-800">
-              {courses.data.map((course, index) => (
-                <tr key={course.id} className="border-t hover:bg-gray-50 transition">
-                  <td className="p-3">{courses.from + index}</td>
-                  <td className="p-3">{course.degree_type || '-'}</td>
-                  <td className="p-3">{course.code}</td>
-                  <td className="p-3">{course.name}</td>
-                  <td className="p-3">{course.department?.name || '-'}</td>
-                  <td className="p-3 flex gap-2">
-                    <button
-                      onClick={() => openEditModal(course)}
-                      className="flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
-                    >
-                      <PencilSimple size={16} /> Edit
-                    </button>
-                    <button
-                      onClick={() => openViewModal(course)}
-                      className="flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700 hover:bg-green-200 transition"
-                    >
-                      <Eye size={16} /> View
-
-                    </button>
-                    <button
-                      onClick={() => handleToggleStatus(course.id, course.status)}
-                      className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition ${course.status === 1
-                        ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                        : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                        }`}
-                    >
-                      {course.status === 1 ? (
-                        <>
-                          <XCircle size={16} /> Inactive
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle size={16} /> Active
-                        </>
-                      )}
-                    </button>
-
-                  </td>
-                </tr>
-              ))}
-              {courses.data.length === 0 && (
-                <tr>
-                  <td colSpan="5" className="text-center text-gray-500 p-4">
-                    No courses found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+{/* Courses Grid */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+  {courses.data.length > 0 ? (
+    courses.data.map((course) => (
+      <motion.div
+        key={course.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all p-6 flex flex-col justify-between"
+      >
+        {/* Course Info */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center justify-between">
+            {course.name}
+          </h3>
+          <p className="text-sm text-gray-600">
+            Code: <span className="font-medium">{course.code}</span>
+          </p>
+          <p className="text-sm text-gray-600">
+            Department:{" "}
+            <span className="font-medium">
+              {course.department?.name || "-"}
+            </span>
+          </p>
+          <div className="flex justify-between items-center mt-3">
+            <span className="text-xs font-medium text-gray-500">
+              {course.degree_type || "-"}
+            </span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                course.status === 1
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
+              {course.status === 1 ? "Active" : "Inactive"}
+            </span>
+          </div>
         </div>
+
+        {/* Actions */}
+        <div className="flex gap-2 mt-5">
+          {/* Majors Button */}
+           <button
+    onClick={() => router.visit(route("registrar.courses.majors.index", course.id))}
+    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition text-sm font-medium"
+    title="Manage Majors"
+  >
+    <Eye size={18} />
+    See Majors
+  </button>
+
+          {/* Edit */}
+          <button
+            onClick={() => openEditModal(course)}
+            className="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
+            title="Edit"
+          >
+            <PencilSimple size={18} />
+          </button>
+
+          {/* View */}
+          <button
+            onClick={() => openViewModal(course)}
+            className="p-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+            title="View"
+          >
+            <Eye size={18} />
+          </button>
+
+          {/* Toggle Status */}
+          <button
+            onClick={() => handleToggleStatus(course.id, course.status)}
+            className={`p-2 rounded-lg transition ${
+              course.status === 1
+                ? "bg-red-100 text-red-600 hover:bg-red-200"
+                : "bg-green-100 text-green-600 hover:bg-green-200"
+            }`}
+            title={course.status === 1 ? "Inactivate" : "Activate"}
+          >
+            {course.status === 1 ? (
+              <XCircle size={18} />
+            ) : (
+              <CheckCircle size={18} />
+            )}
+          </button>
+        </div>
+      </motion.div>
+    ))
+  ) : (
+    <p className="col-span-full text-center text-gray-500 py-10">
+      No courses found.
+    </p>
+  )}
+</div>
+
+
 
         {/* Pagination */}
         <div className="flex justify-center items-center mt-4 space-x-2">
@@ -219,13 +303,15 @@ export default function Courses() {
               disabled={!link.url}
               dangerouslySetInnerHTML={{ __html: link.label }}
               onClick={() => handlePagination(link.url)}
-              className={`px-3 py-1 text-sm border rounded ${link.active
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
-                } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`px-3 py-1 text-sm border rounded ${
+                link.active
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
+              } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
             />
           ))}
         </div>
+
         {/* Add/Edit Modal */}
         <AnimatePresence>
           {showModal && (
@@ -256,7 +342,6 @@ export default function Courses() {
 
                 {/* Form */}
                 <form onSubmit={submit} className="space-y-4">
-
                   {/* Degree Type */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -352,13 +437,15 @@ export default function Courses() {
                   <button
                     type="submit"
                     disabled={form.processing}
-                    className={`w-full text-white px-4 py-2 rounded-md transition ${form.processing ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
-                      }`}
+                    className={`w-full text-white px-4 py-2 rounded-md transition ${
+                      form.processing
+                        ? 'bg-blue-400'
+                        : 'bg-blue-600 hover:bg-blue-700'
+                    }`}
                   >
                     {form.processing ? 'Saving...' : 'Save'}
                   </button>
                 </form>
-
               </motion.div>
             </motion.div>
           )}
@@ -397,10 +484,11 @@ export default function Courses() {
                   <p>
                     <strong>Status:</strong>{' '}
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${selectedCourse.status === 1
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700'
-                        }`}
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        selectedCourse.status === 1
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-red-100 text-red-700'
+                      }`}
                     >
                       {selectedCourse.status === 1 ? 'Active' : 'Inactive'}
                     </span>
@@ -416,7 +504,66 @@ export default function Courses() {
                     {selectedCourse.description || '-'}
                   </div>
                 </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
+        {/* Majors Modal */}
+        <AnimatePresence>
+          {majorsModal && selectedCourse && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg"
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold">
+                    Majors for {selectedCourse.name}
+                  </h2>
+                  <button
+                    onClick={() => {
+                      setMajorsModal(false);
+                      setSelectedCourse(null);
+                    }}
+                    className="text-gray-600 hover:text-red-600 transition"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                {/* Majors List (placeholder until backend is hooked) */}
+                <div className="space-y-2">
+                  {selectedCourse.majors && selectedCourse.majors.length > 0 ? (
+                    selectedCourse.majors.map((major, idx) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center bg-gray-100 p-2 rounded"
+                      >
+                        <span>{major.name}</span>
+                        <button className="text-blue-600 hover:underline text-sm">
+                          Edit
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500">No majors added yet.</p>
+                  )}
+                </div>
+
+                {/* Add Major Button */}
+                <button
+                  className="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md"
+                >
+                  + Add Major
+                </button>
               </motion.div>
             </motion.div>
           )}

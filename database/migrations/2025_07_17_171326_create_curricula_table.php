@@ -14,12 +14,17 @@ return new class extends Migration
         Schema::create('curricula', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('semesters_id')
-            ->constrained('semesters')
+            $table->text('description')->nullable();
+              $table->foreignId('majors_id')->nullable()
+            ->constrained()
+            ->onDelete('cascade');
+              $table->foreignId('courses_id')
+            ->constrained()
             ->onDelete('cascade');
             $table->foreignId('department_id')
             ->constrained()
             ->onDelete('cascade');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         });
     }

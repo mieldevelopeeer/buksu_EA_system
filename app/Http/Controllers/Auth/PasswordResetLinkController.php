@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Mail\ForgetPass;
+use App\Models\Users;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -37,7 +41,14 @@ class PasswordResetLinkController extends Controller
         // to send the link, we will examine the response then see the message we
         // need to show to the user. Finally, we'll send out a proper response.
         $status = Password::sendResetLink(
-            $request->only('email')
+            $request->only('email'),
+            function ($user, $token) use ($request) {
+                $baseUrl = $request->getSchemeAndHttpHost() ?? config('app.url');
+                $resetPath = route('password.reset', ['token' => $token], false);
+                $resetUrl = rtrim($baseUrl, '/') . $resetPath;
+
+                Mail::to($user->email)->send(new ForgetPass($user, $resetUrl));
+            }
         );
 
         if ($status == Password::RESET_LINK_SENT) {

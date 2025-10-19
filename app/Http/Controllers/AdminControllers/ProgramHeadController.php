@@ -5,75 +5,87 @@ namespace App\Http\Controllers\AdminControllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Users;
-use App\Models\ProgramHead; // ✅ Use proper PascalCase
 use App\Models\Department;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use App\Mail\ProgramHeadCreated;
 
 class ProgramHeadController extends Controller
 {
-public function index()
-{
-    $programHeads = Users::with([
-            'programHead.department:id,name' // load department too
-        ])
-        ->where('role', 'program_head') // ✅ Consistent role
-        ->select('id', 'fName', 'mName', 'lName', 'username', 'email')
-        ->latest()
-        ->get();
-
-    $departments = Department::select('id', 'name')->orderBy('name')->get();
-
-    return Inertia::render('Admin/Users/ProgramHead', [
-        'programHeads' => $programHeads,
-        'departments'  => $departments,
-    ]);
-}
-
-
-    public function store(Request $request)
+    // List all Program Heads
+    public function index()
     {
-        $validated = $request->validate([
-            'fName'         => 'required|string|max:255',
-            'mName'         => 'nullable|string|max:255',
-            'lName'         => 'required|string|max:255',
-            'email'         => 'required|email|unique:users,email',
-            'suffix'        => 'nullable|string|max:10',
-            'username'      => 'required|string|max:255|unique:users,username',
-            'password'      => 'required|string|min:6',
-            'contact_no'    => 'nullable|string|max:20',
-            'id_number'     => 'required|string|max:50|unique:program_head,id_number',
-            'department_id' => 'required|exists:departments,id',
+        $programHeads = Users::with(['department:id,name'])
+            ->where('role', 'program_head')
+            ->select(
+                'id',
+                'fName',
+                'mName',
+                'lName',
+                'suffix',
+                'username',
+                'email',
+                'contact_no',
+                'id_number',
+                'department_id',
+                'generated_password', // Include generated_password for display
+            )
+            ->latest()
+            ->get();
+
+        $departments = Department::select('id', 'name')->orderBy('name')->get();
+
+        return Inertia::render('Admin/Users/ProgramHead', [
+            'programHeads' => $programHeads,
+            'departments'  => $departments,
         ]);
-
-        DB::transaction(function () use ($validated) {
-            // Create User
-            $user = Users::create([
-                'fName'    => $validated['fName'],
-                'mName'    => $validated['mName'] ?? null,
-                'lName'    => $validated['lName'],
-                'email'    => $validated['email'],
-                'username' => $validated['username'],
-                'password' => bcrypt($validated['password']),
-                'role'     => 'program_head',
-            ]);
-
-            // Create related Program Head record
-            $user->programHead()->create([
-                'users_id'      => $user->id,
-                'id_number'     => $validated['id_number'],
-                'contact_no'    => $validated['contact_no'] ?? null,
-                'department_id' => $validated['department_id'],
-                'suffix'        => $validated['suffix'] ?? null,
-            ]);
-        });
-
-        return back()->with('success', 'Program Head added successfully.');
     }
 
+   // Store new Program Head
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'fName'         => 'required|string|max:255',
+        'mName'         => 'nullable|string|max:255',
+        'lName'         => 'required|string|max:255',
+        'email'         => 'required|email|unique:users,email',
+        'username'      => 'required|string|max:255|unique:users,username',
+        'id_number'     => 'required|string|max:50|unique:users,id_number',
+        'department_id' => 'required|exists:departments,id',
+        'contact_no'    => 'nullable|string|max:20',
+        'suffix'        => 'nullable|string|max:10',
+    ]);
+
+    // ✅ Generate random password
+    $generatedPassword = Str::random(10);
+
+    // Save user
+    $user = Users::create([
+        'fName'             => $validated['fName'],
+        'mName'             => $validated['mName'] ?? null,
+        'lName'             => $validated['lName'],
+        'email'             => $validated['email'],
+        'username'          => $validated['username'],
+        'password'          => Hash::make($generatedPassword), // hashed password
+        'generated_password'=> $generatedPassword, // ✅ store raw password in DB
+        'role'              => 'program_head',
+        'contact_no'        => $validated['contact_no'] ?? null,
+        'id_number'         => $validated['id_number'],
+        'department_id'     => $validated['department_id'],
+        'suffix'            => $validated['suffix'] ?? null,
+    ]);
+
+    // Send email (user + raw generated password)
+    Mail::to($user->email)->send(new ProgramHeadCreated($user, $generatedPassword));
+
+    return back()->with('success', 'Program Head added successfully and email sent.');
+}
+    // Update existing Program Head
     public function update(Request $request, $id)
     {
-        $user = Users::with('programHead')->where('role', 'program_head')->findOrFail($id);
+        $user = Users::where('role', 'program_head')->findOrFail($id);
 
         $validated = $request->validate([
             'fName'         => 'required|string|max:255',
@@ -81,33 +93,23 @@ public function index()
             'lName'         => 'required|string|max:255',
             'email'         => 'required|email|unique:users,email,' . $user->id,
             'username'      => 'required|string|max:255|unique:users,username,' . $user->id,
-            'contact_no'    => 'nullable|string|max:20',
-            'id_number'     => 'required|string|max:50|unique:program_head,id_number,' . ($user->programHead->id ?? 'NULL'),
+            'id_number'     => 'required|string|max:50|unique:users,id_number,' . $user->id,
             'department_id' => 'required|exists:departments,id',
+            'contact_no'    => 'nullable|string|max:20',
             'suffix'        => 'nullable|string|max:10',
         ]);
 
-        DB::transaction(function () use ($user, $validated) {
-            // Update User
-            $user->update([
-                'fName'    => $validated['fName'],
-                'mName'    => $validated['mName'] ?? null,
-                'lName'    => $validated['lName'],
-                'email'    => $validated['email'],
-                'username' => $validated['username'],
-            ]);
-
-            // Update or create Program Head record
-            $user->programHead()->updateOrCreate(
-                ['users_id' => $user->id],
-                [
-                    'id_number'     => $validated['id_number'],
-                    'contact_no'    => $validated['contact_no'] ?? null,
-                    'department_id' => $validated['department_id'],
-                    'suffix'        => $validated['suffix'] ?? null,
-                ]
-            );
-        });
+        $user->update([
+            'fName'         => $validated['fName'],
+            'mName'         => $validated['mName'] ?? null,
+            'lName'         => $validated['lName'],
+            'suffix'        => $validated['suffix'] ?? null,
+            'email'         => $validated['email'],
+            'username'      => $validated['username'],
+            'id_number'     => $validated['id_number'],
+            'department_id' => $validated['department_id'],
+            'contact_no'    => $validated['contact_no'] ?? null,
+        ]);
 
         return back()->with('success', 'Program Head updated successfully.');
     }

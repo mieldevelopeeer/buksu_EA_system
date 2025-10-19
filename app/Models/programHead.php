@@ -13,7 +13,7 @@ class programHead extends Model
     protected $table = 'program_head';
 
     protected $fillable =[
-        'user_id',
+        'users_id',
         'id_number',
         'contact_no',
         'department_id',
@@ -24,12 +24,12 @@ class programHead extends Model
 
         public function user()
 {
-    return $this->belongsTo(Users::class, 'users_id');
+    return $this->belongsTo(Users::class, 'users_id', 'id');
 }
 
   public function department()
     {
-        return $this->belongsTo(Department::class, 'department_id');
+        return $this->belongsTo(Department::class, 'department_id', 'id');
     }
 
 }

@@ -48,5 +48,17 @@ class DepartmentController extends Controller
 
     return back()->with('message', 'Department updated successfully.');
 }
+ // New function: show program heads of a department
+   public function showHeads()
+{
+    // Get all users with role 'program_head' and load their department
+    $programHeads = \App\Models\Users::where('role', 'program_head')
+        ->with('department')
+        ->get();
+
+    return Inertia::render('Registrar/Departments/ProgramHeads', [
+        'programHeads' => $programHeads,
+    ]);
+}
 
 }

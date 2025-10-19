@@ -14,12 +14,13 @@ return new class extends Migration
        Schema::create('curriculum_subject', function (Blueprint $table) {
     $table->id();
     $table->Integer('lec_unit');
-    $table->Integer('lab_unit');
-    $table->foreignId('school_year_id')->constrained('school_year')->onDelete('cascade');
-      $table->foreignId('year_level_id')->constrained('year_level')->onUpdate('cascade');
-    
+    $table->integer('lab_unit')->default(0);
+    $table->foreignId('semesters_id')->constrained('semesters')->onDelete('cascade');
+    $table->foreignId('year_level_id')->constrained('year_levels')->onUpdate('cascade');
     $table->foreignId('curricula_id')->constrained('curricula')->onDelete('cascade');
     $table->foreignId('subject_id')->constrained()->onDelete('cascade');
+    $table->enum('type', ['Old', 'New'])->default('Old');
+    $table->timestamps();
 });
 
     }

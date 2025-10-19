@@ -33,4 +33,16 @@ class SemesterController extends Controller
 
         return redirect()->route('registrar.semester.index')->with('success', 'Semester created successfully.');
     }
+
+
+    
+    public function toggleStatus($id)
+    {
+        $semester = Semester::findOrFail($id);
+
+        $semester->is_active = !$semester->is_active;
+        $semester->save();
+
+        return redirect()->route('registrar.semester.index')->with('success', 'Semester status updated successfully.');
+    }
 }

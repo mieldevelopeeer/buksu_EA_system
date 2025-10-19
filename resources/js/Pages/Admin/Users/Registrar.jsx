@@ -13,6 +13,8 @@ export default function Registrar() {
     const [editMode, setEditMode] = useState(false);
     const [selectedRegistrar, setSelectedRegistrar] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfMeta ? csrfMeta.content : '';
 
     const form = useForm({
         id_number: '',
@@ -40,7 +42,7 @@ export default function Registrar() {
 
     const openEditModal = (registrar) => {
         form.setData({
-            id_number: registrar.registrar?.id_number || '',
+            id_number: registrar.id_number || '',
             fName: registrar.fName,
             mName: registrar.mName || '',
             lName: registrar.lName,
@@ -58,77 +60,92 @@ export default function Registrar() {
         setViewModal(true);
     };
 
-    const submit = (e) => {
-        e.preventDefault();
+   const submit = (e) => {
+    e.preventDefault();
 
-        const successMessage = editMode
-            ? 'Registrar updated successfully!'
-            : 'Registrar added successfully!';
-        const errorMessage = editMode
-            ? 'Failed to update registrar.'
-            : 'Failed to add registrar.';
+    const successMessage = editMode
+        ? 'Registrar updated successfully!'
+        : 'Registrar added successfully!';
+    const errorMessage = editMode
+        ? 'Failed to update registrar.'
+        : 'Failed to add registrar.';
 
-        const onSuccess = () => {
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: successMessage,
-                timer: 2000,
-                showConfirmButton: false,
-            });
-            closeModal();
-        };
+    // Show "Please wait..." while saving
+    Swal.fire({
+        title: 'Please wait...',
+        text: editMode ? 'Updating registrar credentials' : 'Saving registrar credentials',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
 
-        const onError = () => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: errorMessage,
-            });
-        };
-
-        if (editMode && selectedRegistrar) {
-            form.put(route('admin.registrar.update', selectedRegistrar.id), {
-                onSuccess,
-                onError,
-            });
-        } else {
-            form.post(route('admin.registrar.store'), {
-                onSuccess,
-                onError,
-            });
-        }
+    const onSuccess = () => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: successMessage,
+            timer: 2000,
+            showConfirmButton: false,
+        });
+        closeModal();
     };
-const handleCustomEmail = async (user) => {
-  const defaultMessage = `Hello ${user.fName} ${user.lName},
 
-Username: ${user.username}
-ID Number: ${user.registrar?.id_number}
-Password: ${user.password}`;
+    const onError = () => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: errorMessage,
+        });
+    };
 
-  const { value: message } = await Swal.fire({
-    title: `Send Account Details to ${user.email}`,
-    input: 'textarea',
-    inputValue: defaultMessage,
-    showCancelButton: true,
-    confirmButtonText: 'Send',
-    inputValidator: (value) => value ? null : 'Message cannot be empty!'
-  });
+    if (editMode && selectedRegistrar) {
+        form.put(route('admin.registrar.update', selectedRegistrar.id), {
+            onSuccess,
+            onError,
+        });
+    } else {
+        form.post(route('admin.registrar.store'), {
+            onSuccess,
+            onError,
+        });
+    }
+};
 
-  if (message) {
-    fetch('/admin/registrar/send-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-      },
-      body: JSON.stringify({
-        to: user.email,
-        message
-      })
+  const handleCustomEmail = async (user) => {
+    if (!user) return;
+
+    // Show loading Swal while sending
+    Swal.fire({
+      title: 'Sending Email...',
+      html: 'Please wait while the email is being sent.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+  // Send data to Laravel
+  fetch(route('admin.registrar.send.email'), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': csrfToken
+    },
+    body: JSON.stringify({
+      to: user.email,
+      fName: user.fName,
+      mName: user.mName ?? '',
+      lName: user.lName,
+      username: user.username,
+      id_number: user.id_number,
+      password: user.generated_password ?? ''
     })
+  })
     .then(res => res.json())
     .then(data => {
+      Swal.close(); // Close loading
       if (data.success) {
         Swal.fire('Success', data.message, 'success');
       } else {
@@ -136,12 +153,11 @@ Password: ${user.password}`;
       }
     })
     .catch(err => {
+      Swal.close(); // Close loading
       Swal.fire('Error', 'Server error while sending email', 'error');
       console.error(err);
     });
-  }
 };
-    
 
     const filteredRegistrars = useMemo(() => {
         return registrars.filter((reg) =>
@@ -152,88 +168,103 @@ Password: ${user.password}`;
     }, [registrars, searchTerm]);
 
     return (
-        <AdminLayout title="Registrar Users">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-                <h1 className="text-2xl font-semibold tracking-wide">Registrar List</h1>
-                <div className="flex items-center gap-2">
-                    <div className="relative">
-                        <MagnifyingGlass
-                            size={18}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                        />
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10 pr-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-                    <button
-                        onClick={openAddModal}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 shadow transition"
-                    >
-                        <Plus size={18} /> Add Registrar
-                    </button>
-                </div>
-            </div>
+      <AdminLayout title="Registrar Users">
+  {/* Header */}
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+    <h1 className="text-xl font-semibold tracking-wide text-gray-800">
+      Registrar List
+    </h1>
+    <div className="flex items-center gap-2">
+      {/* Search */}
+      <div className="relative">
+        <MagnifyingGlass
+          size={18}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+        />
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        />
+      </div>
+      {/* Add Button */}
+      <button
+        onClick={openAddModal}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg flex items-center gap-2 text-sm font-medium shadow-sm transition"
+      >
+        <Plus size={18} /> Add Registrar
+      </button>
+    </div>
+  </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto bg-white rounded shadow">
-                <table className="min-w-full text-sm">
-                    <thead className="bg-gray-100 text-left uppercase text-gray-600">
-                        <tr>
-                            <th className="p-3">#</th>
-                            <th className="p-3">ID Number</th>
-                            <th className="p-3">First Name</th>
-                            <th className="p-3">Last Name</th>
-                            <th className="p-3">Username</th>
-                            <th className="p-3">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="text-gray-800">
-                        {filteredRegistrars.length > 0 ? (
-                            filteredRegistrars.map((reg, index) => (
-  <tr key={reg.id} className="border-t hover:bg-gray-50 transition">
-    <td className="p-3">{index + 1}</td>
-    <td className="p-3">{reg.registrar?.id_number ?? '-'}</td>
-    <td className="p-3">{reg.fName}</td>
-    <td className="p-3">{reg.lName}</td>
-    <td className="p-3">{reg.username}</td>
-    <td className="p-3 flex gap-2">
-      <button
-        onClick={() => openEditModal(reg)}
-        className="flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
-      >
-        <PencilSimple size={16} /> Edit
-      </button>
-      <button
-        onClick={() => openViewModal(reg)}
-        className="flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700 hover:bg-green-200 transition"
-      >
-        <Eye size={16} /> View
-      </button>
-      <button
-        onClick={() => handleCustomEmail(reg)}
-        className="flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition"
-      >
-        <EnvelopeSimple size={16} /> Email
-      </button>
-    </td>
-  </tr>
-))
+  {/* Table */}
+  <div className="overflow-x-auto bg-white rounded-xl shadow-md border border-gray-200">
+    <table className="min-w-full text-xs text-gray-700">
+      <thead className="bg-gray-50 uppercase tracking-wide text-gray-600 text-[11px]">
+        <tr>
+          <th className="p-3 text-left">#</th>
+          <th className="p-3 text-left">ID Number</th>
+          <th className="p-3 text-left">First Name</th>
+          <th className="p-3 text-left">Last Name</th>
+          <th className="p-3 text-left">Generated Password</th>
+          <th className="p-3 text-left">Username</th>
+          <th className="p-3 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-100">
+        {filteredRegistrars.length > 0 ? (
+          filteredRegistrars.map((reg, index) => (
+            <tr
+              key={reg.id}
+              className="hover:bg-gray-50 transition-colors"
+            >
+              <td className="p-3">{index + 1}</td>
+              <td className="p-3">{reg.id_number ?? "-"}</td>
+              <td className="p-3">{reg.fName}</td>
+              <td className="p-3">{reg.lName}</td>
+              <td className="p-3 font-mono text-blue-600">
+                {reg.generated_password}
+              </td>
+              <td className="p-3">{reg.username}</td>
+              <td className="p-3 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => openEditModal(reg)}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+                >
+                  <PencilSimple size={14} /> Edit
+                </button>
+                <button
+                  onClick={() => openViewModal(reg)}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 transition"
+                >
+                  <Eye size={14} /> View
+                </button>
+                <button
+                  onClick={() => handleCustomEmail(reg)}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition"
+                >
+                  <EnvelopeSimple size={14} /> Email
+                </button>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td
+              colSpan="7"
+              className="text-center p-4 text-gray-500 text-sm"
+            >
+              No results found.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
 
-                        ) : (
-                            <tr>
-                                <td colSpan="6" className="text-center p-4 text-gray-500">
-                                    No results found.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+
 
             {/* Add/Edit Modal */}
             <AnimatePresence>
@@ -435,7 +466,7 @@ Password: ${user.password}`;
                             </div>
                             <div className="space-y-2 text-sm text-gray-700">
                                 <p><strong>ID:</strong> {selectedRegistrar.id}</p>
-                                <p><strong>ID Number:</strong> {selectedRegistrar.registrar?.id_number ?? '-'}</p>
+                                <p><strong>ID Number:</strong> {selectedRegistrar.id_number ?? '-'}</p>
                                 <p><strong>First Name:</strong> {selectedRegistrar.fName}</p>
                                 <p><strong>Middle Name:</strong> {selectedRegistrar.mName ?? '-'}</p>
                                 <p><strong>Last Name:</strong> {selectedRegistrar.lName}</p>

@@ -1,30 +1,33 @@
-import { Link, usePage } from '@inertiajs/react';
-import { useState, useRef, useEffect } from 'react';
+import { Link } from "@inertiajs/react";
+import { useEffect, useRef, useState } from "react";
 import {
   House,
   Book,
   FileText,
-  Calendar,
   List,
   CaretDown,
-  CaretRight,
+  CaretLeft,
   User,
-  FileArrowDown,
-  UsersThree,
-  CheckSquare // replaced Ballot
-} from 'phosphor-react';
-import '@fontsource/poppins';
+  CheckSquare,
+} from "phosphor-react";
+import "@fontsource/poppins";
+
+const NAV_LINKS = [
+  { href: "/students/dashboard", label: "Dashboard", Icon: House },
+  { href: "/students/enrolled-subjects", label: "Enrolled Subjects", Icon: Book },
+  { href: "/students/grades", label: "Grades", Icon: FileText },
+  { href: "/students/academic-records", label: "Academic Records", Icon: CheckSquare },
+];
 
 export default function StudentLayout({ children }) {
-  const { auth } = usePage().props;
-  const [openMenu, setOpenMenu] = useState({
-    enrollment: false,
-    grades: false,
-    events: false,
-  });
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [sidebarOpen, setSidebarOpen] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : true
+  );
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== "undefined" && window.innerWidth >= 1024
+  );
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -32,138 +35,150 @@ export default function StudentLayout({ children }) {
         setDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleMenu = (menu) => {
-    setOpenMenu((prev) => ({ ...prev, [menu]: !prev[menu] }));
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window === "undefined") return;
+      const desktop = window.innerWidth >= 1024;
+      setIsDesktop(desktop);
+      setSidebarOpen(desktop);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   return (
-    <div className="min-h-screen flex bg-gray-100 font-[Poppins]">
-      {/* Sidebar */}
-      <aside className={`bg-blue-900 text-white p-4 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} shadow-lg`}>
-        <div className="mb-6">
-          <div className="flex items-center space-x-2">
-            <img src="/images/buksu_logo.png" alt="Logo" className="w-10 h-10" />
-            {sidebarOpen && <span className="text-sm font-bold leading-tight">Bukidnon State University Alubijid Campus</span>}
+    <div className="min-h-screen bg-[#f6f7fb] font-[Poppins] lg:flex">
+      {!isDesktop && !sidebarOpen && (
+        <button
+          onClick={toggleSidebar}
+          className="fixed left-4 top-4 z-40 flex h-9 w-9 items-center justify-center rounded-full bg-blue-900 text-white shadow-lg transition hover:bg-blue-800"
+          aria-label="Open sidebar"
+        >
+          <List size={18} />
+        </button>
+      )}
+
+      {!isDesktop && sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/35 backdrop-blur-sm"
+          onClick={toggleSidebar}
+          role="presentation"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex h-full flex-col bg-blue-900 text-white shadow-lg transition-transform duration-300 ease-in-out lg:shadow-none ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        } ${isDesktop ? (sidebarOpen ? "w-56" : "w-16") : "w-56"}`}
+      >
+        <div className="flex items-center justify-between px-4 py-5">
+          <div className="flex items-center gap-2">
+            <img src="/images/buksu_logo.png" alt="Logo" className="h-8 w-8" />
+            {sidebarOpen && (
+              <span className="text-xs font-semibold leading-tight tracking-tight">
+                Bukidnon State University
+                <br />
+                Alubijid Campus
+              </span>
+            )}
           </div>
+          {!isDesktop && sidebarOpen && (
+            <button
+              onClick={toggleSidebar}
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-white transition hover:bg-white/30"
+              aria-label="Close sidebar"
+            >
+              <CaretLeft size={14} />
+            </button>
+          )}
         </div>
 
-        <nav className="space-y-3 text-sm">
-          <NavItem href="/student/dashboard" icon={<House size={24} />} label="Dashboard" open={sidebarOpen} />
-
-          <ExpandableMenu
-            title="Enrollment"
-            icon={<Book size={24} />}
-            isOpen={openMenu.enrollment}
-            toggle={() => toggleMenu('enrollment')}
-            open={sidebarOpen}
-            items={[
-              { href: '/student/enroll', label: 'Enroll in Subjects', icon: <Book size={20} /> },
-              { href: '/student/enrolled-subjects', label: 'My Enrolled Subjects', icon: <Book size={20} /> },
-            ]}
-          />
-
-          <ExpandableMenu
-            title="Grades"
-            icon={<FileText size={24} />}
-            isOpen={openMenu.grades}
-            toggle={() => toggleMenu('grades')}
-            open={sidebarOpen}
-            items={[
-              { href: '/student/grades/view', label: 'View Grades', icon: <FileText size={20} /> },
-              { href: '/student/grades/report-card', label: 'Download Report Card', icon: <FileArrowDown size={20} /> },
-            ]}
-          />
-
-          <NavItem href="/student/schedule" icon={<Calendar size={24} />} label="Schedule" open={sidebarOpen} />
-
-          <ExpandableMenu
-            title="Events & Election"
-            icon={<UsersThree size={24} />}
-            isOpen={openMenu.events}
-            toggle={() => toggleMenu('events')}
-            open={sidebarOpen}
-            items={[
-              { href: '/student/events', label: 'View Events', icon: <Calendar size={20} /> },
-              { href: '/student/vote', label: 'Vote', icon: <CheckSquare size={20} /> }, // replaced Ballot
-            ]}
-          />
+        <nav className="flex-1 space-y-3 px-3 text-[11px]">
+          {NAV_LINKS.map(({ href, label, Icon }) => (
+            <NavItem key={href} href={href} label={label} Icon={Icon} open={sidebarOpen} />
+          ))}
         </nav>
+
+        {sidebarOpen && (
+          <div className="hidden px-4 pb-4 text-[11px] text-white/70 lg:block">
+            <span className="block font-semibold uppercase tracking-wide text-white">Need help?</span>
+            <span>Registrar Office · (088) 555-1234</span>
+          </div>
+        )}
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-6">
-        <div className="flex justify-between items-center mb-4">
+      <main
+        className={`flex-1 px-4 py-5 transition-all duration-300 ease-in-out lg:px-6 ${
+          isDesktop ? (sidebarOpen ? "lg:ml-56" : "lg:ml-16") : ""
+        }`}
+      >
+        <div className="mb-4 flex items-center justify-end gap-2 lg:justify-between">
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="bg-white p-2 rounded shadow hover:bg-gray-100"
+            onClick={toggleSidebar}
+            className="hidden rounded-full bg-white px-2 py-1 text-sm text-blue-900 shadow transition hover:bg-blue-50 lg:inline-flex"
+            aria-label="Toggle sidebar"
           >
-            <List size={24} color="black" />
+            {sidebarOpen ? <span className="text-base font-semibold">&lt;</span> : <List size={18} />}
           </button>
 
-          {/* Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-1 bg-white/70 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm hover:bg-white/90 transition"
+              onClick={() => setDropdownOpen((prev) => !prev)}
+              className="flex items-center gap-1 rounded-md bg-white/70 px-2 py-1 text-xs shadow-sm backdrop-blur-sm transition hover:bg-white/90"
             >
-              <User size={20} />
-              <CaretDown size={12} />
+              <User size={18} />
+              <CaretDown size={10} />
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-32 bg-white/80 backdrop-blur-md rounded shadow text-sm z-50">
-                <Link href="/profile" className="block px-3 py-1 text-gray-700 hover:bg-gray-200 rounded-t">Profile</Link>
-                <Link href="/logout" method="post" as="button" className="block w-full text-left px-3 py-1 text-red-600 hover:bg-gray-200 rounded-b">Logout</Link>
+              <div className="absolute right-0 mt-2 w-32 rounded-md border border-white/40 bg-white/90 text-xs shadow backdrop-blur">
+                <Link
+                  href="/profile"
+                  className="block rounded-t-md px-3 py-1.5 text-gray-700 hover:bg-gray-100"
+                >
+                  Profile
+                </Link>
+                <Link
+                  href="/logout"
+                  method="post"
+                  as="button"
+                  className="block w-full rounded-b-md px-3 py-1.5 text-left text-red-600 hover:bg-gray-100"
+                >
+                  Logout
+                </Link>
               </div>
             )}
           </div>
         </div>
 
-        {children}
+        <div className="rounded-lg bg-white p-4 shadow-sm transition-all duration-300 ease-in-out lg:p-5">
+          {children}
+        </div>
       </main>
     </div>
   );
 }
 
-function NavItem({ href, icon, label, open }) {
-  const isActive = window.location.pathname === href;
+function NavItem({ href, label, Icon, open }) {
+  const isActive = typeof window !== "undefined" && window.location.pathname === href;
+
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 p-2 rounded transition-all hover:bg-blue-700 ${
-        isActive ? 'bg-blue-800 font-semibold' : ''
-      }`}
+      className={`flex items-center gap-2 rounded-md px-2 py-2 transition hover:bg-blue-800/60 ${
+        isActive ? "bg-blue-800/80 font-semibold" : ""
+      } ${open ? "justify-start" : "justify-center"}`}
     >
-      {icon}
-      {open && <span>{label}</span>}
+      <Icon size={open ? 18 : 20} />
+      {open && <span className="text-[11px] tracking-tight">{label}</span>}
     </Link>
   );
 }
 
-function ExpandableMenu({ title, icon, isOpen, toggle, items, open }) {
-  return (
-    <div>
-      <button
-        onClick={toggle}
-        className={`flex items-center justify-between w-full px-2 py-2 hover:bg-blue-700 rounded transition-all ${!open ? 'justify-center' : ''}`}
-      >
-        <div className="flex items-center gap-2">
-          {icon}
-          {open && <span className="font-semibold">{title}</span>}
-        </div>
-        {open && <span>{isOpen ? <CaretDown size={20} /> : <CaretRight size={20} />}</span>}
-      </button>
-      {isOpen && open && (
-        <div className="ml-6 mt-1 space-y-1">
-          {items.map((item, i) => (
-            <NavItem key={i} href={item.href} icon={item.icon} label={item.label} open={open} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}

@@ -1,33 +1,37 @@
-import { Link, usePage } from '@inertiajs/react';
-import { useState, useRef, useEffect } from 'react';
+import { Link, usePage, router } from "@inertiajs/react";
+import { useState, useRef, useEffect } from "react";
 import {
   House,
   Clipboard,
   Users,
   FileText,
   NotePencil,
-  CaretDown,
-  CaretRight,
   Notebook,
   User,
-  Printer,
   List,
+  CaretLeft,
   AddressBook,
   BookOpen,
-  UserCircle,
-  Book // <-- added for Curriculum
-} from 'phosphor-react';
-import '@fontsource/poppins/index.css';
+  Book,
+  CheckCircle,
+  CaretDown,
+  ChartPie,
+  Clock,
+  GraduationCap,
+} from "phosphor-react";
+
+import "@fontsource/poppins/index.css";
+import Swal from "sweetalert2";
 
 export default function ProgramHeadLayout({ children }) {
-  const { auth } = usePage().props;
-  const [openMenu, setOpenMenu] = useState({
-    evaluation: true,
-    students: false,
-    loading: false,
-    curriculum: false, // <-- added curriculum state
+  const { url, props } = usePage();
+  const { auth } = props;
+
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    const stored = localStorage.getItem("phSidebarOpen");
+    return stored !== null ? JSON.parse(stored) : true;
   });
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -37,144 +41,307 @@ export default function ProgramHeadLayout({ children }) {
         setDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleMenu = (menu) => {
-    setOpenMenu((prev) => ({ ...prev, [menu]: !prev[menu] }));
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => {
+      localStorage.setItem("phSidebarOpen", JSON.stringify(!prev));
+      return !prev;
+    });
+  };
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, logout",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Logging out...",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          didOpen: () => Swal.showLoading(),
+        });
+        localStorage.clear();
+        sessionStorage.clear();
+        router.post(route("logout"), { onFinish: () => Swal.close() });
+      }
+    });
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-100 font-[Poppins]">
+    <div className="min-h-screen flex bg-gray-100 font-[Poppins] text-[13px] font-normal">
       {/* Sidebar */}
-      <aside className={`bg-blue-900 text-white p-4 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} shadow-lg`}>
-        <div className="mb-6">
-          <div className="flex items-center space-x-2">
-            <img src="/images/buksu_logo.png" alt="Logo" className="w-10 h-10" />
-            {sidebarOpen && <span className="text-sm font-bold leading-tight">Bukidnon State Universtiy Alubijid Campus</span>}
+      <aside
+        className={`bg-blue-900 text-white transition-all duration-300 ${
+          sidebarOpen ? "w-60" : "w-20"
+        } shadow-lg relative`}
+      >
+        {/* Logo */}
+        <div className="p-4 border-b border-blue-800">
+          <div className="flex items-center gap-2">
+            <img src="/images/buksu_logo.png" alt="Logo" className="w-8 h-8" />
+            {sidebarOpen && (
+              <span className="text-[11px] font-medium leading-tight tracking-wide">
+                Bukidnon State University
+                <br />
+                Alubijid Campus
+              </span>
+            )}
           </div>
         </div>
 
-        <nav className="space-y-3 text-sm">
-          <NavItem href="/program-head/dashboard" icon={<House size={24} />} label="Dashboard" open={sidebarOpen} />
-
-          <ExpandableMenu
-            title="Evaluation"
-            icon={<Clipboard size={24} />}
-            isOpen={openMenu.evaluation}
-            toggle={() => toggleMenu('evaluation')}
+        {/* Navigation */}
+        <nav className="p-3 space-y-2">
+          <NavItem
+            href="/program-head/dashboard"
+            icon={<House size={20} />}
+            label="Dashboard"
             open={sidebarOpen}
-            items={[
-              { href: '/program-head/evaluation/enrollment', label: 'Evaluate for Enrollment', icon: <BookOpen size={20} /> },
-              { href: '/program-head/subject-loading', label: 'Subject Loading', icon: <NotePencil size={20} /> },
-            ]}
+            url={url}
           />
 
-          <ExpandableMenu
-            title="Student Data"
-            icon={<UserCircle size={24} />}
-            isOpen={openMenu.students}
-            toggle={() => toggleMenu('students')}
+          {sidebarOpen && (
+            <p className="px-2 text-[11px] uppercase text-gray-300">Evaluation</p>
+          )}
+          <NavItem
+            href="/program-head/enrollment"
+            icon={<BookOpen size={18} />}
+            label="Evaluate Enrollment"
             open={sidebarOpen}
-            items={[
-              { href: '/program-head/students/list', label: 'Student List', icon: <Users size={20} /> },
-              { href: '/program-head/students/records', label: 'Academic Records', icon: <FileText size={20} /> },
-            ]}
+            url={url}
+          />
+          <PendingNavItem
+            href="/program-head/pending-enrollments"
+            icon={<NotePencil size={18} />}
+            label="Pending Pre-Enrolls"
+            open={sidebarOpen}
+            url={url}
+            badge={props.pendingEnrollmentCount ?? 0}
+          />
+         
+
+          {sidebarOpen && (
+            <p className="px-2 text-[10px] uppercase tracking-[0.22em] text-gray-300 mt-1.5">
+              Student Data
+            </p>
+          )}
+          <NavItem
+            href="/program-head/students-list"
+            icon={<Users size={18} />}
+            label="Student List"
+            open={sidebarOpen}
+            url={url}
+          />
+          <NavItem
+            href="/program-head/academic-records"
+            icon={<FileText size={18} />}
+            label="Academic Records"
+            open={sidebarOpen}
+            url={url}
+          />
+          <NavItem
+            href="/program-head/students/enrolled"
+            icon={<CheckCircle size={18} />}
+            label="Enrolled Students"
+            open={sidebarOpen}
+            url={url}
           />
 
-          <ExpandableMenu
-            title="Faculty"
-            icon={<User size={24} />}
-            isOpen={openMenu.loading}
-            toggle={() => toggleMenu('loading')}
+          {sidebarOpen && (
+            <p className="px-2 text-[10px] uppercase tracking-[0.22em] text-gray-300 mt-1.5">Faculty</p>
+          )}
+          <NavItem
+            href="/program-head/faculties"
+            icon={<Users size={18} />}
+            label="Faculties"
             open={sidebarOpen}
-            items={[
-              { href: '/program-head/faculty/assign', label: 'Assign Faculty', icon: <AddressBook size={20} /> },
-              { href: '/program-head/faculty/load', label: 'Faculty Load', icon: <Clipboard size={20} /> },
-            ]}
+            url={url}
+          />
+          <NavItem
+            href="/program-head/faculties/assignfaculty"
+            icon={<AddressBook size={18} />}
+            label="Assign Faculty"
+            open={sidebarOpen}
+            url={url}
+          />
+          <NavItem
+            href="/program-head/faculties/facultyload"
+            icon={<Clipboard size={18} />}
+            label="Faculty Load"
+            open={sidebarOpen}
+            url={url}
           />
 
-          {/* Curriculum Menu (Single Link) */}
-          <Link
-            href="/program-head/curriculum"
-            className="flex items-center space-x-2 p-2 rounded-md hover:bg-blue-800 transition"
-          >
-            <Book size={24} />
-            {sidebarOpen && <span>Curriculum</span>}
-          </Link>
+          <div className="border-t border-blue-800 my-2" />
 
-          <NavItem href="/program-head/reports" icon={<Printer size={24} />} label="Reports" open={sidebarOpen} />
+          <NavItem
+            href="/program-head/section"
+            icon={<Notebook size={20} />}
+            label="Sections"
+            open={sidebarOpen}
+            url={url}
+          />
+          <NavItem
+            href="/program-head/curricula"
+            icon={<Book size={20} />}
+            label="Curriculum"
+            open={sidebarOpen}
+            url={url}
+          />
+          {sidebarOpen && (
+            <p className="px-2 text-[10px] uppercase tracking-[0.22em] text-gray-300 mt-1.5">
+              Reports
+            </p>
+          )}
+          <NavItem
+            href="/program-head/reports/enrollment"
+            icon={<ChartPie size={18} />}
+            label="Enrollment Report"
+            open={sidebarOpen}
+            url={url}
+          />
+          <NavItem
+            href="/program-head/reports/grades"
+            icon={<GraduationCap size={18} />}
+            label="Grades Report"
+            open={sidebarOpen}
+            url={url}
+          />
+          <NavItem
+            href="/program-head/reports/attendance"
+            icon={<Clock size={18} />}
+            label="Attendance Report"
+            open={sidebarOpen}
+            url={url}
+          />
         </nav>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-5 text-[13px] font-normal">
         <div className="flex justify-between items-center mb-4">
+          {/* Sidebar Toggle */}
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="bg-white p-2 rounded shadow hover:bg-gray-100"
+            onClick={toggleSidebar}
+            className="bg-white p-2 rounded shadow hover:bg-gray-100 transition"
           >
-            <List size={24} color="black" />
+            {sidebarOpen ? (
+              <CaretLeft size={20} color="black" />
+            ) : (
+              <List size={20} color="black" />
+            )}
           </button>
 
           {/* Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-1 bg-white/70 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm hover:bg-white/90 transition"
+              className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-md shadow hover:bg-gray-100 transition text-[13px] font-normal"
             >
-              <User size={20} />
-              <CaretDown size={12} />
+              <User size={18} />
+              {sidebarOpen && (
+                <>
+                  <span>Program Head</span>
+                  <CaretDown size={14} />
+                </>
+              )}
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-32 bg-white/80 backdrop-blur-md rounded shadow text-sm z-50">
-                <Link href="/profile" className="block px-3 py-1 text-gray-700 hover:bg-gray-200 rounded-t">Profile</Link>
-                <Link href="/logout" method="post" as="button" className="block w-full text-left px-3 py-1 text-red-600 hover:bg-gray-200 rounded-b">Logout</Link>
+              <div className="absolute right-0 mt-1 w-40 bg-white rounded shadow-md z-50 text-sm overflow-hidden">
+                <Link
+                  href="/profile"
+                  className="block px-3 py-2 hover:bg-gray-100"
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-3 py-2 text-red-600 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
               </div>
             )}
           </div>
         </div>
+
         {children}
       </main>
     </div>
   );
 }
 
-function NavItem({ href, icon, label, open }) {
-  const isActive = window.location.pathname === href;
+function PendingNavItem({ href, icon, label, open, url, badge = 0 }) {
+  const isActive = url.startsWith(href);
+  const hasBadge = Number(badge) > 0;
+
   return (
-    <Link
-      href={href}
-      className={`flex items-center gap-3 p-2 rounded transition-all hover:bg-blue-700 ${isActive ? 'bg-blue-800 font-semibold' : ''
+    <div className="relative group text-[13px] font-normal">
+      <Link
+        href={href}
+        className={`flex items-center gap-2 p-2 rounded-md transition ${
+          isActive
+            ? "bg-blue-800 text-white font-medium shadow-inner"
+            : "hover:bg-blue-700 hover:text-white text-gray-200"
         }`}
-    >
-      {icon}
-      {open && <span>{label}</span>}
-    </Link>
+      >
+        <span className="relative">
+          {icon}
+          {!open && hasBadge && (
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">
+              {badge}
+            </span>
+          )}
+        </span>
+        {open && (
+          <span className="flex items-center gap-2">
+            {label}
+            {hasBadge && (
+              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                {badge}
+              </span>
+            )}
+          </span>
+        )}
+      </Link>
+      {!open && (
+        <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap bg-blue-800 text-white px-2 py-0.5 rounded text-[11px] opacity-0 group-hover:opacity-100 transition">
+          {label}
+        </span>
+      )}
+    </div>
   );
 }
 
-function ExpandableMenu({ title, icon, isOpen, toggle, items, open }) {
+function NavItem({ href, icon, label, open, url }) {
+  const isActive = url.startsWith(href);
+
   return (
-    <div>
-      <button
-        onClick={toggle}
-        className={`flex items-center justify-between w-full px-2 py-2 hover:bg-blue-700 rounded transition-all ${!open ? 'justify-center' : ''}`}
+    <div className="relative group text-[13px] font-normal">
+      <Link
+        href={href}
+        className={`flex items-center gap-2 p-2 rounded-md transition ${
+          isActive
+            ? "bg-blue-800 text-white font-medium shadow-inner"
+            : "hover:bg-blue-700 hover:text-white text-gray-200"
+        }`}
       >
-        <div className="flex items-center gap-2">
-          {icon}
-          {open && <span className="font-semibold">{title}</span>}
-        </div>
-        {open && <span>{isOpen ? <CaretDown size={20} /> : <CaretRight size={20} />}</span>}
-      </button>
-      {isOpen && open && (
-        <div className="ml-6 mt-1 space-y-1">
-          {items.map((item, i) => (
-            <NavItem key={i} href={item.href} icon={item.icon} label={item.label} open={open} />
-          ))}
-        </div>
+        <span className="relative">{icon}</span>
+        {open && <span>{label}</span>}
+      </Link>
+      {!open && (
+        <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap bg-blue-800 text-white px-2 py-0.5 rounded text-[11px] opacity-0 group-hover:opacity-100 transition">
+          {label}
+        </span>
       )}
     </div>
   );

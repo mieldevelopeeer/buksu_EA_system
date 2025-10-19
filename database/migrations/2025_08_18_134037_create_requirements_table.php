@@ -13,15 +13,13 @@ return new class extends Migration
     {
         Schema::create('requirements', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->enum('required_for', ['freshmen', 'transferee', 'shiftee', 'returnee', 'all'])->default('all');
-            $table->boolean('status')->default(true); 
-            $table->foreignId('enrollments_id')->constrained('enrollments')->onDelete('cascade');        
-            $table->timestamps();
+    $table->string('name');
+    $table->text('description')->nullable();
+    $table->enum('required_for', ['freshmen', 'transferee', 'shiftee', 'returnee', 'all'])->default('all');
+    $table->boolean('status')->default(true); // active/inactive requirement
+    $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

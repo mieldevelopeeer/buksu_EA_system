@@ -82,35 +82,32 @@ export default function Semester() {
     }
   };
 
-  const toggleStatus = (semester) => {
-    Swal.fire({
-      title: `Change status for ${semester.semester}?`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, change',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        router.put(
-          route('registrar.semesters.toggleStatus', semester.id),
-          { is_active: !semester.is_active },
-          {
-            onSuccess: () => {
-              Toast.fire({
-                icon: 'success',
-                title: 'Status updated',
-              });
-            },
-            onError: () => {
-              Toast.fire({
-                icon: 'error',
-                title: 'Failed to update status.',
-              });
-            },
-          }
-        );
-      }
-    });
-  };
+const toggleStatus = (semester) => {
+  Swal.fire({
+    title: `Change status for ${semester.semester}?`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, change',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      router.get(route('registrar.semester.toggle', semester.id), {
+        onSuccess: () => {
+          Toast.fire({
+            icon: 'success',
+            title: 'Status updated',
+          });
+        },
+        onError: () => {
+          Toast.fire({
+            icon: 'error',
+            title: 'Failed to update status.',
+          });
+        },
+      });
+    }
+  });
+};
+
 
   return (
     <RegistrarLayout>
@@ -237,8 +234,8 @@ export default function Semester() {
   required
 >
   <option value="" disabled>Select Semester</option>
-  <option value="1st Semester">1st Semester</option>
-  <option value="2nd Semester">2nd Semester</option>
+  <option value="First Semester">First Semester</option>
+  <option value="Second Semester">Second Semester</option>
   <option value="Summer">Summer</option>
 </select>
 {form.errors.semester && (

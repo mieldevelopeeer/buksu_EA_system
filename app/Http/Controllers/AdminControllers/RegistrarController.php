@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\CustomEmail;
+use Illuminate\Support\Str;
 
 class RegistrarController extends Controller
 {
 public function index()
 {
-    $registrars = Users::with(['registrar:id,users_id,id_number']) // eager load registrar with id_number
-        ->where('role', 'registrar')
-        ->select('id', 'fName', 'mName', 'lName', 'username', 'email')
+    $registrars = Users::where('role', 'registrar')
+        ->select('id', 'fName', 'mName', 'lName', 'username', 'email', 'id_number', 'generated_password')
         ->latest()
         ->get();
 
@@ -27,100 +27,120 @@ public function index()
     ]);
 }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'fName'     => 'required|string|max:255',
-            'mName'     => 'nullable|string|max:255',
-            'lName'     => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email',
-            'username'  => 'required|string|max:255|unique:users,username',
-            'password'  => 'required|string|min:6',
-            'id_number' => 'required|string|max:50|unique:registrar,id_number',
-        ]);
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'fName'     => 'required|string|max:255',
+        'mName'     => 'nullable|string|max:255',
+        'lName'     => 'required|string|max:255',
+        'email'     => 'required|email|unique:users,email',
+        'username'  => 'required|string|max:255|unique:users,username',
+        'id_number' => 'required|string|max:50|unique:users,id_number',
+        'password'  => 'nullable|string|min:6',
+    ]);
 
-        DB::transaction(function () use ($validated) {
-            // Create user first
-            $user = Users::create([
-                'fName'    => $validated['fName'],
-                'mName'    => $validated['mName'] ?? null,
-                'lName'    => $validated['lName'],
-                'email'    => $validated['email'],
-                'username' => $validated['username'],
-                'password' => bcrypt($validated['password']),
-                'role'     => 'registrar',
-            ]);
+    $rawPassword = $validated['password'] ?? Str::random(10);
 
-            // Create registrar record linked to user
-            $user->registrar()->create([
-                'id_number' => $validated['id_number'],
-                'users_id'  => $user->id, // ensure FK is set
-            ]);
-        });
+    $user = Users::create([
+        'fName'             => $validated['fName'],
+        'mName'             => $validated['mName'] ?? null,
+        'lName'             => $validated['lName'],
+        'email'             => $validated['email'],
+        'username'          => $validated['username'],
+        'id_number'         => $validated['id_number'],
+        'password'          => bcrypt($rawPassword),
+        'generated_password'=> $rawPassword,  // keep plain until changed
+        'role'              => 'registrar',
+    ]);
 
-        return back()->with('success', 'Registrar added successfully.');
+    // 📧 Send credentials via email
+try {
+    Mail::to($user->email)->send(
+        new CustomEmail(
+            'admin@buksualubijidcampus.com',
+            $user->fName,
+            $user->mName,       // nullable
+            $user->lName,
+            $user->username,
+            $user->id_number,
+            $rawPassword
+        )
+    );
+} catch (\Exception $e) {
+    return back()->with('error', 'Registrar added but email failed: ' . $e->getMessage());
+}
+
+    return back()->with('success', 'Registrar added successfully and credentials sent to email.');
+}
+
+
+   public function update(Request $request, $id)
+{
+    $user = Users::where('role', 'registrar')->findOrFail($id);
+
+    $validated = $request->validate([
+        'fName'     => 'required|string|max:255',
+        'mName'     => 'nullable|string|max:255',
+        'lName'     => 'required|string|max:255',
+        'email'     => 'required|email|unique:users,email,' . $user->id,
+        'username'  => 'required|string|max:255|unique:users,username,' . $user->id,
+        'id_number' => 'required|string|max:50|unique:users,id_number,' . $user->id,
+        'password'  => 'nullable|string|min:6',
+    ]);
+
+    $updateData = [
+        'fName'     => $validated['fName'],
+        'mName'     => $validated['mName'] ?? null,
+        'lName'     => $validated['lName'],
+        'email'     => $validated['email'],
+        'username'  => $validated['username'],
+        'id_number' => $validated['id_number'],
+    ];
+
+    if (!empty($validated['password'])) {
+        $updateData['password'] = bcrypt($validated['password']);
+        $updateData['generated_password'] = null; // clear generated password
     }
 
-    public function update(Request $request, $id)
-    {
-        $user = Users::with('registrar')->where('role', 'registrar')->findOrFail($id);
+    $user->update($updateData);
 
-        $validated = $request->validate([
-            'fName'     => 'required|string|max:255',
-            'mName'     => 'nullable|string|max:255',
-            'lName'     => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email,' . $user->id,
-            'username'  => 'required|string|max:255|unique:users,username,' . $user->id,
-            'id_number' => 'required|string|max:50|unique:registrar,id_number,' . ($user->registrar->id ?? 'NULL'),
-        ]);
-
-        DB::transaction(function () use ($user, $validated) {
-            $user->update([
-                'fName'    => $validated['fName'],
-                'mName'    => $validated['mName'] ?? null,
-                'lName'    => $validated['lName'],
-                'email'    => $validated['email'],
-                'username' => $validated['username'],
-            ]);
-
-            $user->registrar()->updateOrCreate(
-                ['users_id' => $user->id],
-                ['id_number' => $validated['id_number']]
-            );
-        });
-
-        return back()->with('success', 'Registrar updated successfully.');
-    }
-
-
-
+    return back()->with('success', 'Registrar updated successfully.');
+}
 
 public function sendEmail(Request $request)
 {
     $request->validate([
         'to' => 'required|email',
-        'message' => 'required|string',
+        'fName' => 'required|string',
+        'mName' => 'nullable|string',
+        'lName' => 'required|string',
+        'username' => 'required|string',
+        'id_number' => 'required|string',
+        'password' => 'required|string',
     ]);
 
     try {
-        Mail::raw($request->message, function ($mail) use ($request) {
-            $mail->to($request->to)
-                 ->subject('Your Account Details');
-        });
+        \Mail::to($request->to)->send(new \App\Mail\CustomEmail(
+            'admin@buksualubijidcampus.com', // sender
+            $request->fName,
+            $request->mName,
+            $request->lName,
+            $request->username,
+            $request->id_number,
+            $request->password
+        ));
 
-        // ✅ Return standard JSON
         return response()->json([
             'success' => true,
-            'message' => 'Email sent successfully'
+            'message' => 'Email sent successfully!'
         ]);
     } catch (\Exception $e) {
-        \Log::error('Email send error: '.$e->getMessage());
-
         return response()->json([
             'success' => false,
-            'message' => 'Failed to send email'
-        ], 500);
+            'message' => 'Failed to send email: ' . $e->getMessage()
+        ]);
     }
 }
 
 }
+
