@@ -14,7 +14,14 @@ class ProfileController extends Controller
 {
     public function index(Request $request)
     {
-        $user = $request->user()->load('department');
+        $user = $request->user()->load([
+            'department',
+            'enrollments' => function ($query) {
+                $query->with('course')
+                    ->orderByDesc('created_at')
+                    ->limit(1);
+            },
+        ]);
 
         return Inertia::render('Profile/Profiles', [
             'users' => $user,

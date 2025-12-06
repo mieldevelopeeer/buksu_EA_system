@@ -24,4 +24,24 @@ class FacultyLoad extends Model
         'school_year_id',
 
     ];
+
+    public function curriculumSubject()
+    {
+        return $this->belongsTo(Curriculum_Subject::class, 'curriculum_subject_id');
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Courses::class, 'courses_id');
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class, 'semester_id');
+    }
+
+    public function schoolYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'school_year_id');
+    }
 }

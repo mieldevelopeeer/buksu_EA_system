@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Registrar;
-use App\Models\programHead;
+use App\Models\ProgramHead;
 
 class Users extends Authenticatable
 {
@@ -61,10 +61,30 @@ class Users extends Authenticatable
         'password' => 'hashed',
     ];
 
+    /**
+     * The attributes that should be appended to the model array.
+     * This ensures name fields are included when serializing to JSON (for Inertia).
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'name',
+        'full_name',
+    ];
+
     public function getAuthIdentifierName()
-{
-    return 'username';
-}
+    {
+        return 'username';
+    }
+
+    /**
+     * Accessor for the 'name' attribute to return full name.
+     * This ensures compatibility with Laravel's standard naming conventions.
+     */
+    public function getNameAttribute()
+    {
+        return "{$this->fName} {$this->mName} {$this->lName}";
+    }
     // 🔹 Student belongs to a user
     public function user()
     {
@@ -77,7 +97,7 @@ public function registrar()
 
 public function programHead(){
 
-    return $this->hasOne(programHead::class, 'users_id','id');
+    return $this->hasOne(ProgramHead::class, 'users_id','id');
 
 }
 public function department()
@@ -95,6 +115,10 @@ public function class_schedules()
 public function student()
 {
     return $this->hasOne(Student::class, 'user_id');
+}
+public function studentDetails()
+{
+    return $this->hasOne(StudentDetail::class, 'user_id');
 }
 // In Users.php
 public function getFullNameAttribute()

@@ -12,6 +12,9 @@ export default function RegistrarEnrolledStudents({
   const [yearFilter, setYearFilter] = useState("all");
   const [sectionFilter, setSectionFilter] = useState("all");
   const [semesterFilter, setSemesterFilter] = useState("all");
+  const [courseFilter, setCourseFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
 
   // Pagination
@@ -34,6 +37,18 @@ export default function RegistrarEnrolledStudents({
     () =>
       Array.from(
         new Set(enrolledStudents.map((s) => s.section?.section).filter(Boolean))
+      ),
+    [enrolledStudents]
+  );
+
+  const courses = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          enrolledStudents
+            .map((s) => s.course?.code || s.course?.name)
+            .filter(Boolean)
+        )
       ),
     [enrolledStudents]
   );
@@ -70,9 +85,16 @@ export default function RegistrarEnrolledStudents({
         semesterFilter === "all" ||
         enrollment.semester?.semester === semesterFilter;
 
-      return matchesSearch && matchesYear && matchesSection && matchesSemester;
+      const courseLabel = enrollment.course?.code || enrollment.course?.name;
+      const matchesCourse = courseFilter === "all" || courseLabel === courseFilter;
+
+      const enrolledDate = enrollment.enrolled_at ? new Date(enrollment.enrolled_at) : null;
+      const matchesDateFrom = !dateFrom || (enrolledDate && enrolledDate >= new Date(dateFrom));
+      const matchesDateTo = !dateTo || (enrolledDate && enrolledDate <= new Date(dateTo));
+
+      return matchesSearch && matchesYear && matchesSection && matchesSemester && matchesCourse && matchesDateFrom && matchesDateTo;
     });
-  }, [enrolledStudents, search, yearFilter, sectionFilter, semesterFilter]);
+  }, [enrolledStudents, search, yearFilter, sectionFilter, semesterFilter, courseFilter, dateFrom, dateTo]);
 
   // Pagination logic
   const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
@@ -84,7 +106,7 @@ export default function RegistrarEnrolledStudents({
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, yearFilter, sectionFilter, semesterFilter]);
+  }, [search, yearFilter, sectionFilter, semesterFilter, courseFilter, dateFrom, dateTo]);
 
   return (
     <RegistrarLayout>
@@ -139,6 +161,20 @@ export default function RegistrarEnrolledStudents({
         ))}
       </select>
 
+      {/* Course Filter */}
+      <select
+        value={courseFilter}
+        onChange={(e) => setCourseFilter(e.target.value)}
+        className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+      >
+        <option value="all">All Courses</option>
+        {courses.map((course) => (
+          <option key={course} value={course}>
+            {course}
+          </option>
+        ))}
+      </select>
+
       {/* Semester Filter */}
       <select
         value={semesterFilter}
@@ -153,6 +189,21 @@ export default function RegistrarEnrolledStudents({
         ))}
       </select>
 
+      {/* Date Range */}
+      <input
+        type="date"
+        value={dateFrom}
+        onChange={(e) => setDateFrom(e.target.value)}
+        className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+      />
+      <span className="text-[11px] text-gray-500">to</span>
+      <input
+        type="date"
+        value={dateTo}
+        onChange={(e) => setDateTo(e.target.value)}
+        className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+      />
+
       {/* Reset Filters */}
       <button
         onClick={() => {
@@ -160,6 +211,9 @@ export default function RegistrarEnrolledStudents({
           setYearFilter("all");
           setSectionFilter("all");
           setSemesterFilter("all");
+          setCourseFilter("all");
+          setDateFrom("");
+          setDateTo("");
         }}
         className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-md transition"
       >
@@ -190,9 +244,11 @@ export default function RegistrarEnrolledStudents({
             <th className="px-3 py-2 text-left font-medium">#</th>
             <th className="px-3 py-2 text-left font-medium">ID</th>
             <th className="px-3 py-2 text-left font-medium">Name</th>
+            <th className="px-3 py-2 text-left font-medium">Course</th>
             <th className="px-3 py-2 text-left font-medium">Year</th>
             <th className="px-3 py-2 text-left font-medium">Semester</th>
             <th className="px-3 py-2 text-left font-medium">Section</th>
+            <th className="px-3 py-2 text-left font-medium">Date</th>
             <th className="px-3 py-2 text-center font-medium">Action</th>
           </tr>
         </thead>
@@ -213,6 +269,9 @@ export default function RegistrarEnrolledStudents({
                 {enrollment.user?.mName || ""}
               </td>
               <td className="px-3 py-2">
+                {enrollment.course?.code || enrollment.course?.name || "N/A"}
+              </td>
+              <td className="px-3 py-2">
                 {enrollment.year_level?.year_level ?? "N/A"}
               </td>
               <td className="px-3 py-2">
@@ -220,6 +279,15 @@ export default function RegistrarEnrolledStudents({
               </td>
               <td className="px-3 py-2">
                 {enrollment.section?.section || "N/A"}
+              </td>
+              <td className="px-3 py-2">
+                {enrollment.enrolled_at
+                  ? new Date(enrollment.enrolled_at).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  : "—"}
               </td>
               <td className="px-3 py-2 text-center">
                 <button
@@ -403,17 +471,17 @@ export default function RegistrarEnrolledStudents({
       }
 
       return subjects.map((subj, idx) => {
-        const curriculum = subj.class_schedule?.curriculum_subject;
-        const subject = curriculum?.subject;
-        if (!subject) return null;
+        const schedule = subj.classSchedule || subj.class_schedule;
+        const curriculum = schedule?.curriculumSubject || schedule?.curriculum_subject || subj.curriculumSubject || subj.curriculum_subject;
+        const subject = curriculum?.subject || subj.subject || {};
 
-        const lec = curriculum?.lec_unit || 0;
-        const lab = curriculum?.lab_unit || 0;
+        const lec = curriculum?.lec_unit ?? 0;
+        const lab = curriculum?.lab_unit ?? 0;
         const units = lec + lab;
 
-        const scheduleDay = subj.class_schedule?.schedule_day || "TBA";
-        const startTime = subj.class_schedule?.start_time || "";
-        const endTime = subj.class_schedule?.end_time || "";
+        const scheduleDay = schedule?.schedule_day || "TBA";
+        const startTime = schedule?.start_time || "";
+        const endTime = schedule?.end_time || "";
 
         const formatTime = (time) => {
           if (!time) return "";
@@ -427,16 +495,19 @@ export default function RegistrarEnrolledStudents({
         const scheduleTime =
           startTime && endTime ? `${formatTime(startTime)} – ${formatTime(endTime)}` : "TBA";
 
-        const room = subj.class_schedule?.classroom?.room_number || "TBA";
+        const room = schedule?.classroom?.room_number || schedule?.classroom?.roomNumber || "TBA";
 
-        const instructor = subj.class_schedule?.faculty
-          ? `${subj.class_schedule.faculty.lName}, ${subj.class_schedule.faculty.fName}`
+        const faculty = schedule?.faculty;
+        const instructor = faculty
+          ? `${faculty.lName}, ${faculty.fName}`
           : "TBA";
 
         return (
           <tr key={idx} className="border-b border-gray-200">
-            <td className="px-1 py-1 text-center">{subject.code || "-"}</td>
-            <td className="px-1 py-1 break-words">{subject.descriptive_title || "-"}</td>
+            <td className="px-1 py-1 text-center">{subject.code || curriculum?.code || "-"}</td>
+            <td className="px-1 py-1 break-words">
+              {subject.descriptive_title || curriculum?.descriptive_title || "Pending Subject"}
+            </td>
             <td className="px-1 py-1 text-center">{units}</td>
             <td className="px-1 py-1 text-center">{scheduleDay}</td>
             <td className="px-1 py-1 text-center text-[9px]">{scheduleTime}</td>
@@ -454,18 +525,19 @@ export default function RegistrarEnrolledStudents({
                <div className="flex justify-end text-xs mb-6">
                  <p className="font-semibold text-gray-700">
                    Total Units:{" "}
-                   <span className="ml-2 font-bold">
-                     {(() => {
-                       const totalUnits =
-                         selectedStudent?.enrollment_subjects?.reduce((sum, subj) => {
-                           const curriculum = subj.class_schedule?.curriculum_subject;
-                           const lec = curriculum?.lec_unit || 0;
-                           const lab = curriculum?.lab_unit || 0;
-                           return sum + lec + lab;
-                         }, 0) || 0;
-   
-                       return totalUnits;
-                     })()}
+                     <span className="ml-2 font-bold">
+                       {(() => {
+                         const totalUnits =
+                        selectedStudent?.enrollment_subjects?.reduce((sum, subj) => {
+                          const schedule = subj.classSchedule || subj.class_schedule;
+                          const curriculum = schedule?.curriculumSubject || schedule?.curriculum_subject || subj.curriculumSubject || subj.curriculum_subject;
+                          const lec = curriculum?.lec_unit ?? 0;
+                          const lab = curriculum?.lab_unit ?? 0;
+                          return sum + lec + lab;
+                        }, 0) || 0;
+
+                        return totalUnits;
+                      })()}
                    </span>
                  </p>
                </div>

@@ -18,47 +18,54 @@ class PHDashboardController extends Controller
         $user = Auth::user();
         $departmentId = $user?->department_id;
 
+        if (!$departmentId) {
+            abort(403, 'Program Head must have an assigned department.');
+        }
+
         $activeSchoolYearId = AcademicYear::where('is_active', 1)->value('id');
 
+        // Base query filters to only enrollments from courses in this department
         $enrollmentBase = Enrollments::query()
-            ->when($departmentId, function ($query) use ($departmentId) {
-                $query->whereHas('course', function ($courseQuery) use ($departmentId) {
-                    $courseQuery->where('department_id', $departmentId);
-                });
+            ->whereHas('course', function ($courseQuery) use ($departmentId) {
+                $courseQuery->where('department_id', $departmentId);
             })
             ->when($activeSchoolYearId, function ($query) use ($activeSchoolYearId) {
                 $query->where('school_year_id', $activeSchoolYearId);
             });
 
+        // Total distinct students from this department
         $totalStudents = (clone $enrollmentBase)
             ->distinct('student_id')
             ->count('student_id');
 
+        // Enrolled students from this department only
         $enrolledStudents = (clone $enrollmentBase)
             ->where('status', 'enrolled')
             ->distinct('student_id')
             ->count('student_id');
 
+        // Pending enrollments from this department
         $pendingEnrollments = (clone $enrollmentBase)
             ->where('status', 'pending')
             ->count();
 
+        // Courses offered by this department
         $coursesOffered = Courses::query()
-            ->when($departmentId, fn ($query) => $query->where('department_id', $departmentId))
+            ->where('department_id', $departmentId)
             ->count();
 
+        // Faculty in this department
         $facultyCount = Users::query()
             ->where('role', 'faculty')
-            ->when($departmentId, fn ($query) => $query->where('department_id', $departmentId))
+            ->where('department_id', $departmentId)
             ->count();
 
+        // Gender distribution of students in this department
         $genderCounts = Users::query()
             ->selectRaw('LOWER(gender) as gender, COUNT(DISTINCT users.id) as total')
             ->where('role', 'student')
-            ->when($departmentId, function ($query) use ($departmentId) {
-                $query->whereHas('enrollments.course', function ($courseQuery) use ($departmentId) {
-                    $courseQuery->where('department_id', $departmentId);
-                });
+            ->whereHas('enrollments.course', function ($courseQuery) use ($departmentId) {
+                $courseQuery->where('department_id', $departmentId);
             })
             ->when($activeSchoolYearId, function ($query) use ($activeSchoolYearId) {
                 $query->whereHas('enrollments', function ($enrollmentQuery) use ($activeSchoolYearId) {
@@ -109,6 +116,11 @@ class PHDashboardController extends Controller
 
         $user->loadMissing('department');
 
+        // Get academic year start and end dates for refresh logic
+        $academicYear = DB::table('school_year')
+            ->where('is_active', 1)
+            ->first();
+
         return Inertia::render('ProgramHead/Dashboard', [
             'stats' => [
                 'totalStudents' => $totalStudents,
@@ -123,6 +135,12 @@ class PHDashboardController extends Controller
             'department' => [
                 'name' => optional($user->department)->name,
             ],
+            'academicYear' => $academicYear ? [
+                'id' => $academicYear->id,
+                'schoolYear' => $academicYear->school_year,
+                'startDate' => $academicYear->start_date,
+                'endDate' => $academicYear->end_date,
+            ] : null,
         ]);
     }
 }

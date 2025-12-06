@@ -3,8 +3,41 @@ import { Head, Link, usePage } from "@inertiajs/react";
 import StudentLayout from "@/Layouts/StudentLayout";
 import { ArrowLeft, FileText, GraduationCap, Layers } from "lucide-react";
 
-const formatScore = (value) =>
-  typeof value === "number" && Number.isFinite(value) ? value.toFixed(2) : "—";
+const formatScore = (value) => {
+  if (value === null || value === undefined || value === "") {
+    return "—";
+  }
+  if (typeof value === "number" && Number.isFinite(value)) {
+    // Check if it's a realistic grade (0-5 or 0-100 scale)
+    if (value >= 0 && value <= 100) {
+      return value.toFixed(2);
+    }
+  }
+  return "—";
+};
+
+const formatTime = (time) => {
+  if (!time) return "";
+  const [hourStr, minuteStr] = time.split(":");
+  let hour = Number(hourStr);
+  if (Number.isNaN(hour)) return time;
+  const ampm = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
+  return `${hour}:${minuteStr ?? "00"} ${ampm}`;
+};
+
+const statusBadgeClass = (status) => {
+  const value = String(status || "").toLowerCase();
+  if (value === "enrolled") return "text-emerald-600";
+  if (value === "reserved") return "text-amber-500";
+  if (value === "dropped") return "text-rose-500";
+  return "text-slate-500";
+};
+
+const isActiveSubject = (subject = {}) => {
+  const status = String(subject.status || "").toLowerCase();
+  return status !== "dropped";
+};
 
 const remarkTone = (remarks) => {
   const value = String(remarks || "").toLowerCase();
@@ -27,13 +60,23 @@ const summaryChipTone = (remarks) => {
 export default function RecordDetail() {
   const {
     record = {},
-    groups = [],
+    groups: rawGroups = [],
     activeEnrollmentId = null,
+    subjects = [],
   } = usePage().props;
 
-  const hasAnySubjects = groups.some((group) =>
-    group.semesters.some((term) => Array.isArray(term.subjects) && term.subjects.length > 0)
+  const groups = Array.isArray(rawGroups) ? rawGroups : [];
+  const enrolledSubjects = Array.isArray(subjects)
+    ? subjects.filter((subject) => isActiveSubject(subject))
+    : [];
+
+  const hasHistoricalRecords = groups.some(
+    (group) =>
+      Array.isArray(group?.semesters) &&
+      group.semesters.some((term) => Array.isArray(term.subjects) && term.subjects.length > 0)
   );
+  const hasSubjects = enrolledSubjects.length > 0;
+  const statusCounts = record.status_counts ?? {};
 
   return (
     <StudentLayout>
@@ -62,14 +105,98 @@ export default function RecordDetail() {
           </Link>
         </div>
 
-        {!hasAnySubjects ? (
+        <section className="mb-8 space-y-4">
+          <div className="grid gap-2 sm:grid-cols-3">
+            {["enrolled", "reserved", "dropped"].map((key) => (
+              <div
+                key={`status-${key}`}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm"
+              >
+                <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400">{key}</p>
+                <p className={`text-2xl font-semibold ${statusBadgeClass(key)}`}>
+                  {statusCounts[key] ?? 0}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div className="border-b border-slate-100 px-4 py-3">
+              <h2 className="text-base font-semibold text-slate-900">Enrolled Subjects</h2>
+              <p className="text-xs text-slate-500">
+                Detailed view of subjects included in this enrollment.
+              </p>
+            </div>
+            {hasSubjects ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-[12px] text-slate-600">
+                  <thead className="bg-slate-50 text-[11px] uppercase tracking-[0.2em] text-slate-500">
+                    <tr>
+                      <th className="px-3 py-2 text-left">Code</th>
+                      <th className="px-3 py-2 text-left">Subject</th>
+                      <th className="px-3 py-2 text-center">Units</th>
+                      <th className="px-3 py-2 text-left">Schedule</th>
+                      <th className="px-3 py-2 text-left">Room</th>
+                      <th className="px-3 py-2 text-left">Faculty</th>
+                      <th className="px-3 py-2 text-center">Cumulative</th>
+                      <th className="px-3 py-2 text-center">Remarks</th>
+                      <th className="px-3 py-2 text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {enrolledSubjects.map((subject) => {
+                      const schedule = subject.schedule;
+                      const scheduleLabel = schedule
+                        ? `${schedule.day ?? "TBA"} · ${
+                            schedule.start_time ? `${formatTime(schedule.start_time)} – ${formatTime(schedule.end_time)}` : "TBA"
+                          }`
+                        : "Schedule not set";
+
+                      return (
+                        <tr key={`subject-${subject.id}`}>
+                          <td className="px-3 py-2 font-semibold text-slate-900">{subject.code}</td>
+                          <td className="px-3 py-2">{subject.title}</td>
+                          <td className="px-3 py-2 text-center">{Number(subject.units ?? 0).toFixed(1)}</td>
+                          <td className="px-3 py-2 text-sm text-slate-500">{scheduleLabel}</td>
+                          <td className="px-3 py-2">{schedule?.room ?? "TBA"}</td>
+                          <td className="px-3 py-2">{subject.faculty ?? "TBA"}</td>
+                          <td className="px-3 py-2 text-center font-semibold text-slate-800">
+                            {formatScore(subject.cumulative)}
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            {typeof subject.cumulative === "number" && subject.remarks ? (
+                              <span className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-[11px] font-semibold ${summaryChipTone(subject.remarks)}`}>
+                                {subject.remarks}
+                              </span>
+                            ) : (
+                              "—"
+                            )}
+                          </td>
+                          <td className={`px-3 py-2 text-center font-semibold ${statusBadgeClass(subject.status)}`}>
+                            {subject.status || "—"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="px-4 py-6 text-center text-sm text-slate-500">
+                No enrolled subjects recorded for this term yet.
+              </div>
+            )}
+          </div>
+        </section>
+
+        {!hasHistoricalRecords ? (
           <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 px-8 py-16 text-center">
             <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-slate-400 shadow-sm">
               <GraduationCap className="h-6 w-6" />
             </span>
-            <h2 className="text-base font-semibold text-slate-700">No subjects found</h2>
+            <h2 className="text-base font-semibold text-slate-700">No historical records found</h2>
             <p className="max-w-xs text-xs text-slate-500 sm:text-sm">
-              We couldn’t find any confirmed grades for this record yet. Please check back later.
+              Once grades for other terms are available, they will appear below for quick reference.
             </p>
           </div>
         ) : (
@@ -91,7 +218,9 @@ export default function RecordDetail() {
                 <div className="space-y-4">
                   {group.semesters.map((term) => {
                     const isActive = Number(term.enrollment_id) === Number(activeEnrollmentId);
-                    const subjects = Array.isArray(term.subjects) ? term.subjects : [];
+                    const termSubjects = Array.isArray(term.subjects)
+                      ? term.subjects.filter((subject) => isActiveSubject(subject))
+                      : [];
 
                     return (
                       <div
@@ -128,7 +257,7 @@ export default function RecordDetail() {
                           </div>
                         </div>
 
-                        {subjects.length === 0 ? (
+                        {termSubjects.length === 0 ? (
                           <div className="px-4 py-6 text-center text-sm text-slate-400">
                             No confirmed grades for this term yet.
                           </div>
@@ -144,7 +273,7 @@ export default function RecordDetail() {
                                   </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100/70">
-                                  {subjects.map((subject, index) => {
+                                  {termSubjects.map((subject, index) => {
                                     const remarksLabel = subject.remarks || "Pending";
                                     const rowBase = index % 2 === 0 ? "bg-white" : "bg-slate-50/70";
                                     const rowClass = remarksLabel.toLowerCase().includes("fail")

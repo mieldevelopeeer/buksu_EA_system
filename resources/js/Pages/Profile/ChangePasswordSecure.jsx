@@ -1,13 +1,17 @@
-import React, { useEffect } from "react";
-import { Head, useForm, usePage, Link } from "@inertiajs/react";
+import React, { useEffect, useState } from "react";
+import { Head, useForm, usePage, Link, router } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import { ShieldCheck, ArrowLeft } from "phosphor-react";
+import { Eye, EyeOff } from "lucide-react";
 
 const inputClass =
   "w-full rounded-lg border border-white/10 bg-slate-900/60 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring focus:ring-sky-600/40";
 
 export default function ChangePasswordSecure() {
   const { auth, flash } = usePage().props;
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const { data, setData, put, processing, errors, reset } = useForm({
     current_password: "",
@@ -49,6 +53,9 @@ export default function ChangePasswordSecure() {
           showConfirmButton: false,
         });
         reset();
+        setTimeout(() => {
+          router.post(route("logout"));
+        }, 500);
       },
       onError: () => {
         Swal.fire({
@@ -103,44 +110,68 @@ export default function ChangePasswordSecure() {
             </section>
 
             <section className="space-y-4">
-              <div>
+              <div className="relative">
                 <label className="text-xs font-medium uppercase tracking-[0.18em] text-slate-300">Current password</label>
                 <input
-                  type="password"
+                  type={showCurrent ? "text" : "password"}
                   value={data.current_password}
                   onChange={(event) => setData("current_password", event.target.value)}
-                  className={`${inputClass} ${errors.current_password ? "border-red-400" : ""}`}
+                  className={`${inputClass} pr-11 ${errors.current_password ? "border-red-400" : ""}`}
                   autoComplete="current-password"
                   required
                 />
+                <button
+                  type="button"
+                  className="absolute right-3 top-[38px] text-slate-400 hover:text-white"
+                  onClick={() => setShowCurrent((prev) => !prev)}
+                  aria-label={showCurrent ? "Hide current password" : "Show current password"}
+                >
+                  {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
                 {errors.current_password && (
                   <p className="mt-1 text-xs text-red-500">{errors.current_password}</p>
                 )}
               </div>
 
-              <div>
+              <div className="relative">
                 <label className="text-xs font-medium uppercase tracking-[0.18em] text-slate-300">New password</label>
                 <input
-                  type="password"
+                  type={showNew ? "text" : "password"}
                   value={data.password}
                   onChange={(event) => setData("password", event.target.value)}
-                  className={`${inputClass} ${errors.password ? "border-red-400" : ""}`}
+                  className={`${inputClass} pr-11 ${errors.password ? "border-red-400" : ""}`}
                   autoComplete="new-password"
                   required
                 />
+                <button
+                  type="button"
+                  className="absolute right-3 top-[38px] text-slate-400 hover:text-white"
+                  onClick={() => setShowNew((prev) => !prev)}
+                  aria-label={showNew ? "Hide new password" : "Show new password"}
+                >
+                  {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
                 {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
               </div>
 
-              <div>
+              <div className="relative">
                 <label className="text-xs font-medium uppercase tracking-[0.18em] text-slate-300">Confirm new password</label>
                 <input
-                  type="password"
+                  type={showConfirm ? "text" : "password"}
                   value={data.password_confirmation}
                   onChange={(event) => setData("password_confirmation", event.target.value)}
-                  className={`${inputClass} ${errors.password_confirmation ? "border-red-400" : ""}`}
+                  className={`${inputClass} pr-11 ${errors.password_confirmation ? "border-red-400" : ""}`}
                   autoComplete="new-password"
                   required
                 />
+                <button
+                  type="button"
+                  className="absolute right-3 top-[38px] text-slate-400 hover:text-white"
+                  onClick={() => setShowConfirm((prev) => !prev)}
+                  aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+                >
+                  {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
                 {errors.password_confirmation && (
                   <p className="mt-1 text-xs text-red-500">{errors.password_confirmation}</p>
                 )}

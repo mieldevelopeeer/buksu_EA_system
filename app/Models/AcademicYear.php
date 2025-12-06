@@ -13,6 +13,8 @@ protected $table = 'school_year';
     protected $fillable = [
         'id',
         'school_year',
+        'start_date',
+        'end_date',
         'is_active',
         
         

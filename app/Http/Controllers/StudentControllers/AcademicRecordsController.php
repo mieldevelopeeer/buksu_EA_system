@@ -16,61 +16,8 @@ class AcademicRecordsController extends Controller
     {
         $student = $request->user();
 
-        $gradeRecords = Grades::with([
-            'enrollment.semester',
-            'enrollment.schoolYear',
-            'enrollment.yearLevel',
-        ])
-            ->whereHas('enrollment', function ($query) use ($student) {
-                $query->where('student_id', $student->id);
-            })
-            ->whereIn('status', ['approved', 'confirmed'])
-            ->get();
-
-        $records = $gradeRecords
-            ->groupBy('enrollment_id')
-            ->map(function (Collection $records, $enrollmentId) {
-                $firstRecord = $records->first();
-                $enrollment = $firstRecord?->enrollment;
-
-                $semester = optional($enrollment?->semester)->semester ?? 'Semester';
-                $schoolYear = optional($enrollment?->schoolYear)->school_year ?? 'School Year';
-                $yearLevel = optional($enrollment?->yearLevel)->name
-                    ?? optional($enrollment?->yearLevel)->year_level
-                    ?? 'Year Level';
-
-                $average = $this->calculateAverage($records);
-                $remarksSummary = $this->summarizeRemarks($records);
-                $latestUpdate = $records->max(function ($item) {
-                    return $item->updated_at;
-                });
-
-                return [
-                    'enrollment_id'   => (int) $enrollmentId,
-                    'term_label'      => trim($semester . ' (' . $schoolYear . ')'),
-                    'semester'        => $semester,
-                    'school_year'     => $schoolYear,
-                    'year_level'      => $yearLevel,
-                    'subjects_count'  => $records->count(),
-                    'average'         => $average,
-                    'remarks_summary' => $remarksSummary,
-                    'updated_at'      => $latestUpdate ? $latestUpdate->toDateTimeString() : null,
-                ];
-            })
-            ->sortByDesc('updated_at')
-            ->values();
-
-        $groups = $records
-            ->groupBy(function ($record) {
-                return $record['year_level'] ?? 'Year Level';
-            })
-            ->map(function (Collection $items, $yearLevel) {
-                return [
-                    'year_level' => $yearLevel,
-                    'records'    => $items->values(),
-                ];
-            })
-            ->values();
+        $enrollments = $this->loadStudentEnrollments($student->id);
+        $groups = $this->groupEnrollmentsByYearLevel($enrollments);
 
         return Inertia::render('Students/AcademicRecords/AcademicRecord', [
             'groups'  => $groups,
@@ -82,73 +29,50 @@ class AcademicRecordsController extends Controller
         $student = $request->user();
         $this->authorizeEnrollment($student, $enrollment);
 
-        $allGradeRecords = Grades::with([
-            'enrollment.semester',
-            'enrollment.schoolYear',
-            'enrollment.yearLevel',
-        ])
-            ->whereHas('enrollment', function ($query) use ($student) {
-                $query->where('student_id', $student->id);
-            })
-            ->whereIn('status', ['approved', 'confirmed'])
-            ->get();
+        $enrollments = $this->loadStudentEnrollments($student->id);
+        $groups = $this->groupEnrollmentsByYearLevel($enrollments);
 
-        $groups = $allGradeRecords
-            ->groupBy(function (Grades $record) {
-                return $this->determineYearLevelLabel($record);
-            })
-            ->map(function (Collection $recordsByYear) {
-                $yearLabel = $this->determineYearLevelLabel($recordsByYear->first());
+        $enrollment->loadMissing([
+            'course',
+            'major',
+            'yearLevel',
+            'semester',
+            'schoolYear',
+            'section',
+            'enrollmentSubjects.curriculumSubject.subject',
+            'enrollmentSubjects.curriculumSubject.yearLevel',
+            'enrollmentSubjects.curriculumSubject.semester',
+            'enrollmentSubjects.classSchedule.faculty',
+            'enrollmentSubjects.classSchedule.classroom',
+            'enrollmentSubjects.droppedBy:id,fName,lName',
+        ]);
 
-                $semesters = $recordsByYear
-                    ->groupBy(function (Grades $record) {
-                        return optional($record->enrollment?->semester)->semester ?? 'Semester';
-                    })
-                    ->map(function (Collection $semesterRecords) {
-                        $first = $semesterRecords->first();
-                        $semester = optional($first->enrollment?->semester)->semester ?? 'Semester';
-                        $schoolYear = optional($first->enrollment?->schoolYear)->school_year ?? 'School Year';
-                        $enrollmentId = (int) optional($first->enrollment)->id;
-
-                        return [
-                            'enrollment_id'   => $enrollmentId,
-                            'semester'        => $semester,
-                            'school_year'     => $schoolYear,
-                            'term_label'      => trim($semester . ' (' . $schoolYear . ')'),
-                            'average'         => $this->calculateAverage($semesterRecords),
-                            'remarks_summary' => $this->summarizeRemarks($semesterRecords),
-                            'subjects'        => $semesterRecords
-                                ->map(fn (Grades $record) => $this->buildSubjectPayload($record))
-                                ->values(),
-                        ];
-                    })
-                    ->values();
-
-                return [
-                    'year_level' => $yearLabel,
-                    'semesters'  => $semesters,
-                ];
-            })
-            ->sortBy(function (array $group) {
-                $order = $this->yearLevelOrder();
-                $index = array_search($group['year_level'], $order, true);
-
-                return $index === false ? count($order) : $index;
-            })
+        $subjects = $enrollment->enrollmentSubjects
+            ->map(fn ($subject) => $this->buildEnrollmentSubjectPayload($subject))
             ->values();
 
         $semester = optional($enrollment->semester)->semester;
         $schoolYear = optional($enrollment->schoolYear)->school_year;
         $yearLevel = $this->determineYearLevelLabelFromEnrollment($enrollment);
 
+        $subjectStatuses = [
+            'enrolled' => $subjects->where('status', 'enrolled')->count(),
+            'reserved' => $subjects->where('status', 'reserved')->count(),
+            'dropped'  => $subjects->where('status', 'dropped')->count(),
+        ];
+
         return Inertia::render('Students/AcademicRecords/RecordDetail', [
             'record' => [
-                'term_label'  => trim(($semester ?? 'Semester') . ' (' . ($schoolYear ?? 'School Year') . ')'),
-                'semester'    => $semester,
-                'school_year' => $schoolYear,
-                'year_level'  => $yearLevel,
+                'term_label'     => trim(($semester ?? 'Semester') . ' (' . ($schoolYear ?? 'School Year') . ')'),
+                'semester'       => $semester,
+                'school_year'    => $schoolYear,
+                'year_level'     => $yearLevel,
+                'status'         => $enrollment->status,
+                'subjects_count' => $subjects->count(),
+                'status_counts'  => $subjectStatuses,
             ],
             'groups'              => $groups,
+            'subjects'            => $subjects,
             'activeEnrollmentId'  => (int) $enrollment->id,
         ]);
     }
@@ -205,21 +129,120 @@ class AcademicRecordsController extends Controller
         return $remarks->isEmpty() ? 'Pending' : 'Mixed';
     }
 
-    protected function buildSubjectPayload(Grades $record): array
+    protected function buildEnrollmentSubjectPayload($enrollmentSubject): array
     {
-        $classSchedule = Class_Schedules::with('subject')->find($record->class_schedule_id);
-        $subject = $classSchedule?->subject;
+        $curriculumSubject = $enrollmentSubject->curriculumSubject;
+        $subject = $curriculumSubject?->subject;
+        $schedule = $enrollmentSubject->classSchedule;
+        $grade = $enrollmentSubject->grade; // Now properly filtered by class_schedule_id
 
-        $midterm = is_numeric($record->midterm) ? (float) $record->midterm : null;
-        $final = is_numeric($record->final) ? (float) $record->final : null;
-        $grade = is_numeric($record->grade) ? (float) $record->grade : null;
+        $lec = (float) ($curriculumSubject->lec_unit ?? $subject->lec_unit ?? 0);
+        $lab = (float) ($curriculumSubject->lab_unit ?? $subject->lab_unit ?? 0);
+        
+        // Safely extract grade values with null checks
+        $midterm = null;
+        $final = null;
+        $gradeValue = null;
+        
+        if ($grade) {
+            $midterm = is_numeric($grade->midterm ?? null) ? (float) $grade->midterm : null;
+            $final = is_numeric($grade->final ?? null) ? (float) $grade->final : null;
+            $gradeValue = is_numeric($grade->grade ?? null) ? (float) $grade->grade : null;
+        }
+        
+        $cumulative = $this->calculateCumulative($midterm, $final, $gradeValue);
 
         return [
-            'code'       => $subject->code ?? '—',
-            'title'      => $subject->descriptive_title ?? 'Untitled Subject',
-            'cumulative' => $this->calculateCumulative($midterm, $final, $grade),
-            'remarks'    => $record->remarks ?? 'Pending',
+            'id'            => $enrollmentSubject->id,
+            'status'        => $enrollmentSubject->status,
+            'drop_reason'   => $enrollmentSubject->drop_reason,
+            'dropped_at'    => optional($enrollmentSubject->dropped_at)->toDateTimeString(),
+            'dropped_by'    => $enrollmentSubject->droppedBy ? [
+                'id'   => $enrollmentSubject->droppedBy->id,
+                'name' => trim(($enrollmentSubject->droppedBy->fName ?? '') . ' ' . ($enrollmentSubject->droppedBy->lName ?? '')),
+            ] : null,
+            'code'          => $subject->code ?? '—',
+            'title'         => $subject->descriptive_title ?? 'Untitled Subject',
+            'units'         => $lec + $lab,
+            'schedule'      => $schedule ? [
+                'day'        => $schedule->schedule_day ?? 'TBA',
+                'start_time' => $schedule->start_time ?? null,
+                'end_time'   => $schedule->end_time ?? null,
+                'room'       => optional($schedule->classroom)->room_number ?? 'TBA',
+            ] : null,
+            'faculty'       => $schedule && $schedule->faculty ? trim(($schedule->faculty->fName ?? '') . ' ' . ($schedule->faculty->lName ?? '')) : 'TBA',
+            'midterm'       => $midterm,
+            'final'         => $final,
+            'grade'         => $gradeValue,
+            'cumulative'    => $cumulative,
+            'remarks'       => $grade?->remarks ?? null,
         ];
+    }
+
+    protected function loadStudentEnrollments(int $studentId)
+    {
+        return Enrollments::with([
+            'course',
+            'major',
+            'yearLevel',
+            'semester',
+            'schoolYear',
+            'enrollmentSubjects.curriculumSubject.subject',
+            'enrollmentSubjects.curriculumSubject.yearLevel',
+            'enrollmentSubjects.curriculumSubject.semester',
+            'enrollmentSubjects.classSchedule.faculty',
+            'enrollmentSubjects.classSchedule.classroom',
+            'enrollmentSubjects.droppedBy:id,fName,lName',
+            'enrollmentSubjects.grade',
+        ])
+            ->where('student_id', $studentId)
+            ->orderByDesc('enrolled_at')
+            ->get();
+    }
+
+    protected function groupEnrollmentsByYearLevel(Collection $enrollments)
+    {
+        $records = $enrollments->map(function (Enrollments $enrollment) {
+            $subjects = $enrollment->enrollmentSubjects
+                ->map(fn ($subject) => $this->buildEnrollmentSubjectPayload($subject));
+
+            $semester = optional($enrollment->semester)->semester ?? 'Semester';
+            $schoolYearModel = $enrollment->schoolYear;
+            $schoolYear = optional($schoolYearModel)->school_year ?? 'School Year';
+            $schoolYearStart = optional($schoolYearModel)->start_date;
+            $schoolYearEnd = optional($schoolYearModel)->end_date;
+            $yearLevel = $this->determineYearLevelLabelFromEnrollment($enrollment);
+            $statusCounts = [
+                'enrolled' => $subjects->where('status', 'enrolled')->count(),
+                'reserved' => $subjects->where('status', 'reserved')->count(),
+                'dropped'  => $subjects->where('status', 'dropped')->count(),
+            ];
+
+            return [
+                'enrollment_id'  => (int) $enrollment->id,
+                'term_label'     => trim($semester . ' (' . $schoolYear . ')'),
+                'semester'       => $semester,
+                'school_year'    => $schoolYear,
+                'school_year_start' => $schoolYearStart,
+                'school_year_end'   => $schoolYearEnd,
+                'year_level'     => $yearLevel,
+                'subjects_count' => $subjects->count(),
+                'status'         => $enrollment->status,
+                'subjects'       => $subjects,
+                'status_counts'  => $statusCounts,
+                'updated_at'     => optional($enrollment->updated_at)->toDateTimeString(),
+            ];
+        });
+
+        return $records
+            ->groupBy(fn ($record) => $record['year_level'] ?? 'Year Level')
+            ->map(function (Collection $items, $yearLevel) {
+                return [
+                    'year_level' => $yearLevel,
+                    'records'    => $items->values(),
+                ];
+            })
+            ->values();
     }
 
     protected function determineYearLevelLabel(?Grades $record): string

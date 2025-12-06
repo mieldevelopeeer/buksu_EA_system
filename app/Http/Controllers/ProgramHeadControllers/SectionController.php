@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Section;
 use App\Models\YearLevel;
+use App\Models\AcademicYear;
 use Inertia\Inertia;
 
 class SectionController extends Controller
@@ -106,5 +107,40 @@ class SectionController extends Controller
         $section->save();
 
         return back()->with('success', 'Status updated successfully.');
+    }
+
+    public function capacityOverview()
+    {
+        $user = auth()->user();
+        $departmentId = $user?->department_id;
+
+        if (!$departmentId) {
+            abort(403, 'No department assigned to this user.');
+        }
+
+        $activeSchoolYear = AcademicYear::where('is_active', 1)->first();
+        $activeSchoolYearId = $activeSchoolYear?->id;
+
+        $sections = Section::query()
+            ->select('id', 'section', 'student_limit', 'status', 'year_level_id')
+            ->with('yearLevel:id,year_level')
+            ->withCount(['enrollments as enrolled_students_count' => function ($query) use ($activeSchoolYearId) {
+                $query->where('status', 'enrolled');
+                if ($activeSchoolYearId) {
+                    $query->where('school_year_id', $activeSchoolYearId);
+                }
+            }])
+            ->where('department_id', $departmentId)
+            ->orderBy('year_level_id')
+            ->orderBy('section')
+            ->get();
+
+        $yearLevels = YearLevel::select('id', 'year_level')->orderBy('id')->get();
+
+        return Inertia::render('ProgramHead/Sections/SectionCapacity', [
+            'sections' => $sections,
+            'yearLevels' => $yearLevels,
+            'activeSchoolYear' => $activeSchoolYear,
+        ]);
     }
 }

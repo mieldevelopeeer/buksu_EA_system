@@ -19,11 +19,14 @@ return new class extends Migration
     ->nullable()
     ->constrained('school_year') // singular table name
     ->onDelete('cascade');
+      $table->enum('status', ['first_second_only', 'summer_only', 'all'])
+              ->default('all')
+              ->comment('Specifies which semesters are present for a curriculum year level');
 
             $table->timestamps();
         });
     }
-
+ 
     /**
      * Reverse the migrations.
      */
@@ -31,4 +34,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('semesters');
     }
-};
+};  
+    

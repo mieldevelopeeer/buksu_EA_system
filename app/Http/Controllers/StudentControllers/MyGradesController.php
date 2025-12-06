@@ -26,18 +26,18 @@ class MyGradesController extends Controller
         'enrollment.yearLevel',
         'enrollment.semester',
         'enrollment.schoolYear',
+        'classSchedule.subject',
+        'classSchedule.curriculumSubject.subject',
+        'classSchedule.curriculumSubject.yearLevel',
+        'classSchedule.curriculumSubject.semester',
     ])
     ->whereIn('enrollment_id', $enrollmentIds)
-    ->when($request->input('status'), function ($query, $status) {
-        $query->where('status', $status);
-    }, function ($query) {
-        $query->whereIn('status', ['approved', 'confirmed']);
-    })
     ->get();
 
     $grades = $gradeRecords->map(function ($record) {
-        $classSchedule = \App\Models\Class_Schedules::with('subject')
-            ->find($record->class_schedule_id);
+        $classSchedule = $record->classSchedule;
+        $curriculumSubject = $classSchedule?->curriculumSubject;
+        $subject = $curriculumSubject?->subject ?? $classSchedule?->subject;
 
         $midterm = is_numeric($record->midterm) ? (float) $record->midterm : null;
         $final = is_numeric($record->final) ? (float) $record->final : null;
@@ -50,17 +50,28 @@ class MyGradesController extends Controller
             $cumulative = round($gradeValue, 2);
         }
 
+        $semesterLabel = $curriculumSubject?->semester->semester ?? optional($record->enrollment?->semester)->semester;
+        $schoolYear = optional($record->enrollment?->schoolYear);
+        $lec = (float) ($curriculumSubject->lec_unit ?? $subject->lec_unit ?? 0);
+        $lab = (float) ($curriculumSubject->lab_unit ?? $subject->lab_unit ?? 0);
+
         return [
-            'enrollment_id' => $record->enrollment_id,
-            'code'          => optional($classSchedule?->subject)->code ?? '',
-            'title'         => optional($classSchedule?->subject)->descriptive_title ?? '',
-            'midterm'       => $midterm,
-            'final'         => $final,
-            'grade'         => $gradeValue,
-            'cumulative'    => $cumulative,
-            'remarks'       => $record->remarks ?? 'Pending',
-            'semester'      => optional($record->enrollment?->semester)->semester ?? null,
-            'school_year'   => optional($record->enrollment?->schoolYear)->school_year ?? null,
+            'enrollment_id'   => $record->enrollment_id,
+            'code'            => $subject->code ?? '',
+            'title'           => $subject->descriptive_title ?? '',
+            'midterm'         => $midterm,
+            'final'           => $final,
+            'grade'           => $gradeValue,
+            'cumulative'      => $cumulative,
+            'remarks'         => $record->remarks ?? 'Pending',
+            'semester_label'  => $semesterLabel,
+            'school_year'     => $schoolYear?->school_year,
+            'school_year_start' => $schoolYear?->start_date,
+            'school_year_end'   => $schoolYear?->end_date,
+            'year_level'      => $curriculumSubject?->yearLevel?->year_level ?? optional($record->enrollment?->yearLevel)->year_level,
+            'total_units'     => $lec + $lab,
+            'midterm_status'  => $record->midterm_status,
+            'final_status'    => $record->final_status,
         ];
     })->filter(function ($grade) {
         return !empty($grade['code']) || !empty($grade['title']);

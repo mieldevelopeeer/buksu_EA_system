@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class courses extends Model
+class Courses extends Model
 {
     use HasFactory;
      protected $table = 'courses';
@@ -29,15 +29,23 @@ public function majors()
 {
     return $this->hasMany(Major::class, 'courses_id');
 }
-
+  public function faculty(): BelongsTo
+    {
+        return $this->belongsTo(Faculty::class, 'faculty_id');
+    }
 // App\Models\Curriculum_Subject.php
 public function subject() {
     return $this->belongsTo(Subject::class);
 }
+public function curricula()
+{
+    return $this->hasMany(Curricula::class, 'courses_id'); 
+}
+
+// Alias for backward compatibility
 public function curriculum()
 {
-    return $this->hasOne(Curricula::class, 'courses_id'); 
-    // or hasMany if a course can have multiple curricula
+    return $this->hasOne(Curricula::class, 'courses_id');
 }
 
 public function getFullCourseCodeAttribute() {

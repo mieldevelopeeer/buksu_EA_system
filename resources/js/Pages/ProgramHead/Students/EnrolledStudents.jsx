@@ -31,6 +31,20 @@ const formatTime = (time) => {
   return `${hour}:${minute} ${ampm}`;
 };
 
+const formatDate = (value) => {
+  if (!value) return "—";
+  try {
+    return new Date(value).toLocaleDateString("en-PH", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  } catch (error) {
+    console.warn("Unable to format date", value, error);
+    return "—";
+  }
+};
+
 const formatInstructorName = (faculty) => {
   if (!faculty) return "TBA";
   const middleInitial = faculty.mName ? `${faculty.mName[0]}.` : "";
@@ -39,10 +53,26 @@ const formatInstructorName = (faculty) => {
     .trim();
 };
 
+const getCurriculumFromSubject = (subjectRecord) => {
+  const schedule = subjectRecord?.class_schedule || subjectRecord?.classSchedule;
+  const curriculumFromSchedule =
+    schedule?.curriculum_subject || schedule?.curriculumSubject;
+  return (
+    curriculumFromSchedule ||
+    subjectRecord?.curriculum_subject ||
+    subjectRecord?.curriculumSubject ||
+    null
+  );
+};
+
+const getSubjectsArray = (enrollment) =>
+  enrollment?.enrollment_subjects ?? enrollment?.enrollmentSubjects ?? [];
+
 const calculateTotalUnits = (enrollment) => {
-  if (!enrollment?.enrollment_subjects) return 0;
-  return enrollment.enrollment_subjects.reduce((sum, subj) => {
-    const curriculum = subj.class_schedule?.curriculum_subject;
+  const subjects = getSubjectsArray(enrollment);
+  if (!subjects.length) return 0;
+  return subjects.reduce((sum, subj) => {
+    const curriculum = getCurriculumFromSubject(subj);
     const lec = curriculum?.lec_unit || 0;
     const lab = curriculum?.lab_unit || 0;
     return sum + lec + lab;
@@ -303,6 +333,7 @@ export default function EnrolledStudents({ enrolledStudents = [], evaluator }) {
                     <th className="px-2.5 py-1.5 text-left">Program / Year</th>
                     <th className="px-2.5 py-1.5 text-left">Section</th>
                     <th className="px-2.5 py-1.5 text-left">Status</th>
+                    <th className="px-2.5 py-1.5 text-left">Date Enrolled</th>
                     <th className="px-2.5 py-1.5 text-right">Action</th>
                   </tr>
                 </thead>
@@ -343,6 +374,9 @@ export default function EnrolledStudents({ enrolledStudents = [], evaluator }) {
                           <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-600">
                             <CheckCircle size={11} /> {statusLabel}
                           </span>
+                        </td>
+                        <td className="px-2.5 py-1.5 text-[12px] text-slate-600">
+                          {formatDate(enrollment.enrolled_at)}
                         </td>
                         <td className="px-2.5 py-1.5 text-right">
                           <button
@@ -509,11 +543,12 @@ export default function EnrolledStudents({ enrolledStudents = [], evaluator }) {
                   <th className="px-2 py-1 text-center">Time</th>
                   <th className="px-2 py-1 text-center">Room</th>
                   <th className="px-2 py-1 text-center">Instructor</th>
+                  <th className="px-2 py-1 text-center">Section</th>
                 </tr>
               </thead>
               <tbody>
                 {(() => {
-                  const subjects = selectedStudent?.enrollment_subjects || [];
+                  const subjects = getSubjectsArray(selectedStudent);
 
                   if (!subjects || subjects.length === 0) {
                     return (
@@ -526,33 +561,40 @@ export default function EnrolledStudents({ enrolledStudents = [], evaluator }) {
                   }
 
                   return subjects.map((subj, idx) => {
-                    const curriculum = subj.class_schedule?.curriculum_subject;
-                    const subject = curriculum?.subject;
-                    if (!subject) return null;
-
+                    const curriculum = getCurriculumFromSubject(subj);
+                    const subject = curriculum?.subject || subj.subject || subj?.class_schedule?.subject;
                     const lec = curriculum?.lec_unit || 0;
                     const lab = curriculum?.lab_unit || 0;
                     const units = lec + lab;
 
-                    const scheduleDay = subj.class_schedule?.schedule_day || "TBA";
-                    const startTime = subj.class_schedule?.start_time || "";
-                    const endTime = subj.class_schedule?.end_time || "";
+                    const classSchedule = subj.class_schedule || subj.classSchedule;
+                    const scheduleDay = classSchedule?.schedule_day || classSchedule?.scheduleDay || "TBA";
+                    const startTime = classSchedule?.start_time || classSchedule?.startTime || null;
+                    const endTime = classSchedule?.end_time || classSchedule?.endTime || null;
+                    const hasTime = startTime && endTime;
+                    const scheduleTime = hasTime
+                      ? `${formatTime(startTime)} – ${formatTime(endTime)}`
+                      : "TBA";
 
-                    const scheduleTime =
-                      startTime && endTime ? `${formatTime(startTime)} – ${formatTime(endTime)}` : "";
-
-                    const room = subj.class_schedule?.classroom?.room_number || "TBA";
-                    const instructor = formatInstructorName(subj.class_schedule?.faculty);
+                    const room = classSchedule?.classroom?.room_number || "TBA";
+                    const instructor = classSchedule
+                      ? formatInstructorName(classSchedule?.faculty)
+                      : "TBA";
+                    const sectionLabel =
+                      classSchedule?.section?.section ||
+                      selectedStudent?.section?.section ||
+                      "TBA";
 
                     return (
                       <tr key={idx} className="border-b border-gray-200">
-                        <td className="px-2 py-1 text-center">{subject.code || "-"}</td>
-                        <td className="px-2 py-1">{subject.descriptive_title || "-"}</td>
+                        <td className="px-2 py-1 text-center">{subject?.code || "N/A"}</td>
+                        <td className="px-2 py-1">{subject?.descriptive_title || "No title available"}</td>
                         <td className="px-2 py-1 text-center">{units}</td>
                         <td className="px-2 py-1 text-center">{scheduleDay}</td>
                         <td className="px-2 py-1 text-center">{scheduleTime}</td>
                         <td className="px-2 py-1 text-center">{room}</td>
                         <td className="px-2 py-1 text-center">{instructor}</td>
+                        <td className="px-2 py-1 text-center">{sectionLabel}</td>
                       </tr>
                     );
                   });

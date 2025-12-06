@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\department;
-use App\Models\courses;
-use App\Models\major;
+use App\Models\Department;
+use App\Models\Courses;
+use App\Models\Major;
 use App\Models\Enrollments;
 
-class section extends Model
+class Section extends Model
 {
     use HasFactory;
 
@@ -40,12 +40,12 @@ class section extends Model
 
     public function department()
     {
-        return $this->belongsTo(department::class, 'department_id');
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function courses()
     {
-        return $this->hasMany(courses::class, 'department_id', 'department_id');
+        return $this->hasMany(Courses::class, 'department_id', 'department_id');
     }
 
     public function enrollments()
@@ -67,8 +67,8 @@ public function getCourseAliasAttribute()
 public function majors()
 {
     return $this->hasManyThrough(
-        major::class,
-        courses::class,
+        Major::class,
+        Courses::class,
         'department_id',
         'courses_id',
         'department_id',

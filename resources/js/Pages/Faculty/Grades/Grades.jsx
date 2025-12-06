@@ -736,3 +736,4 @@ export default function Grades({ user, schedules = [], activeSemester = null }) 
     </FacultyLayout>
   );
 }
+  

@@ -10,6 +10,9 @@ use App\Models\Curricula;
 use App\Models\Semester;
 use App\Models\YearLevel;
 use App\Models\Major;
+use App\Models\Notification;
+use App\Models\Users;
+use Illuminate\Support\Str;
 
 class CurriculumsperDeptController extends Controller
 {
@@ -30,6 +33,51 @@ class CurriculumsperDeptController extends Controller
             'curricula' => $curricula,
             'courses'   => $courses,
         ]);
+        }
+
+    /**
+     * Notify program heads within the curriculum's department about status updates.
+     */
+    protected function notifyProgramHeadsOfStatusChange(Curricula $curriculum, ?string $previousStatus = null): void
+    {
+        $departmentId = $curriculum->department_id;
+
+        if (!$departmentId) {
+            return;
+        }
+
+        $recipientIds = Users::query()
+            ->where('role', 'program_head')
+            ->where('department_id', $departmentId)
+            ->pluck('id');
+
+        if ($recipientIds->isEmpty()) {
+            return;
+        }
+
+        $statusLabel = Str::headline($curriculum->status ?? 'Updated');
+        $message = sprintf(
+            'Curriculum "%s" was updated to %s.',
+            $curriculum->name,
+            strtolower($statusLabel)
+        );
+
+        if ($previousStatus) {
+            $message .= ' Previous status: ' . Str::headline($previousStatus) . '.';
+        }
+
+        $url = route('program-head.curriculum.show', $curriculum->id);
+
+        foreach ($recipientIds as $userId) {
+            Notification::create([
+                'user_id' => $userId,
+                'type' => 'curriculum_status',
+                'title' => $statusLabel . ' curriculum',
+                'message' => $message,
+                'url' => $url,
+                'is_read' => false,
+            ]);
+        }
     }
 
     /**
@@ -90,17 +138,28 @@ class CurriculumsperDeptController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:approved,rejected',
+            'status' => 'required|in:approved,rejected,pending',
         ]);
 
         $curriculum = Curricula::findOrFail($id);
+        $previousStatus = $curriculum->status;
+
+        if ($previousStatus === $request->status) {
+            return redirect()->back()->with('swal', [
+                'icon'  => 'info',
+                'title' => 'Curriculum is already ' . Str::headline($request->status) . '.',
+            ]);
+        }
+
         $curriculum->status = $request->status;
         $curriculum->save();
+
+        $this->notifyProgramHeadsOfStatusChange($curriculum, $previousStatus);
 
         // ✅ Flash message for frontend SweetAlert
         return redirect()->back()->with('swal', [
             'icon'  => 'success',
-            'title' => "Curriculum has been {$request->status}.",
+            'title' => 'Curriculum status updated to ' . Str::headline($request->status) . '.',
         ]);
     }
 }

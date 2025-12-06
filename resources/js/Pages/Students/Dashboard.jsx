@@ -9,7 +9,8 @@ import {
   CalendarDays,
   MapPin,
   Award,
-  Star
+  Star,
+  BookOpen,
 } from 'lucide-react';
 
 const QUOTES = [

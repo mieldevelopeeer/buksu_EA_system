@@ -63,7 +63,8 @@ return new class extends Migration
     $table->unsignedInteger('schedule_group')->default(1)
           ->comment('Groups schedules for same subject, e.g. Lec=1, Lab=2');
 
-            
+             // 🎨 Color column (for color picker)
+            $table->string('color', 10)->nullable()->comment('Hex or RGBA color code');
             $table->timestamps();
         });
     }

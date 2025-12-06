@@ -113,4 +113,40 @@ public function store(Request $request)
 
         return back()->with('success', 'Program Head updated successfully.');
     }
+
+    public function sendEmail(Request $request)
+    {
+        $request->validate([
+            'to'         => 'required|email',
+            'fName'      => 'required|string',
+            'mName'      => 'nullable|string',
+            'lName'      => 'required|string',
+            'username'   => 'required|string',
+            'id_number'  => 'required|string',
+            'password'   => 'required|string',
+        ]);
+
+        try {
+            Mail::to($request->to)->send(new ProgramHeadCreated(
+                new Users([
+                    'fName'        => $request->fName,
+                    'mName'        => $request->mName,
+                    'lName'        => $request->lName,
+                    'username'     => $request->username,
+                    'id_number'    => $request->id_number,
+                ]),
+                $request->password
+            ));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Email sent successfully!',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send email: ' . $e->getMessage(),
+            ]);
+        }
+    }
 }

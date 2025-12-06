@@ -283,6 +283,95 @@ public function storeSubjects(Request $request, $curriculumId)
 }
 
 
+public function storeSubject(Request $request, $curriculumId)
+{
+    $validated = $request->validate([
+        'code'          => 'required|string|max:50',
+        'title'         => 'required|string|max:255',
+        'lec'           => 'required|integer|min:0',
+        'lab'           => 'nullable|integer|min:0',
+        'semester_id'   => 'required|integer|exists:semesters,id',
+        'year'          => 'required|string|max:50',
+        'type'          => 'required|in:Old,New',
+        'prerequisites' => 'nullable|array',
+        'prerequisites.*' => 'string|exists:subjects,code',
+        'comment'       => 'nullable|string|max:255',
+    ]);
+
+    $user = Auth::user();
+    $departmentId = $user->department_id;
+
+    if (!$departmentId) {
+        abort(403, 'Unauthorized');
+    }
+
+    try {
+        DB::transaction(function () use ($validated, $curriculumId, $departmentId) {
+            $labUnit = $validated['lab'] ?? 0;
+
+            $subject = Subjects::updateOrCreate(
+                ['code' => $validated['code']],
+                [
+                    'descriptive_title' => $validated['title'],
+                    'department_id'     => $departmentId,
+                ]
+            );
+
+            $yearLevel = Year_Level::firstOrCreate([
+                'year_level' => $validated['year'],
+            ]);
+
+            $curriculumSubject = Curriculum_Subject::updateOrCreate(
+                [
+                    'curricula_id'  => $curriculumId,
+                    'subject_id'    => $subject->id,
+                    'semesters_id'  => $validated['semester_id'],
+                    'year_level_id' => $yearLevel->id,
+                ],
+                [
+                    'lec_unit' => $validated['lec'],
+                    'lab_unit' => $labUnit,
+                    'type'     => $validated['type'],
+                ]
+            );
+
+            PreRequisites::where('curriculum_subject_id', $curriculumSubject->id)->delete();
+
+            $prereqCodes = $validated['prerequisites'] ?? [];
+
+            if (!empty($prereqCodes)) {
+                $prereqIds = collect($prereqCodes)
+                    ->map(function ($code) use ($curriculumId) {
+                        $subject = Subjects::where('code', $code)->first();
+                        if (!$subject) {
+                            return null;
+                        }
+
+                        return Curriculum_Subject::where('curricula_id', $curriculumId)
+                            ->where('subject_id', $subject->id)
+                            ->value('id');
+                    })
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                foreach ($prereqIds as $prereqId) {
+                    PreRequisites::create([
+                        'curriculum_subject_id'   => $curriculumSubject->id,
+                        'prerequisite_subject_id' => $prereqId,
+                        'comment'                 => null,
+                    ]);
+                }
+            }
+        });
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Failed to add subject: ' . $e->getMessage());
+    }
+
+    return redirect()->back()->with('success', 'Subject added successfully!');
+}
+
+
 public function updateSubject(Request $request, $curriculumId)
 {
     $validated = $request->validate([
@@ -295,8 +384,7 @@ public function updateSubject(Request $request, $curriculumId)
         'year'                    => 'required|string|max:50',
         'type'                    => 'required|in:Old,New',
         'prerequisites'           => 'nullable|array',
-        'prerequisites.*.code'    => 'nullable|string|exists:subjects,code',
-        'prerequisites.*.comment' => 'nullable|string|max:255',
+        'prerequisites.*'         => 'string|exists:subjects,code',
     ]);
 
     $user = Auth::user();
@@ -335,27 +423,40 @@ public function updateSubject(Request $request, $curriculumId)
                 'type'          => $validated['type'],
             ]);
 
-            // ✅ Remove old prerequisites
+            // ✅ Refresh prerequisites
             PreRequisites::where('curriculum_subject_id', $curriculumSubject->id)->delete();
 
-            if (!empty($validated['prerequisites'])) {
-                foreach ($validated['prerequisites'] as $pre) {
-                    // Allow comment-only entries (no subject code)
-                    $preSubject = !empty($pre['code'])
-                        ? Subjects::where('code', $pre['code'])->first()
-                        : null;
+            $prereqCodes = $validated['prerequisites'] ?? [];
 
-                    PreRequisites::create([
-                        'curriculum_subject_id'   => $curriculumSubject->id,
-                        'prerequisite_subject_id' => $preSubject?->id, // nullable
-                        'comment'                 => $pre['comment'] ?? null,
-                    ]);
+            if (!empty($prereqCodes)) {
+                $prereqIds = collect($prereqCodes)
+                    ->map(function ($code) use ($curriculumId) {
+                        $subject = Subjects::where('code', $code)->first();
+                        if (!$subject) {
+                            return null;
+                        }
 
-                    Log::info('✅ Inserted prerequisite/comment', [
-                        'curriculum_subject_id'   => $curriculumSubject->id,
-                        'prerequisite_subject_id' => $preSubject?->id,
-                        'comment'                 => $pre['comment'] ?? null,
+                        return Curriculum_Subject::where('curricula_id', $curriculumId)
+                            ->where('subject_id', $subject->id)
+                            ->value('id');
+                    })
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                if ($prereqIds->isEmpty()) {
+                    Log::info('ℹ️ No valid prerequisites found', [
+                        'curriculum_subject_id' => $curriculumSubject->id,
+                        'requested_codes'       => $prereqCodes,
                     ]);
+                } else {
+                    foreach ($prereqIds as $prereqId) {
+                        PreRequisites::create([
+                            'curriculum_subject_id'   => $curriculumSubject->id,
+                            'prerequisite_subject_id' => $prereqId,
+                            'comment'                 => null,
+                        ]);
+                    }
                 }
             } else {
                 Log::info('ℹ️ No prerequisites provided', [
@@ -368,6 +469,34 @@ public function updateSubject(Request $request, $curriculumId)
     } catch (\Exception $e) {
         Log::error('❌ Failed to update subject', ['error' => $e->getMessage()]);
         return redirect()->back()->with('error', 'Failed to update subject: ' . $e->getMessage());
+    }
+}
+
+
+public function deleteSubject($curriculumId, $subjectId)
+{
+    $user = Auth::user();
+
+    if ($user->role !== 'program_head') {
+        return redirect()->back()->with('error', 'Unauthorized action.');
+    }
+
+    try {
+        DB::transaction(function () use ($curriculumId, $subjectId) {
+            $curriculumSubject = Curriculum_Subject::where('curricula_id', $curriculumId)
+                ->where('id', $subjectId)
+                ->firstOrFail();
+
+            // Remove prerequisite relations where this subject is involved
+            PreRequisites::where('curriculum_subject_id', $curriculumSubject->id)->delete();
+            PreRequisites::where('prerequisite_subject_id', $curriculumSubject->id)->delete();
+
+            $curriculumSubject->delete();
+        });
+
+        return redirect()->back()->with('success', 'Subject deleted successfully!');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Failed to delete subject: ' . $e->getMessage());
     }
 }
 

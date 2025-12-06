@@ -100,9 +100,9 @@ export default function Majors() {
           {/* Add Major */}
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1.5 shadow transition text-[11px]"
           >
-            <Plus size={18} /> Add Major
+            <Plus size={16} /> Add Major
           </button>
         </div>
 
@@ -190,31 +190,92 @@ export default function Majors() {
       <AnimatePresence>
         {showAddModal && (
           <ModalWrapper onClose={() => setShowAddModal(false)}>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Add Major for {course?.code}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <InputField
-                label="Major Name"
-                value={form.data.name}
-                onChange={(e) => form.setData("name", e.target.value)}
-              />
-              <InputField
-                label="Major Code"
-                value={form.data.code}
-                onChange={(e) => form.setData("code", e.target.value)}
-              />
-              <TextareaField
-                label="Description"
-                value={form.data.description}
-                onChange={(e) => form.setData("description", e.target.value)}
-              />
-              <ActionButtons
-                onCancel={() => setShowAddModal(false)}
-                processing={form.processing}
-                label="Save Major"
-              />
-            </form>
+            {(close) => (
+              <div className="text-xs">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-base font-semibold">
+                    Add Major for {course?.code}
+                  </h2>
+                  <button
+                    onClick={close}
+                    className="text-gray-600 hover:text-red-600 transition"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                      Major Name
+                    </label>
+                    <input
+                      type="text"
+                      value={form.data.name}
+                      onChange={(e) => form.setData("name", e.target.value)}
+                      placeholder="e.g., Software Development"
+                      className="w-full border rounded-md px-2 py-1.5 focus:ring-2 focus:ring-blue-500 text-[11px] placeholder:text-[11px]"
+                    />
+                    {form.errors.name && (
+                      <p className="text-red-600 text-[11px] mt-1">{form.errors.name}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                      Major Code
+                    </label>
+                    <input
+                      type="text"
+                      value={form.data.code}
+                      onChange={(e) => form.setData("code", e.target.value)}
+                      placeholder="e.g., SD-101"
+                      className="w-full border rounded-md px-2 py-1.5 focus:ring-2 focus:ring-blue-500 text-[11px] placeholder:text-[11px]"
+                    />
+                    {form.errors.code && (
+                      <p className="text-red-600 text-[11px] mt-1">{form.errors.code}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      value={form.data.description}
+                      onChange={(e) => form.setData("description", e.target.value)}
+                      placeholder="Enter a short description"
+                      rows={3}
+                      className="w-full border rounded-md px-2 py-1.5 focus:ring-2 focus:ring-blue-500 text-[11px] placeholder:text-[11px]"
+                    />
+                    {form.errors.description && (
+                      <p className="text-red-600 text-[11px] mt-1">{form.errors.description}</p>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={close}
+                      className="px-3 py-1.5 rounded-md border text-[11px] text-gray-600 hover:bg-gray-100"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={form.processing}
+                      className={`px-3 py-1.5 rounded-md text-white text-[11px] transition ${
+                        form.processing
+                          ? "bg-blue-400"
+                          : "bg-blue-600 hover:bg-blue-700"
+                      }`}
+                    >
+                      {form.processing ? "Saving..." : "Save Major"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
           </ModalWrapper>
         )}
       </AnimatePresence>
@@ -223,31 +284,92 @@ export default function Majors() {
       <AnimatePresence>
         {showEditModal && (
           <ModalWrapper onClose={() => setShowEditModal(false)}>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Edit Major – {selectedMajor?.name}
-            </h2>
-            <form onSubmit={handleUpdate} className="space-y-4">
-              <InputField
-                label="Major Name"
-                value={form.data.name}
-                onChange={(e) => form.setData("name", e.target.value)}
-              />
-              <InputField
-                label="Major Code"
-                value={form.data.code}
-                onChange={(e) => form.setData("code", e.target.value)}
-              />
-              <TextareaField
-                label="Description"
-                value={form.data.description}
-                onChange={(e) => form.setData("description", e.target.value)}
-              />
-              <ActionButtons
-                onCancel={() => setShowEditModal(false)}
-                processing={form.processing}
-                label="Update Major"
-              />
-            </form>
+            {(close) => (
+              <div className="text-xs">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-base font-semibold">
+                    Edit Major – {selectedMajor?.name}
+                  </h2>
+                  <button
+                    onClick={close}
+                    className="text-gray-600 hover:text-red-600 transition"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <form onSubmit={handleUpdate} className="space-y-4">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                      Major Name
+                    </label>
+                    <input
+                      type="text"
+                      value={form.data.name}
+                      onChange={(e) => form.setData("name", e.target.value)}
+                      placeholder="e.g., Software Development"
+                      className="w-full border rounded-md px-2 py-1.5 focus:ring-2 focus:ring-blue-500 text-[11px] placeholder:text-[11px]"
+                    />
+                    {form.errors.name && (
+                      <p className="text-red-600 text-[11px] mt-1">{form.errors.name}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                      Major Code
+                    </label>
+                    <input
+                      type="text"
+                      value={form.data.code}
+                      onChange={(e) => form.setData("code", e.target.value)}
+                      placeholder="e.g., SD-101"
+                      className="w-full border rounded-md px-2 py-1.5 focus:ring-2 focus:ring-blue-500 text-[11px] placeholder:text-[11px]"
+                    />
+                    {form.errors.code && (
+                      <p className="text-red-600 text-[11px] mt-1">{form.errors.code}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      value={form.data.description}
+                      onChange={(e) => form.setData("description", e.target.value)}
+                      placeholder="Enter a short description"
+                      rows={3}
+                      className="w-full border rounded-md px-2 py-1.5 focus:ring-2 focus:ring-blue-500 text-[11px] placeholder:text-[11px]"
+                    />
+                    {form.errors.description && (
+                      <p className="text-red-600 text-[11px] mt-1">{form.errors.description}</p>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={close}
+                      className="px-3 py-1.5 rounded-md border text-[11px] text-gray-600 hover:bg-gray-100"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={form.processing}
+                      className={`px-3 py-1.5 rounded-md text-white text-[11px] transition ${
+                        form.processing
+                          ? "bg-blue-400"
+                          : "bg-blue-600 hover:bg-blue-700"
+                      }`}
+                    >
+                      {form.processing ? "Saving..." : "Update Major"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
           </ModalWrapper>
         )}
       </AnimatePresence>
@@ -256,24 +378,38 @@ export default function Majors() {
       <AnimatePresence>
         {showViewModal && (
           <ModalWrapper onClose={() => setShowViewModal(false)}>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              {selectedMajor?.name}
-            </h2>
-            <p>
-              <strong>Code:</strong> {selectedMajor?.code}
-            </p>
-            <p>
-              <strong>Description:</strong>{" "}
-              {selectedMajor?.description || "No description provided"}
-            </p>
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setShowViewModal(false)}
-                className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
-              >
-                Close
-              </button>
-            </div>
+            {(close) => (
+              <div className="text-xs">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-base font-semibold">{selectedMajor?.name}</h2>
+                  <button
+                    onClick={close}
+                    className="text-gray-600 hover:text-red-600 transition"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <div className="space-y-2 text-gray-700">
+                  <p>
+                    <strong>Code:</strong> {selectedMajor?.code || "-"}
+                  </p>
+                  <p>
+                    <strong>Description:</strong>{" "}
+                    {selectedMajor?.description || "No description provided"}
+                  </p>
+                </div>
+
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={close}
+                    className="px-3 py-1.5 rounded-md border text-[11px] text-gray-600 hover:bg-gray-100"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
           </ModalWrapper>
         )}
       </AnimatePresence>
@@ -284,6 +420,7 @@ export default function Majors() {
 /* ✅ Reusable modal wrapper */
 /* ✅ Reusable modal wrapper with blur + animate bg */
 function ModalWrapper({ children, onClose }) {
+  const content = typeof children === 'function' ? children(onClose) : children;
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -307,17 +444,9 @@ function ModalWrapper({ children, onClose }) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.25 }}
-        className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg p-6"
+        className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-5"
       >
-        <div className="flex justify-end">
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <X size={22} />
-          </button>
-        </div>
-        {children}
+        {content}
       </motion.div>
     </motion.div>
   );

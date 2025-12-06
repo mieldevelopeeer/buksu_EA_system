@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class year_level extends Model
+class Year_Level extends Model
 {
     use HasFactory;
 

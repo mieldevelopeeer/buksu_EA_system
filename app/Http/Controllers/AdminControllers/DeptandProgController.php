@@ -5,8 +5,8 @@ namespace App\Http\Controllers\AdminControllers;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Users;
-use App\Models\courses;
-use App\Models\major;
+use App\Models\Courses;
+use App\Models\Major;
 use Inertia\Inertia;
 
 class DeptandProgController extends Controller
@@ -55,7 +55,7 @@ class DeptandProgController extends Controller
                 ];
             });
 
-        $courses = courses::with(['department:id,name', 'majors' => function ($query) {
+        $courses = Courses::with(['department:id,name', 'majors' => function ($query) {
             $query->select('id', 'name', 'code', 'description', 'courses_id');
         }])
             ->orderBy('name')
@@ -103,7 +103,7 @@ class DeptandProgController extends Controller
         $departments = Department::orderBy('name')
             ->get(['id', 'name', 'description']);
 
-        $courses = courses::with(['department:id,name', 'majors' => function ($query) {
+        $courses = Courses::with(['department:id,name', 'majors' => function ($query) {
             $query->select('id', 'name', 'code', 'description', 'courses_id');
         }])
             ->orderBy('name')

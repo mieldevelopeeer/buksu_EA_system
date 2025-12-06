@@ -128,7 +128,7 @@ export default function StudentLayout({ children }) {
             {sidebarOpen ? <span className="text-base font-semibold">&lt;</span> : <List size={18} />}
           </button>
 
-          <div className="relative" ref={dropdownRef}>
+          <div className="relative z-50" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen((prev) => !prev)}
               className="flex items-center gap-1 rounded-md bg-white/70 px-2 py-1 text-xs shadow-sm backdrop-blur-sm transition hover:bg-white/90"
@@ -138,7 +138,7 @@ export default function StudentLayout({ children }) {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-32 rounded-md border border-white/40 bg-white/90 text-xs shadow backdrop-blur">
+              <div className="absolute right-0 mt-2 w-32 rounded-md border border-white/40 bg-white/90 text-xs shadow backdrop-blur z-50">
                 <Link
                   href="/profile"
                   className="block rounded-t-md px-3 py-1.5 text-gray-700 hover:bg-gray-100"

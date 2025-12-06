@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useLayoutEffect } from "react";
+import React, { useState, useMemo, useRef, useLayoutEffect, useEffect } from "react";
 import ProgramHeadLayout from "@/Layouts/ProgramHeadLayout";
 import { Head, router } from "@inertiajs/react";
 import {
@@ -20,6 +20,8 @@ import Swal from "sweetalert2";
 const CELL_HEIGHT = 34;
 const COL_WIDTH = 136;
 const TIME_COL_WIDTH = 80; // matches first column width in gridTemplateColumns
+const MIN_SLOT_DURATION = 30; // minutes
+const MAX_SLOT_DURATION = 180; // 3 hours
 const ROW_BORDER = 1; // px, matches border-b on each time slot row
 // Header height will be measured at runtime for pixel-perfect alignment
 const BASE_HOUR = 5;
@@ -47,21 +49,45 @@ const generateTimeSlots = () => {
   return slots;
 };
 
-// Time formatting
+// Time formatting with validation
 const formatTimeToAMPM = (time) => {
-  const [h, m] = time.split(":").map(Number);
-  const suffix = h >= 12 ? "PM" : "AM";
-  const hour = ((h + 11) % 12) + 1;
-  return `${hour}:${m.toString().padStart(2, "0")} ${suffix}`;
+  if (!time) return 'Invalid time';
+  try {
+    let [h, m] = time.toString().split(":").map(Number);
+    if (isNaN(h) || isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) {
+      return 'Invalid time';
+    }
+    const suffix = h >= 12 ? "PM" : "AM";
+    const hour = h % 12 || 12; // Convert 0 to 12 for 12 AM
+    return `${hour}:${m.toString().padStart(2, "0")} ${suffix}`;
+  } catch (e) {
+    console.error('Error formatting time:', e);
+    return 'Invalid time';
+  }
 };
 const convertToMinutes = (timeString) => {
-  const [h, m] = timeString.split(":").map(Number);
-  return h * 60 + m;
+  if (!timeString) return 0;
+  try {
+    // Handle both 'HH:MM' and 'HH:MM:SS' formats
+    const [h, m] = timeString.split(":").slice(0, 2).map(Number);
+    if (isNaN(h) || isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) {
+      console.warn(`Invalid time format: ${timeString}`);
+      return 0;
+    }
+    return h * 60 + m;
+  } catch (e) {
+    console.error('Error converting time to minutes:', e);
+    return 0;
+  }
 };
 const convertFromMinutes = (minutes) => {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return `${h}:${m.toString().padStart(2, "0")}`;
+  if (minutes === null || minutes === undefined || isNaN(minutes) || minutes < 0) {
+    console.warn(`Invalid minutes value: ${minutes}`);
+    return '00:00';
+  }
+  const h = Math.floor(Math.max(0, minutes) / 60) % 24; // Ensure within 24h
+  const m = Math.floor(Math.max(0, minutes) % 60);
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
 };
 
 // Ensure HH:mm for <input type="time">
@@ -195,6 +221,39 @@ const getTimetableBackground = (hex) => {
   });
 };
 
+const updateSchedRequest = (router, scheduleId, payload, callbacks = {}) => {
+  const { onSuccess, onError } = callbacks;
+  const url = route('program-head.faculty.assign.updateSched', scheduleId);
+  return router.put(url, payload, {
+    preserveScroll: true,
+    onSuccess,
+    onError,
+  });
+};
+
+const deleteSchedRequest = (router, scheduleId, callbacks = {}) => {
+  const { onSuccess, onError } = callbacks;
+  const url = route('program-head.faculty.assign.deleteSched', scheduleId);
+  return router.delete(url, {
+    preserveScroll: true,
+    onSuccess,
+    onError,
+  });
+};
+
+const buildSchedulePayload = (schedule) => ({
+  curriculum_subject_id: schedule.curriculum_subject_id,
+  faculty_id: schedule.faculty_id,
+  classroom_id: schedule.classroom_id,
+  section_id: schedule.section_id,
+  year_level_id: schedule.year_level_id,
+  schedule_day: schedule.day,
+  start_time: toHHMM(schedule.start),
+  end_time: toHHMM(schedule.end),
+  color: schedule.color,
+  session_type: normalizeSessionType(schedule.session_type),
+});
+
 
 
 const SESSION_LABELS = SESSION_TYPES.reduce((acc, type) => {
@@ -204,6 +263,31 @@ const SESSION_LABELS = SESSION_TYPES.reduce((acc, type) => {
 
 const normalizeSessionType = (value) =>
   SESSION_LABELS[value] ? value : "lecture";
+
+// Custom hook for local storage
+const useLocalStorage = (key, initialValue) => {
+  const [storedValue, setStoredValue] = useState(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error('Error reading from localStorage', error);
+      return initialValue;
+    }
+  });
+
+  const setValue = (value) => {
+    try {
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      setStoredValue(valueToStore);
+      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+    } catch (error) {
+      console.error('Error writing to localStorage', error);
+    }
+  };
+
+  return [storedValue, setValue];
+};
 
 export default function FacultyAssignment({
   curriculumSubjects = [],
@@ -248,7 +332,200 @@ export default function FacultyAssignment({
   const [editingSchedule, setEditingSchedule] = useState(null);
   const [selectedYearLevel, setSelectedYearLevel] = useState("");
   const [selectedSection, setSelectedSection] = useState("");
-  const [activeTab, setActiveTab] = useState("timetable");
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
+  const [scheduleConflicts, setScheduleConflicts] = useState([]);
+  
+  // State for collapsible sections with local storage
+  const [expandedSections, setExpandedSections] = useLocalStorage('expandedSections', {});
+  const [activeTab, setActiveTab] = useLocalStorage('activeScheduleTab', 'timetable');
+  
+  // Toggle section expansion with animation
+  const toggleSection = (sectionId) => {
+    setExpandedSections(prev => {
+      const newState = {
+        ...prev,
+        [sectionId]: !(prev[sectionId] !== false) // Toggle the state, default to true if not set
+      };
+      
+      // Store in localStorage
+      try {
+        localStorage.setItem('expandedSections', JSON.stringify(newState));
+      } catch (error) {
+        console.error('Error saving to localStorage:', error);
+      }
+      
+      return newState;
+    });
+  };
+  
+  // Check if section is expanded
+  const isSectionExpanded = (sectionId) => {
+    return expandedSections[sectionId] !== false; // Default to expanded if not set
+  };
+
+  // Handle color selection for schedules
+  const handleColorSelect = (color) => {
+    if (!editingSchedule) return;
+    
+    setEditingSchedule(prev => ({
+      ...prev,
+      color: color || (prev.session_type === 'lecture' ? '#e0f2fe' : '#ffedd5')
+    }));
+  };
+
+  // Check for scheduling conflicts with detailed information
+  const checkForConflicts = (schedule) => {
+    if (!schedule) return [];
+    
+    const conflicts = [];
+    const { day, start, end, faculty_id, classroom_id, section_id, id } = schedule;
+    const startMins = convertToMinutes(start);
+    const endMins = convertToMinutes(end);
+    
+    // Validate time range
+    if (startMins >= endMins) {
+      conflicts.push({
+        type: 'time',
+        message: 'End time must be after start time',
+        level: 'error'
+      });
+    }
+    
+    // Check minimum duration
+    if (endMins - startMins < MIN_SLOT_DURATION) {
+      conflicts.push({
+        type: 'duration',
+        message: `Minimum duration is ${MIN_SLOT_DURATION} minutes`,
+        level: 'error'
+      });
+    }
+    
+    // Check faculty conflicts
+    if (faculty_id) {
+      const facultyConflicts = schedules.filter(s => {
+        if (s.id === id || s.faculty_id !== faculty_id || s.day !== day) return false;
+        const sStart = convertToMinutes(s.start);
+        const sEnd = convertToMinutes(s.end);
+        return startMins < sEnd && endMins > sStart;
+      });
+      
+      if (facultyConflicts.length > 0) {
+        conflicts.push({
+          type: 'faculty',
+          message: 'Faculty has a conflicting schedule',
+          level: 'error',
+          conflicts: facultyConflicts.map(s => ({
+            id: s.id,
+            time: `${formatTimeToAMPM(s.start)} - ${formatTimeToAMPM(s.end)}`,
+            section: sections.find(sec => sec.id === s.section_id)?.name || 'Unknown',
+            room: classrooms.find(r => r.id === s.classroom_id)?.name || 'TBA'
+          }))
+        });
+      }
+    }
+
+    // Check room conflicts
+    if (classroom_id) {
+      const roomConflicts = schedules.filter(s => {
+        if (s.id === id || s.classroom_id !== classroom_id || s.day !== day) return false;
+        const sStart = convertToMinutes(s.start);
+        const sEnd = convertToMinutes(s.end);
+        return startMins < sEnd && endMins > sStart;
+      });
+      
+      if (roomConflicts.length > 0) {
+        conflicts.push({
+          type: 'room',
+          message: 'Room is already booked',
+          level: 'error',
+          conflicts: roomConflicts.map(s => ({
+            id: s.id,
+            time: `${formatTimeToAMPM(s.start)} - ${formatTimeToAMPM(s.end)}`,
+            faculty: getFacultyName(s.faculty_id) || 'TBA',
+            section: sections.find(sec => sec.id === s.section_id)?.name || 'Unknown'
+          }))
+        });
+      }
+    }
+    
+    // Check section conflicts (same section can't have overlapping classes)
+    if (section_id) {
+      const sectionConflicts = schedules.filter(s => {
+        if (s.id === id || s.section_id !== section_id || s.day !== day) return false;
+        const sStart = convertToMinutes(s.start);
+        const sEnd = convertToMinutes(s.end);
+        return startMins < sEnd && endMins > sStart;
+      });
+      
+      if (sectionConflicts.length > 0) {
+        conflicts.push({
+          type: 'section',
+          message: 'Section has a conflicting class',
+          level: 'error',
+          conflicts: sectionConflicts.map(s => ({
+            id: s.id,
+            time: `${formatTimeToAMPM(s.start)} - ${formatTimeToAMPM(s.end)}`,
+            faculty: getFacultyName(s.faculty_id) || 'TBA',
+            room: classrooms.find(r => r.id === s.classroom_id)?.name || 'TBA'
+          }))
+        });
+      }
+    }
+    
+    // Check if time is within allowed hours (5:00 AM - 9:30 PM)
+    if (startMins < BASE_HOUR * 60 || endMins > 21 * 60 + 30) {
+      conflicts.push({
+        type: 'time',
+        message: 'Schedule must be between 5:00 AM and 9:30 PM',
+        level: 'error'
+      });
+    }
+
+    return conflicts;
+  };
+
+  // Handle time change with conflict checking
+  const handleTimeChange = (field, value) => {
+    let newSchedule = { ...editingSchedule };
+    
+    // Ensure time is in HH:MM format and snap to 30-minute intervals
+    if (field === 'start' || field === 'end') {
+      value = snapToGrid(value);
+      
+      // Ensure end time is after start time
+      if (field === 'start' && newSchedule.end) {
+        if (convertToMinutes(value) >= convertToMinutes(newSchedule.end)) {
+          // If new start is after end, adjust end time to be 1 hour after start
+          newSchedule.end = convertFromMinutes(convertToMinutes(value) + 60);
+        }
+      } else if (field === 'end' && newSchedule.start) {
+        if (convertToMinutes(value) <= convertToMinutes(newSchedule.start)) {
+          // If new end is before start, adjust start time to be 1 hour before end
+          newSchedule.start = convertFromMinutes(convertToMinutes(value) - 60);
+          if (convertToMinutes(newSchedule.start) < BASE_HOUR * 60) {
+            // Ensure we don't go before the start of the day
+            newSchedule.start = convertFromMinutes(BASE_HOUR * 60);
+            newSchedule.end = convertFromMinutes(BASE_HOUR * 60 + 60);
+          }
+        } else {
+          // Ensure minimum duration of 30 minutes
+          const duration = convertToMinutes(value) - convertToMinutes(newSchedule.start);
+          if (duration < MIN_SLOT_DURATION) {
+            newSchedule.end = convertFromMinutes(convertToMinutes(newSchedule.start) + MIN_SLOT_DURATION);
+          } else if (duration > MAX_SLOT_DURATION) {
+            newSchedule.end = convertFromMinutes(convertToMinutes(newSchedule.start) + MAX_SLOT_DURATION);
+          }
+        }
+      }
+    }
+    
+    newSchedule[field] = value;
+    setEditingSchedule(newSchedule);
+    
+    // Check for conflicts immediately
+    const conflicts = checkForConflicts(newSchedule);
+    setScheduleConflicts(conflicts);
+  };
   const [selectedSemester, setSelectedSemester] = useState(
     activeSemester?.id ? String(activeSemester.id) : "All"
   );
@@ -303,9 +580,27 @@ export default function FacultyAssignment({
     return groups;
   }, [schedules, yearLevels, sections, selectedSemester]);
 
-  // Pagination for list tab
-  const [listPage, setListPage] = useState(1);
+  // Pagination for list tab with local storage
+  const [listPage, setListPage] = useState(() => {
+    try {
+      const savedPage = localStorage.getItem('scheduleListPage');
+      return savedPage ? parseInt(savedPage, 10) : 1;
+    } catch (error) {
+      console.error('Error reading from localStorage:', error);
+      return 1;
+    }
+  });
+  
   const pageSize = 6;
+  
+  // Save current page to local storage when it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('scheduleListPage', listPage.toString());
+    } catch (error) {
+      console.error('Error saving to localStorage:', error);
+    }
+  }, [listPage]);
   const totalPages = Math.max(1, Math.ceil(sectionGroups.length / pageSize));
   const pagedGroups = useMemo(() => {
     const start = (listPage - 1) * pageSize;
@@ -313,19 +608,48 @@ export default function FacultyAssignment({
   }, [sectionGroups, listPage]);
 
   const handleCellClick = (day, startTime) => {
-    if (readOnly) return;
-    if (!selectedYearLevel || !selectedSection) return;
-
-    // Prevent creating out-of-bounds slot at the end of the day
-    const startM = convertToMinutes(startTime);
-    const duration = 30;
-    const dayEnd = 21 * 60 + 30; // 21:30
-    if (startM + duration > dayEnd) {
+    if (readOnly) {
+      Swal.fire({
+        icon: "info",
+        title: "Read Only",
+        text: "You don't have permission to modify schedules.",
+        timer: 2000,
+        showConfirmButton: false,
+        toast: true,
+        position: "top-end",
+      });
+      return;
+    }
+    
+    if (!selectedYearLevel || !selectedSection) {
       Swal.fire({
         icon: "warning",
-        title: "Time Out of Range",
-        text: "Cannot start a class that extends beyond 9:30 PM.",
-        timer: 2200,
+        title: "Selection Required",
+        text: "Please select both year level and section first.",
+        timer: 2000,
+        showConfirmButton: false,
+        toast: true,
+        position: "top-end",
+      });
+      return;
+    }
+
+    // Ensure the start time is on the grid
+    const snappedStart = snapToGrid(startTime);
+    const startM = convertToMinutes(snappedStart);
+    const defaultDuration = 60; // Default to 1 hour
+    const dayEnd = 21 * 60 + 30; // 21:30
+    
+    // Adjust duration if it would go past the end of the day
+    const endM = Math.min(startM + defaultDuration, dayEnd);
+    const actualDuration = endM - startM;
+    
+    if (actualDuration < 30) {
+      Swal.fire({
+        icon: "warning",
+        title: "Insufficient Time",
+        text: "Not enough time remaining in the day for a class period.",
+        timer: 2500,
         showConfirmButton: false,
         toast: true,
         position: "top-end",
@@ -342,13 +666,13 @@ export default function FacultyAssignment({
       classroom_id: null,
       section_id: Number(selectedSection),
       year_level_id: Number(selectedYearLevel),
+      course_id: defaultCourseId,
       day,
       start: toHHMM(startTime),
       end: toHHMM(convertFromMinutes(convertToMinutes(startTime) + 30)),
       color: "#dbeafe",
       session_type: "lecture",
-      isExisting: false,
-      course_id: defaultCourseId,
+      isExisting: false
     });
   };
 
@@ -434,76 +758,15 @@ export default function FacultyAssignment({
     return next ? next.value : null;
   };
 
-  const handleDragStop = (scheduleId, d) => {
-    if (readOnly) return;
-    
-    const schedule = schedules.find((s) => s.id === scheduleId);
-    if (!schedule) return;
-
-    // Calculate new time based on y position, accounting for header and row borders
-    const unitsFromTop = (d.y - headerHeight) / (CELL_HEIGHT + ROW_BORDER);
-    const startIndex = Math.round(unitsFromTop); // each unit = 30 minutes
-    const newStartMinutes = startIndex * 30 + BASE_HOUR * 60;
-    const duration = convertToMinutes(schedule.end) - convertToMinutes(schedule.start);
-    const newEndMinutes = newStartMinutes + duration;
-
-    const newStart = convertFromMinutes(newStartMinutes);
-    const newEnd = convertFromMinutes(newEndMinutes);
-
-    // Validate bounds
-    const dayEnd = 21 * 60 + 30;
-    if (newStartMinutes < BASE_HOUR * 60 || newEndMinutes > dayEnd) {
-      Swal.fire({
-        icon: "warning",
-        title: "Out of Bounds",
-        text: "Schedule must be within 5:00 AM - 9:30 PM.",
-        timer: 2200,
-        showConfirmButton: false,
-        toast: true,
-        position: "top-end",
-      });
-      return;
-    }
-
-    const updatedSchedule = { ...schedule, start: newStart, end: newEnd };
-
-    // Check conflicts
-    const conflicting = schedules.find((s) => {
-      if (s.id === scheduleId) return false;
-      const sameDay = s.day === updatedSchedule.day;
-      const overlap =
-        convertToMinutes(updatedSchedule.start) < convertToMinutes(s.end) &&
-        convertToMinutes(updatedSchedule.end) > convertToMinutes(s.start);
-      return sameDay && overlap && 
-        (s.faculty_id === updatedSchedule.faculty_id || 
-         s.section_id === updatedSchedule.section_id || 
-         s.classroom_id === updatedSchedule.classroom_id);
-    });
-
-    if (conflicting) {
-      Swal.fire({
-        icon: "error",
-        title: "Schedule Conflict",
-        text: "This time slot conflicts with another schedule.",
-        timer: 2500,
-        showConfirmButton: false,
-        toast: true,
-        position: "top-end",
-      });
-      return;
-    }
-
-    setSchedules(schedules.map((s) => (s.id === scheduleId ? updatedSchedule : s)));
-
-    // Backend update endpoint not available; skipping network call to avoid 404
-    // TODO: When update route is ready, call it here.
+  const handleDragStop = () => {
+    // Dragging disabled; no-op
   };
 
   const handleDeleteSchedule = (scheduleId) => {
     if (readOnly) return;
 
     const schedule = schedules.find((s) => s.id === scheduleId);
-    
+
     Swal.fire({
       title: "Delete Schedule?",
       text: "This action cannot be undone.",
@@ -514,11 +777,12 @@ export default function FacultyAssignment({
       confirmButtonText: "Yes, delete it",
       cancelButtonText: "Cancel",
     }).then((result) => {
-      if (result.isConfirmed) {
-        setSchedules(schedules.filter((s) => s.id !== scheduleId));
-        
-        // Backend delete endpoint not available; skipping network call to avoid 404
-        // TODO: When delete route is ready, call it here.
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      const removeFromState = () => {
+        setSchedules((prev) => prev.filter((s) => s.id !== scheduleId));
         Swal.fire({
           icon: "success",
           title: "Deleted",
@@ -528,6 +792,25 @@ export default function FacultyAssignment({
           toast: true,
           position: "top-end",
         });
+      };
+
+      if (schedule?.isExisting) {
+        deleteSchedRequest(router, scheduleId, {
+          onSuccess: removeFromState,
+          onError: () => {
+            Swal.fire({
+              icon: "error",
+              title: "Delete failed",
+              text: "Unable to delete schedule. Please try again.",
+              timer: 2200,
+              showConfirmButton: false,
+              toast: true,
+              position: "top-end",
+            });
+          },
+        });
+      } else {
+        removeFromState();
       }
     });
   };
@@ -716,19 +999,47 @@ export default function FacultyAssignment({
       ],
     };
 
+    // Show success message
+    Swal.fire({
+      icon: 'success',
+      title: isUpdate ? 'Schedule Updated' : 'Schedule Added',
+      text: isUpdate 
+        ? 'The schedule has been updated successfully.' 
+        : 'New schedule has been added successfully.',
+      timer: 1500,
+      showConfirmButton: false,
+      toast: true,
+      position: 'top-end',
+    });
+
+    const schedulePayload = buildSchedulePayload(newSchedule);
+
     if (isUpdate && newSchedule.isExisting) {
-      // Backend update endpoint not available; skipping network call to avoid 404
-      // TODO: When update route is ready, call it here.
-      Swal.fire({
-        icon: "success",
-        title: "Updated",
-        timer: 1200,
-        showConfirmButton: false,
-        toast: true,
-        position: "top-end",
+      updateSchedRequest(router, newSchedule.id, schedulePayload, {
+        onSuccess: () => {
+          Swal.fire({
+            icon: "success",
+            title: "Schedule Updated",
+            timer: 1500,
+            showConfirmButton: false,
+            toast: true,
+            position: "top-end",
+          });
+        },
+        onError: () => {
+          Swal.fire({
+            icon: "error",
+            title: "Update Failed",
+            text: "Unable to update schedule. Please try again.",
+            timer: 2200,
+            showConfirmButton: false,
+            toast: true,
+            position: "top-end",
+          });
+        },
       });
-    } else if (!isUpdate) {
-      saveScheds(router, payload, {
+    } else if (!isUpdate || !newSchedule.isExisting) {
+      saveScheds(router, { schedules: [schedulePayload] }, {
         onSuccess: () => {
           Swal.fire({
             icon: "success",
@@ -1002,7 +1313,7 @@ export default function FacultyAssignment({
                     style={{ background: withAlpha('#3b82f6', 0.04), borderColor: withAlpha('#3b82f6', 0.3) }}
                   >
                     <div className="flex items-start justify-between">
-                      <div>
+                      <div className="md:col-span-2">
                         <div className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                           <MapPin size={16} className="text-blue-600" />
                           Room {room.room_number}
@@ -1078,7 +1389,7 @@ export default function FacultyAssignment({
                         <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
                           <Book size={20} className="text-purple-600" />
                         </div>
-                        <div>
+                        <div className="md:col-span-2">
                           <h4 className="font-semibold text-sm text-gray-800">
                             {yearLevel.year_level} - {section.section}
                           </h4>
@@ -1251,11 +1562,11 @@ export default function FacultyAssignment({
                       y: headerHeight + top,
                     }}
                     bounds="parent"
-                    dragAxis={readOnly ? false : "y"}
+                    dragAxis={false}
+                    disableDragging
                     enableResizing={false}
                     grid={[COL_WIDTH, CELL_HEIGHT + ROW_BORDER]}
-                    onDragStop={(e, d) => handleDragStop(s.id, d)}
-                    className="absolute cursor-move group outline-none"
+                    className="absolute group outline-none"
                     tabIndex={-1}
                     style={{
                       background,
@@ -1439,9 +1750,9 @@ export default function FacultyAssignment({
 
       {/* Room Schedules Modal */}
       {showRoomModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl overflow-hidden">
-            <div className="p-4 border-b flex items-center justify-between bg-gradient-to-r from-blue-50 to-white">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-4 pt-20 overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl overflow-hidden max-h-[80vh] flex flex-col">
+            <div className="p-3 border-b flex items-center justify-between bg-gradient-to-r from-blue-50 to-white sticky top-0 z-10">
               <div className="flex items-center gap-2">
                 <MapPin size={18} className="text-blue-600" />
                 <div className="text-sm font-semibold text-gray-800">
@@ -1528,7 +1839,7 @@ export default function FacultyAssignment({
                 );
               })()}
             </div>
-            <div className="p-4 border-t bg-gray-50 flex justify-end">
+            <div className="mt-4 pt-3 border-t flex justify-end space-x-2 col-span-full">
               <button className="px-3 py-1.5 border rounded text-xs hover:bg-white" onClick={() => setShowRoomModal(false)}>Close</button>
             </div>
           </div>
@@ -1537,315 +1848,542 @@ export default function FacultyAssignment({
 
       {/* Schedule Modal */}
       {!readOnly && editingSchedule && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg w-full max-w-md md:max-w-lg p-6 shadow-xl">
-            <div className="flex justify-between items-center mb-4 border-b pb-3">
-              <h2 className="text-base font-semibold text-gray-800">
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-2 sm:p-4 pt-20 overflow-y-auto">
+          <div className="bg-white rounded-lg w-full max-w-2xl p-4 shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-3 sticky top-0 bg-white pb-2 border-b z-10">
+              <h2 className="text-sm font-semibold text-gray-800">
                 {editingSchedule.isExisting ? "Edit Schedule" : "New Schedule"}
               </h2>
               <button
                 onClick={() => setEditingSchedule(null)}
-                className="text-gray-500 hover:text-red-500 transition"
+                className="text-gray-500 hover:text-red-500 transition p-1 -mr-1"
+                aria-label="Close"
               >
-                <XCircle size={22} />
+                <XCircle size={18} />
               </button>
             </div>
 
-            <div className="space-y-4">
-              {/* Subject */}
-              <div>
-                <label className="block text-gray-700 mb-1 text-xs">
-                  Subject
-                </label>
-                <select
-                  value={editingSchedule.curriculum_subject_id || ""}
-                  onChange={(e) => {
-                    const subjectId = Number(e.target.value);
-                    const baseSection = editingSchedule.section_id || Number(selectedSection);
-                    const baseYear = editingSchedule.year_level_id || Number(selectedYearLevel);
-                    const nextType = subjectId
-                      ? getNextAvailableSessionType(subjectId, {
-                          excludeScheduleId: editingSchedule.id,
-                          sectionId: baseSection,
-                          yearLevelId: baseYear,
+            <div className="space-y-4 text-sm mt-2">
+              {/* Section 1: Basic Information */}
+              <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Basic Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* Subject */}
+                  <div className="col-span-2">
+                    <label className="block text-gray-700 mb-1 text-xs font-medium">
+                      Subject
+                    </label>
+                    <select
+                      value={editingSchedule.curriculum_subject_id || ""}
+                      onChange={(e) => {
+                        const subjectId = Number(e.target.value);
+                        const baseSection = editingSchedule.section_id || Number(selectedSection);
+                        const baseYear = editingSchedule.year_level_id || Number(selectedYearLevel);
+                        const nextType = subjectId
+                          ? getNextAvailableSessionType(subjectId, {
+                              excludeScheduleId: editingSchedule.id,
+                              sectionId: baseSection,
+                              yearLevelId: baseYear,
+                            })
+                          : null;
+
+                        setEditingSchedule((prev) => ({
+                          ...prev,
+                          curriculum_subject_id: subjectId || null,
+                          session_type:
+                            subjectId && nextType
+                              ? nextType
+                              : normalizeSessionType(prev.session_type || "lecture"),
+                        }));
+                      }}
+                      className="w-full border rounded px-2.5 py-2 text-xs"
+                    >
+                      <option value="">Select a subject...</option>
+                      {curriculumSubjects
+                        .filter((cs) => {
+                          const yearMatch = Number(cs?.year_level_id) === Number(selectedYearLevel);
+                          const rawStatus = typeof cs?.curriculum?.status === 'string'
+                            ? cs.curriculum.status.trim().toLowerCase()
+                            : null;
+                          const allowedStatuses = ['approved', 'active', 'published'];
+                          const isAllowed = !rawStatus || allowedStatuses.includes(rawStatus);
+                          return yearMatch && isAllowed;
                         })
-                      : null;
+                        .map((cs) => {
+                          const assignedCounts = getAssignedTypeCounts(cs.id, {
+                            excludeScheduleId: editingSchedule.id,
+                            sectionId: selectedSection,
+                            yearLevelId: selectedYearLevel,
+                          });
+                          const availableTypes = SESSION_TYPES.filter(
+                            (t) => (assignedCounts[t.value] || 0) < getSessionLimit(t.value)
+                          );
+                          const isComplete = availableTypes.length === 0;
+                          const summary = Object.entries(assignedCounts)
+                            .filter(([, count]) => count > 0)
+                            .map(([type, count]) => `${SESSION_LABELS[type] || type} × ${count}`)
+                            .join(', ');
+                          const label = `${cs.subject?.code || ''} - ${cs.subject?.descriptive_title || 'TBA'}`.trim();
+                          return (
+                            <option
+                              key={cs.id}
+                              value={cs.id}
+                              disabled={isComplete}
+                              className={isComplete ? 'text-gray-400' : ''}
+                              title={isComplete ? 'All session types assigned' : ''}
+                            >
+                              {label}
+                            </option>
+                          );
+                        })}
+                    </select>
+                  </div>
 
-                    setEditingSchedule((prev) => ({
-                      ...prev,
-                      curriculum_subject_id: subjectId || null,
-                      session_type:
-                        subjectId && nextType
-                          ? nextType
-                          : normalizeSessionType(prev.session_type || "lecture"),
-                    }));
-                  }}
-                  className="w-full border rounded-md px-3 py-2 text-sm"
-                >
-                  <option value="">TBA</option>
-                  {curriculumSubjects
-                    // Show subjects for the selected year level; allow when curriculum status is approved/active
-                    // or when no status is defined (legacy records).
-                    .filter((cs) => {
-                      const yearMatch = Number(cs?.year_level_id) === Number(selectedYearLevel);
-                      const rawStatus = typeof cs?.curriculum?.status === 'string'
-                        ? cs.curriculum.status.trim().toLowerCase()
-                        : null;
-                      const allowedStatuses = ['approved', 'active', 'published'];
-                      const isAllowed = !rawStatus || allowedStatuses.includes(rawStatus);
-                      return yearMatch && isAllowed;
-                    })
-                    .map((cs) => {
-                      // Disable if this curriculum subject is already assigned to this section & year level (any day/time)
-                      const assignedCounts = getAssignedTypeCounts(cs.id, {
-                        excludeScheduleId: editingSchedule.id,
-                        sectionId: selectedSection,
-                        yearLevelId: selectedYearLevel,
-                      });
-                      const availableTypes = SESSION_TYPES.filter(
-                        (t) => (assignedCounts[t.value] || 0) < getSessionLimit(t.value)
-                      );
-                      const isComplete = availableTypes.length === 0;
-                      const summary = Object.entries(assignedCounts)
-                        .filter(([, count]) => count > 0)
-                        .map(([type, count]) => `${SESSION_LABELS[type] || type} × ${count}`)
-                        .join(', ');
-                      const label = `${cs.subject?.descriptive_title || 'TBA'}${summary ? ` • ${summary}` : ''}${isComplete ? ' — sessions complete' : ''}`;
-                      return (
-                        <option
-                          key={cs.id}
-                          value={cs.id}
-                          disabled={isComplete}
-                          className={isComplete ? 'text-gray-400' : ''}
-                        >
-                          {label}
+                  {/* Session Type */}
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-xs font-medium">Session Type</label>
+                    <select
+                      value={normalizeSessionType(editingSchedule.session_type)}
+                      onChange={(e) => {
+                        const value = normalizeSessionType(e.target.value);
+                        const assignedCounts = getAssignedTypeCounts(editingSchedule.curriculum_subject_id, {
+                          excludeScheduleId: editingSchedule.id,
+                          sectionId: editingSchedule.section_id,
+                          yearLevelId: editingSchedule.year_level_id,
+                        });
+                        if ((assignedCounts[value] || 0) >= getSessionLimit(value)) {
+                          Swal.fire({
+                            icon: "error",
+                            title: "Duplicate Session",
+                            text: "This subject already reached the allowed number of schedules for that session type.",
+                            timer: 2400,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: "top-end",
+                          });
+                          return;
+                        }
+                        setEditingSchedule({
+                          ...editingSchedule,
+                          session_type: value,
+                        });
+                      }}
+                      className="w-full border rounded px-2.5 py-2 text-xs"
+                      disabled={!editingSchedule.curriculum_subject_id}
+                    >
+                      {SESSION_TYPES.map((type) => {
+                        const assignedCounts = getAssignedTypeCounts(editingSchedule.curriculum_subject_id, {
+                          excludeScheduleId: editingSchedule.id,
+                          sectionId: editingSchedule.section_id,
+                          yearLevelId: editingSchedule.year_level_id,
+                        });
+                        const disabled = (assignedCounts[type.value] || 0) >= getSessionLimit(type.value);
+                        return (
+                          <option
+                            key={type.value}
+                            value={type.value}
+                            disabled={disabled && normalizeSessionType(editingSchedule.session_type) !== type.value}
+                            className={disabled && normalizeSessionType(editingSchedule.session_type) !== type.value ? 'text-gray-400' : ''}
+                          >
+                            {type.label}
+                            {disabled && normalizeSessionType(editingSchedule.session_type) !== type.value ? ' — maxed out' : ''}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 2: Schedule */}
+              <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Schedule</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {/* Day */}
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-xs font-medium">Day</label>
+                    <select
+                      value={editingSchedule.day}
+                      onChange={(e) =>
+                        setEditingSchedule({
+                          ...editingSchedule,
+                          day: e.target.value,
+                        })
+                      }
+                      className="w-full border rounded px-2.5 py-2 text-xs"
+                    >
+                      {DAYS.map((d) => (
+                        <option key={d} value={d}>
+                          {d}
                         </option>
-                      );
-                    })
-                  }
-                </select>
-              </div>
+                      ))}
+                    </select>
+                  </div>
 
-              {/* Session Type */}
-              <div>
-                <label className="block text-gray-700 mb-1 text-xs">Session Type</label>
-                <select
-                  value={normalizeSessionType(editingSchedule.session_type)}
-                  onChange={(e) => {
-                    const value = normalizeSessionType(e.target.value);
-                    const assignedCounts = getAssignedTypeCounts(editingSchedule.curriculum_subject_id, {
-                      excludeScheduleId: editingSchedule.id,
-                      sectionId: editingSchedule.section_id,
-                      yearLevelId: editingSchedule.year_level_id,
-                    });
-                    if ((assignedCounts[value] || 0) >= getSessionLimit(value)) {
-                      Swal.fire({
-                        icon: "error",
-                        title: "Duplicate Session",
-                        text: "This subject already reached the allowed number of schedules for that session type.",
-                        timer: 2400,
-                        showConfirmButton: false,
-                        toast: true,
-                        position: "top-end",
-                      });
-                      return;
-                    }
-                    setEditingSchedule({
-                      ...editingSchedule,
-                      session_type: value,
-                    });
-                  }}
-                  className="w-full border rounded-md px-3 py-2 text-sm"
-                  disabled={!editingSchedule.curriculum_subject_id}
-                >
-                  {SESSION_TYPES.map((type) => {
-                    const assignedCounts = getAssignedTypeCounts(editingSchedule.curriculum_subject_id, {
-                      excludeScheduleId: editingSchedule.id,
-                      sectionId: editingSchedule.section_id,
-                      yearLevelId: editingSchedule.year_level_id,
-                    });
-                    const disabled = (assignedCounts[type.value] || 0) >= getSessionLimit(type.value);
-                    return (
-                      <option
-                        key={type.value}
-                        value={type.value}
-                        disabled={disabled && normalizeSessionType(editingSchedule.session_type) !== type.value}
-                        className={disabled && normalizeSessionType(editingSchedule.session_type) !== type.value ? 'text-gray-400' : ''}
-                      >
-                        {type.label}
-                        {disabled && normalizeSessionType(editingSchedule.session_type) !== type.value ? ' — maxed out' : ''}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
+                  {/* Start Time */}
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-xs font-medium">Start Time</label>
+                    <input
+                      type="time"
+                      value={editingSchedule.start}
+                      onChange={(e) =>
+                        setEditingSchedule({
+                          ...editingSchedule,
+                          start: toHHMM(e.target.value)
+                        })}
+                      className="w-full border rounded px-2.5 py-2 text-xs"
+                    />
+                  </div>
 
-              {/* Day */}
-              <div>
-                <label className="block text-gray-700 mb-1 text-xs">Day</label>
-                <select
-                  value={editingSchedule.day}
-                  onChange={(e) =>
-                    setEditingSchedule({
-                      ...editingSchedule,
-                      day: e.target.value,
-                    })
-                  }
-                  className="w-full border rounded-md px-3 py-2 text-sm"
-                >
-                  {DAYS.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Faculty */}
-              <div>
-                <label className="block text-gray-700 mb-1 text-xs">
-                  Faculty
-                </label>
-                <select
-                  value={editingSchedule.faculty_id || ""}
-                  onChange={(e) =>
-                    setEditingSchedule({
-                      ...editingSchedule,
-                      faculty_id: Number(e.target.value),
-                    })
-                  }
-                  className="w-full border rounded-md px-3 py-2 text-sm"
-                >
-                  <option value="">TBA</option>
-                  {faculties.map((f) => {
-                    const hasConflict = schedules.some((s) => {
-                      if (s.faculty_id !== f.id) return false;
-                      if (s.day !== editingSchedule.day) return false;
-                      return !(
-                        convertToMinutes(editingSchedule.end) <= convertToMinutes(s.start) ||
-                        convertToMinutes(editingSchedule.start) >= convertToMinutes(s.end)
-                      );
-                    });
-                    const label = `${f.fName} ${f.lName}${hasConflict ? ' — has conflict' : ''}`;
-                    return (
-                      <option
-                        key={f.id}
-                        value={f.id}
-                        disabled={hasConflict}
-                        className={hasConflict ? 'text-gray-400' : ''}
-                      >
-                        {label}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-
-              {/* Classroom */}
-              <div>
-                <label className="block text-gray-700 mb-1 text-xs">
-                  Classroom
-                </label>
-                <select
-                  value={editingSchedule.classroom_id || ""}
-                  onChange={(e) =>
-                    setEditingSchedule({
-                      ...editingSchedule,
-                      classroom_id: Number(e.target.value),
-                    })
-                  }
-                  className="w-full border rounded-md px-3 py-2 text-sm"
-                >
-                  <option value="">TBA</option>
-                  {classrooms.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.room_number}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Time */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-gray-700 mb-1 text-xs">
-                    Start Time
-                  </label>
-                  <input
-                    type="time"
-                    value={toHHMM(editingSchedule.start)}
-                    onChange={(e) =>
-                      setEditingSchedule({
-                        ...editingSchedule,
-                        start: toHHMM(e.target.value),
-                      })
-                    }
-                    onBlur={(e) =>
-                      setEditingSchedule((prev) => ({
-                        ...prev,
-                        start: toHHMM(snapToGrid(e.target.value)),
-                      }))
-                    }
-                    className="w-full border rounded-md px-3 py-2 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 mb-1 text-xs">
-                    End Time
-                  </label>
-                  <input
-                    type="time"
-                    value={toHHMM(editingSchedule.end)}
-                    onChange={(e) =>
-                      setEditingSchedule({
-                        ...editingSchedule,
-                        end: toHHMM(e.target.value),
-                      })
-                    }
-                    onBlur={(e) =>
-                      setEditingSchedule((prev) => ({
-                        ...prev,
-                        end: toHHMM(snapToGrid(e.target.value)),
-                      }))
-                    }
-                    className="w-full border rounded-md px-3 py-2 text-sm"
-                  />
+                  {/* End Time */}
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-xs font-medium">End Time</label>
+                    <input
+                      type="time"
+                      value={editingSchedule.end}
+                      onChange={(e) =>
+                        setEditingSchedule({
+                          ...editingSchedule,
+                          end: toHHMM(e.target.value)
+                        })}
+                      className="w-full border rounded px-2.5 py-2 text-xs"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Color Picker */}
-              <div>
-                <label className="block text-gray-700 mb-1 text-xs">
-                  Color
+              {/* Section 3: Assignment */}
+              <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Assignment</h3>
+                <div className="grid grid-cols-1 gap-3">
+                  {/* Faculty */}
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-xs font-medium">
+                      Faculty
+                    </label>
+                    <select
+                      value={editingSchedule.faculty_id || ""}
+                      onChange={(e) =>
+                        setEditingSchedule({
+                          ...editingSchedule,
+                          faculty_id: Number(e.target.value),
+                        })
+                      }
+                      className="w-full border rounded px-2.5 py-2 text-xs"
+                    >
+                      <option value="">Select faculty...</option>
+                      {faculties.map((f) => {
+                        const hasConflict = schedules.some((s) => {
+                          if (s.faculty_id !== f.id) return false;
+                          if (s.day !== editingSchedule.day) return false;
+                          return !(
+                            convertToMinutes(editingSchedule.end) <= convertToMinutes(s.start) ||
+                            convertToMinutes(editingSchedule.start) >= convertToMinutes(s.end)
+                          );
+                        });
+                        const label = `${f.fName} ${f.lName}${hasConflict ? ' — has conflict' : ''}`;
+                        return (
+                          <option
+                            key={f.id}
+                            value={f.id}
+                            disabled={hasConflict}
+                            className={hasConflict ? 'text-gray-400' : ''}
+                          >
+                            {label}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+
+                  {/* Classroom */}
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-xs font-medium">
+                      Classroom
+                    </label>
+                    <select
+                      value={editingSchedule.classroom_id || ""}
+                      onChange={(e) =>
+                        setEditingSchedule({
+                          ...editingSchedule,
+                          classroom_id: Number(e.target.value),
+                        })
+                      }
+                      className="w-full border rounded px-2.5 py-2 text-xs"
+                    >
+                      <option value="">Select classroom...</option>
+                      {classrooms.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.room_number} ({c.building || 'N/A'})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Duration Picker */}
+              <div className="space-y-1">
+                <label className="block text-gray-600 mb-0.5 text-xs font-medium">
+                  Duration
                 </label>
-                <input
-                  type="color"
-                  value={editingSchedule.color || "#dbeafe"}
-                  onChange={(e) =>
-                    setEditingSchedule({
-                      ...editingSchedule,
-                      color: e.target.value,
-                    })
-                  }
-                  className="w-12 h-8 border rounded-md cursor-pointer"
-                />
+                <div className="grid grid-cols-4 gap-2">
+                  {[30, 60, 90, 120].map(minutes => {
+                    const start = convertToMinutes(editingSchedule.start);
+                    const endTime = convertFromMinutes(start + minutes);
+                    return (
+                      <button
+                        key={minutes}
+                        type="button"
+                        onClick={() => {
+                          setEditingSchedule(prev => ({
+                            ...prev,
+                            end: endTime
+                          }));
+                        }}
+                        className={`text-xs py-1 px-2 rounded border ${
+                          (convertToMinutes(editingSchedule.end) - convertToMinutes(editingSchedule.start) === minutes)
+                            ? 'bg-blue-100 border-blue-300 text-blue-700'
+                            : 'bg-white border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        {minutes} min
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Schedule Conflicts */}
+              {scheduleConflicts.length > 0 && (
+                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-700">
+                  <div className="font-medium mb-1">Schedule Conflict Detected:</div>
+                  <ul className="list-disc pl-4 space-y-1">
+                    {scheduleConflicts.map((conflict, idx) => (
+                      <li key={idx}>
+                        {conflict.message}
+                        {conflict.conflicts.map((c, i) => (
+                          <div key={i} className="text-red-600 ml-2">
+                            {c.day} {c.start} - {c.end}
+                            {c.faculty_id && ` (${faculties.find(f => f.id === c.faculty_id)?.lName || 'Faculty'})`}
+                            {c.classroom_id && ` (${classrooms.find(r => r.id === c.classroom_id)?.room_number || 'Room'})`}
+                          </div>
+                        ))}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Advanced Options Toggle */}
+              <button
+                type="button"
+                onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+              >
+                {showAdvancedOptions ? 'Hide' : 'Show'} Advanced Options
+                <svg 
+                  className={`w-3 h-3 transition-transform ${showAdvancedOptions ? 'rotate-180' : ''}`} 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Advanced Options */}
+              {showAdvancedOptions && (
+                <div className="space-y-3 pt-2 border-t border-gray-200">
+                  {/* Recurring Schedule */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center space-x-2 text-xs">
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-300 text-blue-600"
+                        checked={editingSchedule.isRecurring || false}
+                        onChange={(e) => {
+                          setEditingSchedule(prev => ({
+                            ...prev,
+                            isRecurring: e.target.checked,
+                            recurringWeeks: e.target.checked ? (prev.recurringWeeks || 1) : null
+                          }));
+                        }}
+                      />
+                      <span>Recurring Schedule</span>
+                    </label>
+                    
+                    {editingSchedule.isRecurring && (
+                      <div className="mt-2 pl-6">
+                        <label className="block text-gray-600 mb-0.5 text-xs font-medium">
+                          Repeat for
+                        </label>
+                        <select
+                          value={editingSchedule.recurringWeeks || 1}
+                          onChange={(e) => {
+                            setEditingSchedule(prev => ({
+                              ...prev,
+                              recurringWeeks: parseInt(e.target.value, 10)
+                            }));
+                          }}
+                          className="w-full border rounded px-2.5 py-1.5 text-xs"
+                        >
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map((num) => (
+                            <option key={num} value={num}>
+                              {num} week{num !== 1 ? 's' : ''}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Room Capacity Check */}
+                  {editingSchedule.classroom_id && (
+                    <div className="text-xs text-gray-600">
+                      <div className="md:col-span-2">Room Capacity: {classrooms.find(r => r.id === editingSchedule.classroom_id)?.capacity || 'N/A'}</div>
+                      <div className="md:col-span-2">Expected Students: {/* Add your expected students count here */}</div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Enhanced Color Picker */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Schedule Color
+                  </label>
+                  <span className="text-xs text-gray-500">
+                    {editingSchedule.session_type === 'lecture' ? 'Lecture' : 'Lab'} Class
+                  </span>
+                </div>
+                
+                {/* Color Preset Groups */}
+                <div className="space-y-3">
+                  {/* Lecture Presets */}
+                  {editingSchedule.session_type === 'lecture' && (
+                    <div className="md:col-span-2">
+                      <p className="text-xs font-medium text-gray-500 mb-1.5">Lecture Colors</p>
+                      <div className="grid grid-cols-5 gap-2">
+                        {[
+                          { color: '#e0f2fe', label: 'Sky' },
+                          { color: '#dbeafe', label: 'Light Blue' },
+                          { color: '#e0f7fa', label: 'Cyan' },
+                          { color: '#e0f2f1', label: 'Teal' },
+                          { color: '#e8f5e9', label: 'Mint' },
+                        ].map(({ color, label }) => (
+                          <button
+                            key={color}
+                            type="button"
+                            className={`relative w-full h-8 rounded-md border-2 transition-all flex items-center justify-center group ${editingSchedule.color === color ? 'ring-2 ring-blue-500 ring-offset-1' : 'border-transparent'}`}
+                            style={{ backgroundColor: color }}
+                            onClick={() => handleColorSelect(color)}
+                            aria-label={`Select ${label} color`}
+                            title={label}
+                          >
+                            {editingSchedule.color === color && (
+                              <CheckCircle size={16} className="text-gray-800/80" weight="fill" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Lab Presets */}
+                  {editingSchedule.session_type === 'laboratory' && (
+                    <div className="md:col-span-2">
+                      <p className="text-xs font-medium text-gray-500 mb-1.5">Lab Colors</p>
+                      <div className="grid grid-cols-5 gap-2">
+                        {[
+                          { color: '#ffedd5', label: 'Orange' },
+                          { color: '#fee2e2', label: 'Red' },
+                          { color: '#f3e8ff', label: 'Purple' },
+                          { color: '#fce7f3', label: 'Pink' },
+                          { color: '#ecfccb', label: 'Lime' },
+                        ].map(({ color, label }) => (
+                          <button
+                            key={color}
+                            type="button"
+                            className={`relative w-full h-8 rounded-md border-2 transition-all flex items-center justify-center group ${editingSchedule.color === color ? 'ring-2 ring-blue-500 ring-offset-1' : 'border-transparent'}`}
+                            style={{ backgroundColor: color }}
+                            onClick={() => handleColorSelect(color)}
+                            aria-label={`Select ${label} color`}
+                            title={label}
+                          >
+                            {editingSchedule.color === color && (
+                              <CheckCircle size={16} className="text-gray-800/80" weight="fill" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Custom Color Picker */}
+                  <div className="md:col-span-2">
+                    <p className="text-xs font-medium text-gray-500 mb-1.5">Custom Color</p>
+                    <div className="relative">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <div 
+                          className="w-8 h-8 rounded-md border border-gray-300 flex items-center justify-center"
+                          style={{ backgroundColor: editingSchedule.color || '#e0f2fe' }}
+                        >
+                          {!editingSchedule.color && (
+                            <span className="text-xs text-gray-500">Pick</span>
+                          )}
+                        </div>
+                        <span className="text-sm text-gray-700">
+                          {editingSchedule.color ? 'Change color' : 'Select color'}
+                        </span>
+                        <input
+                          type="color"
+                          value={editingSchedule.color || '#e0f2fe'}
+                          onChange={(e) => handleColorSelect(e.target.value)}
+                          className="absolute opacity-0 w-0 h-0"
+                          aria-label="Custom color picker"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Buttons */}
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                onClick={() => setEditingSchedule(null)}
-                className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 text-xs"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={validateAndSaveSchedule}
-                className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs flex items-center gap-1"
-              >
-                <CheckCircle size={14} /> Save
-              </button>
+            <div className="mt-4 pt-3 border-t border-gray-200 flex justify-between items-center">
+              {scheduleConflicts.length > 0 ? (
+                <div className="text-xs text-red-600 flex items-center">
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Please resolve conflicts before saving
+                </div>
+              ) : (
+                <div className="text-xs text-green-600 flex items-center">
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  No scheduling conflicts
+                </div>
+              )}
+              <div className="flex flex-col gap-2 mt-4">
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => setEditingSchedule(null)}
+                    className="px-3 py-2 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50 text-xs flex items-center gap-1"
+                  >
+                    <XCircle size={14} /> Cancel
+                  </button>
+                  <button
+                    onClick={validateAndSaveSchedule}
+                    className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs flex items-center gap-1"
+                  >
+                    <CheckCircle size={14} /> Save
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

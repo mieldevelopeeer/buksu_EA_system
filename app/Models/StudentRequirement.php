@@ -16,7 +16,6 @@ class StudentRequirement extends Model
         'image',
         'is_submitted',
         'submitted_at',
-
     ];
 
     
@@ -30,5 +29,14 @@ class StudentRequirement extends Model
     public function requirement()
     {
         return $this->belongsTo(Requirement::class, 'requirement_id');
-    }   
+    }
+
+    public static function forStudent(int $studentId)
+    {
+        return static::with('requirement')
+            ->where('student_id', $studentId)
+            ->orderByDesc('submitted_at')
+            ->orderByDesc('created_at')
+            ->get();
+    }
 }

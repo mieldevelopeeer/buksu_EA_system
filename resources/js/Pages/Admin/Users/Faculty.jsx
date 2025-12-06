@@ -1,5 +1,5 @@
 // resources/js/Pages/Admin/Users/Faculties.jsx
-import React, { useState ,useEffect } from "react";
+import React, { useState } from "react";
 import { usePage, useForm, router } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -37,9 +37,6 @@ const { data, setData, post, reset, processing } = useForm({
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////////////////////
 const handleSubmit = (e) => {
   e.preventDefault();
 

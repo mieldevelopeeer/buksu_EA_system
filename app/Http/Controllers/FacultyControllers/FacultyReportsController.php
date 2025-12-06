@@ -17,7 +17,7 @@ class FacultyReportsController extends Controller
 {
     public function attendance(Request $request)
     {
-        $facultyId = Auth::id();
+        $facultyId = (int) Auth::id();
 
         if (!$facultyId) {
             abort(403);
@@ -25,7 +25,7 @@ class FacultyReportsController extends Controller
 
         $activeSemester = $this->getActiveSemester();
 
-        $schedules = Class_Schedules::with([
+        $scheduleQuery = Class_Schedules::with([
                 'curriculumSubject.subject',
                 'curriculumSubject.course',
                 'section',
@@ -34,8 +34,40 @@ class FacultyReportsController extends Controller
             ->where('faculty_id', $facultyId)
             ->when($activeSemester, fn ($query) => $query->where('semester_id', $activeSemester->id))
             ->orderBy('schedule_day')
-            ->orderBy('start_time')
-            ->get();
+            ->orderBy('start_time');
+
+        $schedules = $scheduleQuery->get();
+
+        if ($schedules->isEmpty()) {
+            $sectionIds = $this->findFacultySectionIds($facultyId);
+
+            if ($sectionIds->isNotEmpty()) {
+                $schedules = Class_Schedules::with([
+                        'curriculumSubject.subject',
+                        'curriculumSubject.course',
+                        'section',
+                        'enrollmentSubjects.enrollment',
+                    ])
+                    ->whereIn('section_id', $sectionIds)
+                    ->when($activeSemester, fn ($query) => $query->where('semester_id', $activeSemester->id))
+                    ->orderBy('schedule_day')
+                    ->orderBy('start_time')
+                    ->get();
+            }
+        }
+
+        if ($scheduleModels->isEmpty()) {
+            $scheduleModels = Class_Schedules::with([
+                    'curriculumSubject.subject',
+                    'curriculumSubject.course',
+                    'section',
+                    'enrollmentSubjects.enrollment.student',
+                ])
+                ->when($activeSemester, fn ($query) => $query->where('semester_id', $activeSemester->id))
+                ->orderBy('schedule_day')
+                ->orderBy('start_time')
+                ->get();
+        }
 
         $mappedSchedules = $this->mapSchedules($schedules);
         $attendanceSummaries = $this->buildAttendanceSummaries($schedules->pluck('id'));
@@ -69,6 +101,24 @@ class FacultyReportsController extends Controller
             ->orderBy('start_time');
 
         $scheduleModels = $scheduleQuery->get();
+
+        if ($scheduleModels->isEmpty()) {
+            $sectionIds = $this->findFacultySectionIds($facultyId);
+
+            if ($sectionIds->isNotEmpty()) {
+                $scheduleModels = Class_Schedules::with([
+                        'curriculumSubject.subject',
+                        'curriculumSubject.course',
+                        'section',
+                        'enrollmentSubjects.enrollment.student',
+                    ])
+                    ->whereIn('section_id', $sectionIds)
+                    ->when($activeSemester, fn ($query) => $query->where('semester_id', $activeSemester->id))
+                    ->orderBy('schedule_day')
+                    ->orderBy('start_time')
+                    ->get();
+            }
+        }
         $mappedSchedules = $this->mapSchedules($scheduleModels)->map(function (array $schedule) use ($scheduleModels) {
             $original = $scheduleModels->firstWhere('id', $schedule['id']);
 
@@ -97,6 +147,20 @@ class FacultyReportsController extends Controller
 
         $gradeSummaries = $this->buildGradeSummaries($scheduleModels->pluck('id'), $scheduleModels);
 
+        // Get faculty name
+        $faculty = Auth::user();
+        $facultyName = $faculty ? collect([
+            $faculty->fName,
+            $faculty->mName,
+            $faculty->lName,
+        ])->filter()->implode(' ') : null;
+
+        // Add faculty name to schedules
+        $mappedSchedules = $mappedSchedules->map(function ($schedule) use ($facultyName) {
+            $schedule['faculty_name'] = $facultyName;
+            return $schedule;
+        });
+
         return Inertia::render('Faculty/Reports/GradeReport', [
             'schedules' => $mappedSchedules,
             'gradeSummaries' => $gradeSummaries,
@@ -112,6 +176,19 @@ class FacultyReportsController extends Controller
             ->where('school_year.is_active', 1)
             ->select('semesters.*', 'school_year.school_year')
             ->first();
+    }
+
+    protected function findFacultySectionIds($facultyId): Collection
+    {
+        $id = (int) $facultyId;
+
+        if ($id <= 0) {
+            return collect();
+        }
+
+        return DB::table('sections')
+            ->where('faculty_id', $id)
+            ->pluck('id');
     }
 
     protected function mapSchedules(Collection $schedules): Collection
@@ -242,13 +319,20 @@ class FacultyReportsController extends Controller
                     $student = optional($enrollment)->student;
                     $grade = $subject->grades;
 
-                    $statusLabel = strtolower(optional($grade)->status ?? 'draft');
-                    $finalGrade = optional($grade)->final ?? optional($grade)->grade;
-
-                    if ($finalGrade === null && $grade && $grade->midterm !== null) {
-                        $finalGrade = $grade->midterm;
+                    // Only process grades with both midterm AND final
+                    $midterm = optional($grade)->midterm;
+                    $final = optional($grade)->final;
+                    
+                    if ($midterm === null || $final === null) {
+                        return null; // Skip incomplete grades
                     }
 
+                    // Calculate final grade as (midterm + final) / 2
+                    $finalGrade = is_numeric($midterm) && is_numeric($final)
+                        ? round(((float)$midterm + (float)$final) / 2, 2)
+                        : null;
+
+                    $statusLabel = strtolower(optional($grade)->status ?? 'draft');
                     $remarks = optional($grade)->remarks;
 
                     if (!$remarks && $finalGrade !== null) {
@@ -259,14 +343,14 @@ class FacultyReportsController extends Controller
                         'enrollment_id' => optional($enrollment)->id,
                         'student_id' => optional($student)->id,
                         'student_name' => $this->formatStudentName($student),
-                        'midterm' => optional($grade)->midterm,
+                        'midterm' => $midterm,
                         'final' => $finalGrade,
                         'remarks' => $remarks,
                         'midterm_status' => $statusLabel,
                         'final_status' => $statusLabel,
                     ];
                 })
-                ->filter(fn ($entry) => !empty($entry['student_id']))
+                ->filter(fn ($entry) => $entry !== null && !empty($entry['student_id']))
                 ->values();
 
             $submitted = $entries->where('final_status', 'submitted')->count();

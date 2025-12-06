@@ -22,7 +22,13 @@ class Enrollments extends Model
     'school_year_id', // <-- must be here
     'status',
     'student_type',
+    'unenrolled_by',
+    'unenrolled_at',
 ];
+
+    protected $casts = [
+        'unenrolled_at' => 'datetime',
+    ];
 
 
 
@@ -31,6 +37,11 @@ class Enrollments extends Model
     {
         // student_id in enrollments points to id in users
         return $this->belongsTo(Users::class, 'student_id', 'id');
+    }
+
+    public function unenrolledBy()
+    {
+        return $this->belongsTo(Users::class, 'unenrolled_by');
     }
     // Semester relationship
     public function semester()
@@ -86,7 +97,13 @@ class Enrollments extends Model
 public function enrollmentSubjects()
 {
     return $this->hasMany(EnrollmentSubject::class, 'enrollment_id','id');
-}   
+}
+
+public function enrolledSubjects()
+{
+    return $this->hasMany(EnrollmentSubject::class, 'enrollment_id','id');
+}
+
 public function enrollments()
 {
     return $this->hasManyThrough(

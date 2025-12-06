@@ -10,8 +10,12 @@ use App\Models\Class_Schedules;
 use App\Models\EnrollmentSubject;
 use App\Models\Grades;
 use App\Models\Enrollments;
+use App\Models\Notification;
+use App\Models\Users;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+
 class GradeController extends Controller
 {
    public function index()
@@ -59,9 +63,27 @@ class GradeController extends Controller
             $student = $enrollment->student ?? null;
 
             if ($student && $enrollment->status === 'enrolled') {
-                $grade = $enrolled->grades()
-                    ->where('class_schedule_id', $sched->id)
-                    ->first();
+                $grade = $enrolled->grades;
+
+                // If no grade found via relationship, try direct query
+                if (!$grade) {
+                    $grade = \App\Models\Grades::where('enrollment_subject_id', $enrolled->id)
+                        ->first();
+                }
+
+                $compositeStatus = 'draft';
+                if ($grade) {
+                    $partStatuses = [
+                        $grade->midterm_status,
+                        $grade->final_status,
+                    ];
+
+                    if (collect($partStatuses)->filter()->every(fn ($status) => $status === 'submitted')) {
+                        $compositeStatus = 'submitted';
+                    } elseif (collect($partStatuses)->contains('submitted')) {
+                        $compositeStatus = 'submitted';
+                    }
+                }
 
                 return [
                     'enrollment_id' => $enrollment->id,
@@ -70,9 +92,11 @@ class GradeController extends Controller
                     'midterm' => $grade->midterm ?? null,
                     'final' => $grade->final ?? null,
                     'remarks' => $grade->remarks ?? null,
-                    'status' => $grade->status ?? 'draft',
+                    'status' => $compositeStatus,
                     'midterm_status' => $grade->midterm_status ?? 'draft',
                     'final_status' => $grade->final_status ?? 'draft',
+                    'midterm_change_status' => $grade->midterm_change_status ?? 'none',
+                    'final_change_status' => $grade->final_change_status ?? 'none',
                 ];
             }
 
@@ -110,39 +134,257 @@ class GradeController extends Controller
 
         DB::transaction(function () use ($request, $facultyId) {
             foreach ($request->grades as $data) {
-                $midterm = $data['midterm'] ?? null;
-                $final = $data['final'] ?? null;
-                $midtermStatus = $data['midterm_status'] ?? 'draft';
-                $finalStatus = $data['final_status'] ?? 'draft';
-
-                // Compute remarks if not provided
-                $remarks = $data['remarks'] ?? 'Incomplete';
-                if ($midterm !== null || $final !== null) {
-                    $score = $final ?? $midterm;
-                    $remarks = $score <= 3.0 ? 'Passed' : 'Failed';
-                }
-
-                Grades::updateOrCreate(
+                $grade = Grades::firstOrNew(
                     [
                         'enrollment_id' => $data['enrollment_id'],
                         'class_schedule_id' => $data['class_schedule_id'],
                         'faculty_id' => $facultyId,
                     ],
                     [
-                        'midterm' => $midterm,
-                        'final' => $final,
-                        'remarks' => $remarks,
-                        'status' => $finalStatus,
-                        'midterm_status' => $midtermStatus,
-                        'final_status' => $finalStatus,
-                        'confirmed_by' => null,
-                        'confirmed_at' => null,
+                        'midterm_status' => 'draft',
+                        'final_status' => 'draft',
+                        'midterm_change_status' => 'none',
+                        'final_change_status' => 'none',
                     ]
                 );
+
+                $midterm = $data['midterm'] ?? $grade->midterm;
+                $final = $data['final'] ?? $grade->final;
+                $midtermStatus = $data['midterm_status'] ?? $grade->midterm_status ?? 'draft';
+                $finalStatus = $data['final_status'] ?? $grade->final_status ?? 'draft';
+
+                $midtermLocked = $grade->exists
+                    && in_array(strtolower($grade->midterm_status ?? 'draft'), ['submitted', 'confirmed'])
+                    && strtolower($grade->midterm_change_status ?? 'none') !== 'approved';
+                $finalLocked = $grade->exists
+                    && in_array(strtolower($grade->final_status ?? 'draft'), ['submitted', 'confirmed'])
+                    && strtolower($grade->final_change_status ?? 'none') !== 'approved';
+
+                if ($midtermLocked && ($midterm !== $grade->midterm || $midtermStatus !== $grade->midterm_status)) {
+                    throw ValidationException::withMessages([
+                        'grades' => ['Midterm grade is locked until the registrar approves the change request.'],
+                    ]);
+                }
+
+                if ($finalLocked && ($final !== $grade->final || $finalStatus !== $grade->final_status)) {
+                    throw ValidationException::withMessages([
+                        'grades' => ['Final grade is locked until the registrar approves the change request.'],
+                    ]);
+                }
+
+                // Compute remarks if not provided
+                $remarks = $data['remarks'] ?? $grade->remarks ?? 'Incomplete';
+                if ($midterm !== null || $final !== null) {
+                    $score = $final ?? $midterm;
+                    $remarks = $score <= 3.0 ? 'Passed' : 'Failed';
+                }
+
+                $grade->midterm = $midterm;
+                $grade->final = $final;
+                $grade->remarks = $remarks;
+                $grade->midterm_status = $midtermStatus;
+                $grade->final_status = $finalStatus;
+                $grade->confirmed_by = null;
+                $grade->confirmed_at = null;
+                $grade->faculty_id = $facultyId;
+
+                $grade->save();
             }
         });
 
         return redirect()->back()->with('success', 'Grades successfully added/updated.');
+    }
+
+    public function requestChange(Request $request)
+    {
+        $facultyId = Auth::user()->id;
+
+        if ($request->has('students')) {
+            $payload = $request->validate([
+                'students' => 'required|array|min:1',
+                'students.*.enrollment_id' => 'required|exists:enrollments,id',
+                'students.*.class_schedule_id' => 'required|exists:class_schedules,id',
+                'students.*.grade_part' => 'required|in:midterm,final',
+                'reason' => 'nullable|string|max:255',
+            ]);
+
+            $reason = $payload['reason'] ?? null;
+            foreach ($payload['students'] as $studentData) {
+                $grade = Grades::firstOrCreate(
+                    [
+                        'enrollment_id' => $studentData['enrollment_id'],
+                        'class_schedule_id' => $studentData['class_schedule_id'],
+                    ],
+                    [
+                        'faculty_id' => $facultyId,
+                        'midterm_status' => 'draft',
+                        'final_status' => 'draft',
+                    ]
+                );
+
+                $field = $studentData['grade_part'] . '_change_status';
+                $alreadyRequested = $grade->$field === 'requested';
+                $grade->$field = 'requested';
+                $grade->save();
+
+                if (!$alreadyRequested) {
+                    $this->notifyRegistrarsOfGradeChange(
+                        $studentData['enrollment_id'],
+                        $studentData['class_schedule_id'],
+                        $studentData['grade_part'],
+                        $reason
+                    );
+                }
+            }
+
+            return back()->with('success', 'Grade change requests submitted.');
+        }
+
+        $data = $request->validate([
+            'enrollment_id' => 'required|exists:enrollments,id',
+            'class_schedule_id' => 'required|exists:class_schedules,id',
+            'grade_part' => 'required|in:midterm,final',
+            'reason' => 'nullable|string|max:255',
+        ]);
+
+        $grade = Grades::firstOrCreate(
+            [
+                'enrollment_id' => $data['enrollment_id'],
+                'class_schedule_id' => $data['class_schedule_id'],
+            ],
+            [
+                'faculty_id' => $facultyId,
+                'midterm_status' => 'draft',
+                'final_status' => 'draft',
+            ]
+        );
+
+        $field = $data['grade_part'] . '_change_status';
+        $alreadyRequested = $grade->$field === 'requested';
+        $grade->$field = 'requested';
+        $grade->save();
+
+        if (!$alreadyRequested) {
+            $this->notifyRegistrarsOfGradeChange(
+                $data['enrollment_id'],
+                $data['class_schedule_id'],
+                $data['grade_part'],
+                $data['reason'] ?? null
+            );
+        }
+
+        return back()->with('success', ucfirst($data['grade_part']) . ' grade change requested.');
+    }
+
+    protected function notifyRegistrarsOfGradeChange(int $enrollmentId, int $classScheduleId, string $gradePart, ?string $reason = null): void
+    {
+        static $registrarIds = null;
+
+        if ($registrarIds === null) {
+            $registrarIds = Users::query()->where('role', 'registrar')->pluck('id');
+        }
+
+        if ($registrarIds->isEmpty()) {
+            return;
+        }
+
+        $enrollment = Enrollments::with('student:id,fName,mName,lName')->find($enrollmentId);
+        $schedule = Class_Schedules::with([
+            'curriculumSubject.subject',
+            'curriculumSubject.curriculum.course',
+            'curriculumSubject.curriculum.major',
+            'section.yearLevel',
+        ])->find($classScheduleId);
+        $student = optional($enrollment)->student;
+        $studentName = $student
+            ? trim("{$student->fName} {$student->lName}")
+            : 'a student';
+        $subjectTitle = optional($schedule?->curriculumSubject?->subject)->descriptive_title ?? 'their subject';
+
+        $faculty = Auth::user();
+        $facultyName = $faculty ? trim("{$faculty->fName} {$faculty->lName}") : 'A faculty member';
+
+        $gradeLabel = ucfirst($gradePart);
+        $message = sprintf(
+            '%s requested a %s grade change for %s (%s).',
+            $facultyName,
+            strtolower($gradeLabel),
+            $studentName,
+            $subjectTitle
+        );
+
+        if ($reason) {
+            $message .= ' Reason: ' . $reason;
+        }
+
+        $notificationUrl = $this->buildRegistrarGradeReviewUrl($schedule, $student, $gradePart);
+
+        foreach ($registrarIds as $registrarId) {
+            Notification::create([
+                'user_id' => $registrarId,
+                'type' => 'grade_change',
+                'title' => $gradeLabel . ' grade change request',
+                'message' => $message,
+                'url' => $notificationUrl,
+                'is_read' => false,
+            ]);
+        }
+    }
+
+    protected function buildRegistrarGradeReviewUrl(?Class_Schedules $schedule, $student, ?string $gradePart = null): string
+    {
+        try {
+            $fallback = route('registrar.student.grades');
+        } catch (\Throwable $exception) {
+            $fallback = '/registrar/grades';
+        }
+
+        if (!$schedule) {
+            return $fallback;
+        }
+
+        $courseId = optional($schedule->curriculumSubject?->curriculum?->course)->id;
+        $yearId = optional($schedule->section?->yearLevel)->id;
+        $sectionId = $schedule->section?->id;
+        $subjectId = $schedule->id;
+
+        if (!$courseId || !$yearId || !$sectionId || !$subjectId) {
+            return $fallback;
+        }
+
+        $params = [
+            'course' => $courseId,
+            'year' => $yearId,
+            'section' => $sectionId,
+            'subject' => $subjectId,
+        ];
+
+        $query = [];
+        $majorId = optional($schedule->curriculumSubject?->curriculum?->major)->id;
+        if ($majorId) {
+            $query['major_id'] = $majorId;
+        }
+
+        if ($student?->id) {
+            $query['student_id'] = $student->id;
+        }
+
+        $term = strtolower($gradePart ?? '');
+        if (in_array($term, ['midterm', 'final', 'both'])) {
+            $query['term'] = $term;
+        }
+
+        try {
+            $url = route('registrar.student.grades.course.year.section.subject', $params);
+        } catch (\Throwable $exception) {
+            return $fallback;
+        }
+
+        if (!empty($query)) {
+            $url .= '?' . http_build_query($query);
+        }
+
+        return $url;
     }
 
   public function insertExcel(Request $request)
@@ -219,7 +461,6 @@ class GradeController extends Controller
                     'midterm'      => $midterm,
                     'final'        => $final,
                     'remarks'      => $remarks,
-                    'status'       => $finalStatus,
                     'midterm_status' => $midtermStatus,
                     'final_status'   => $finalStatus,
                     'confirmed_by' => null,

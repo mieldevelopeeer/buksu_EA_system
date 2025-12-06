@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\courses;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class class_schedules extends Model
+class Class_Schedules extends Model
 {
     use HasFactory;
 
     protected $table = 'class_schedules';
-     protected $fillable = [
+    
+    protected $fillable = [ 
         'start_time',
         'end_time',
         'schedule_day',
@@ -25,86 +26,185 @@ class class_schedules extends Model
         'school_year_id',
         'semester_id',
         'section_id',
+        'color',
     ];
 
-     // Relationships
-    // public function subject() 
-    // {
-    //     return $this->belongsTo(Subjects::class, 'subject_id', 'id');
-    // }
-
-    public function faculty()  
+    /**
+     * Get the faculty that owns the class ClassSchedules.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function faculty(): BelongsTo
     {
-        return $this->belongsTo(Users::class, 'faculty_id', 'id');
+        return $this->belongsTo(\App\Models\Users::class, 'faculty_id');
     }
 
-    public function classroom() 
+    /**
+     * Get the classroom that owns the class ClassSchedules.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function classroom(): BelongsTo
     {
-        return $this->belongsTo(Classrooms::class, 'classroom_id', 'id');
+        return $this->belongsTo(\App\Models\Classrooms::class, 'classroom_id');
     }
 
-    public function schoolYear()
+    /**
+     * Alias for classroom relationship (for backward compatibility).
+     */
+    public function room(): BelongsTo
     {
-        return $this->belongsTo(AcademicYear::class, 'school_year_id', 'id');
+        return $this->classroom();
     }
 
-    public function semester()
+    /**
+     * Get the school year that owns the class ClassSchedules.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function schoolYear(): BelongsTo
     {
-        return $this->belongsTo(Semester::class, 'semester_id', 'id');
+        return $this->belongsTo(AcademicYear::class, 'school_year_id');
     }
 
-    public function section()  
+    /**
+     * Get the semester that owns the class ClassSchedules.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function semester(): BelongsTo
     {
-        return $this->belongsTo(Section::class, 'section_id', 'id')
-          ->with('yearLevel');;
+        return $this->belongsTo(Semester::class, 'semester_id');
     }
 
- public function enrollmentSubjects()
+    /**
+     * Get the curriculum subject that owns the class ClassSchedules.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function curriculumSubject(): BelongsTo
     {
-        return $this->hasMany(EnrollmentSubject::class, 'class_schedule_id', 'id');
-    }
-    // In class_schedules.php
-   public function curriculumSubject()
-{
-    return $this->belongsTo(Curriculum_Subject::class, 'curriculum_subject_id')
-                  ->with(['subject', 'course']);; // eager load the related Subject
-}
-
-    public function course()
-    {
-        return $this->belongsTo(courses::class, 'courses_id');
+        return $this->belongsTo(\App\Models\Curriculum_Subject::class, 'curriculum_subject_id');
     }
 
-  // 🔹 Shortcut: ClassSchedule → Subject (through curriculum_subject)
-   public function subject()
-{
-    return $this->hasOneThrough(
-        Subjects::class,            // Final model
-        Curriculum_Subject::class,  // Intermediate
-        'id',                       // PK on curriculum_subject
-        'id',                       // PK on subjects
-        'curriculum_subject_id',    // FK on class_schedules
-        'subject_id'                // FK on curriculum_subject
-    );
-}
-
-public function yearLevel()
-{
-    return $this->belongsTo(YearLevel::class, 'year_level_id', 'id');
-}
-
-
-public function enrollments()
-{
-    return $this->section ? $this->section->enrollments() : $this->hasMany(enrollments::class, 'section_id', 'section_id');
-}
- public function getFormattedTimeAttribute()
+    /**
+     * Get the day for the class ClassSchedules.
+     * This is a helper method since schedule_day is an enum.
+     *
+     * @return string|null
+     */
+    public function getDayAttribute(): ?string
     {
+        return $this->schedule_day;
+    }
+
+    /**
+     * Get the section that owns the class ClassSchedules.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Section::class, 'section_id')
+            ->with('yearLevel');
+    }
+
+    /**
+     * Get the enrollment subjects for the class ClassSchedules.
+     */
+    /**
+     * Get the enrollment subjects for the class ClassSchedules.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function enrollmentSubjects()
+    {
+        return $this->hasMany(\App\Models\EnrollmentSubject::class, 'class_schedule_id')
+            ->with(['subject', 'course']);
+    }
+
+    /**
+     * Get the course that owns the class ClassSchedules.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Courses::class, 'courses_id');
+    }
+
+    /**
+     * Get the subject through curriculum_subject.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
+     */
+    public function subject()
+    {
+        return $this->hasOneThrough(
+            \App\Models\Subjects::class,            // Final model
+            \App\Models\Curriculum_Subject::class,  // Intermediate
+            'id',                                   // PK on curriculum_subject
+            'id',                                   // PK on subjects
+            'curriculum_subject_id',                // FK on class_schedules
+            'subject_id'                            // FK on curriculum_subject
+        );
+    }
+
+    /**
+     * Get the year level that owns the class ClassSchedules.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function yearLevel(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Year_Level::class, 'year_level_id');
+    }
+
+    /**
+     * Get the enrollments for the class ClassSchedules.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Query\Builder
+     */
+    public function enrollments()
+    {
+        return $this->section 
+            ? $this->section->enrollments() 
+            : $this->hasMany(\App\Models\Enrollments::class, 'section_id', 'section_id');
+    }
+
+    /**
+     * Get the formatted time range.
+     *
+     * @return string
+     */
+    public function getFormattedTimeAttribute(): string
+    {
+        if (!$this->start_time || !$this->end_time) {
+            return 'TBA';
+        }
+        
         return sprintf(
             '%s - %s',
             date('h:i A', strtotime($this->start_time)),
             date('h:i A', strtotime($this->end_time))
         );
     }
+    
+    /**
+     * Get the display name for the schedule.
+     *
+     * @return string
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        $parts = [
+            $this->schedule_day,
+            $this->formatted_time,
+            $this->classroom ? '(' . $this->classroom->room_number . ')' : ''
+        ];
+        
+        return implode(' ', array_filter($parts));
+    }
 }
+
 

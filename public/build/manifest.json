@@ -1,0 +1,4642 @@
+{
+  "_AdminLayout-nlGm2Ey-.js": {
+    "file": "assets/AdminLayout-nlGm2Ey-.js",
+    "name": "AdminLayout",
+    "imports": [
+      "resources/js/app.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "_ArrowLeft.esm-CLtYDJqE.js": {
+    "file": "assets/ArrowLeft.esm-CLtYDJqE.js",
+    "name": "ArrowLeft.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_ArrowRight.esm-B6HPDFNc.js": {
+    "file": "assets/ArrowRight.esm-B6HPDFNc.js",
+    "name": "ArrowRight.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_ArrowSquareOut.esm-CovKJEg4.js": {
+    "file": "assets/ArrowSquareOut.esm-CovKJEg4.js",
+    "name": "ArrowSquareOut.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_ArrowUpRight.esm-D8mDRfWB.js": {
+    "file": "assets/ArrowUpRight.esm-D8mDRfWB.js",
+    "name": "ArrowUpRight.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_AuthenticatedLayout-1QWsHJiQ.js": {
+    "file": "assets/AuthenticatedLayout-1QWsHJiQ.js",
+    "name": "AuthenticatedLayout",
+    "imports": [
+      "resources/js/app.jsx",
+      "_transition-do3TfUEQ.js"
+    ]
+  },
+  "_BarChart-4Knc9qdw.js": {
+    "file": "assets/BarChart-4Knc9qdw.js",
+    "name": "BarChart",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_index-xIZ0bSiY.js"
+    ]
+  },
+  "_BellSimple.esm-SA1YNnd4.js": {
+    "file": "assets/BellSimple.esm-SA1YNnd4.js",
+    "name": "BellSimple.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Book.esm-B7AH9Dx8.js": {
+    "file": "assets/Book.esm-B7AH9Dx8.js",
+    "name": "Book.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_BookOpen.esm-DReIGavd.js": {
+    "file": "assets/BookOpen.esm-DReIGavd.js",
+    "name": "BookOpen.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Calendar.esm-CM4MSCo0.js": {
+    "file": "assets/Calendar.esm-CM4MSCo0.js",
+    "name": "Calendar.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_CalendarBlank.esm-Ddy1sGOf.js": {
+    "file": "assets/CalendarBlank.esm-Ddy1sGOf.js",
+    "name": "CalendarBlank.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_CalendarCheck.esm-qud0bmfi.js": {
+    "file": "assets/CalendarCheck.esm-qud0bmfi.js",
+    "name": "CalendarCheck.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_CaretDown.esm-DHRPUbW6.js": {
+    "file": "assets/CaretDown.esm-DHRPUbW6.js",
+    "name": "CaretDown.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_CaretLeft.esm-CkcBg5a_.js": {
+    "file": "assets/CaretLeft.esm-CkcBg5a_.js",
+    "name": "CaretLeft.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_ChalkboardTeacher.esm-oDrJGI81.js": {
+    "file": "assets/ChalkboardTeacher.esm-oDrJGI81.js",
+    "name": "ChalkboardTeacher.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_CheckCircle.esm-CClbYzKN.js": {
+    "file": "assets/CheckCircle.esm-CClbYzKN.js",
+    "name": "CheckCircle.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_CheckSquare.esm-BrChhV_v.js": {
+    "file": "assets/CheckSquare.esm-BrChhV_v.js",
+    "name": "CheckSquare.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Circle.esm-B850hmbb.js": {
+    "file": "assets/Circle.esm-B850hmbb.js",
+    "name": "Circle.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Clipboard.esm-CKTctxsI.js": {
+    "file": "assets/Clipboard.esm-CKTctxsI.js",
+    "name": "Clipboard.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_ClipboardText.esm-C00gW_jg.js": {
+    "file": "assets/ClipboardText.esm-C00gW_jg.js",
+    "name": "ClipboardText.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Clock.esm-BpLOpYv2.js": {
+    "file": "assets/Clock.esm-BpLOpYv2.js",
+    "name": "Clock.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_DotsThreeOutlineVertical.esm-CPTX79AG.js": {
+    "file": "assets/DotsThreeOutlineVertical.esm-CPTX79AG.js",
+    "name": "DotsThreeOutlineVertical.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_EnvelopeSimple.esm-DDpiC-w3.js": {
+    "file": "assets/EnvelopeSimple.esm-DDpiC-w3.js",
+    "name": "EnvelopeSimple.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Eye.esm-Vu_hkQ5S.js": {
+    "file": "assets/Eye.esm-Vu_hkQ5S.js",
+    "name": "Eye.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_FacultyLayout-m8Xgtuqg.js": {
+    "file": "assets/FacultyLayout-m8Xgtuqg.js",
+    "name": "FacultyLayout",
+    "imports": [
+      "resources/js/app.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "_FilePdf.esm-B3HPZIWz.js": {
+    "file": "assets/FilePdf.esm-B3HPZIWz.js",
+    "name": "FilePdf.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_FileText.esm-CcCeMj1T.js": {
+    "file": "assets/FileText.esm-CcCeMj1T.js",
+    "name": "FileText.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_FileX.esm-BKzxnmp9.js": {
+    "file": "assets/FileX.esm-BKzxnmp9.js",
+    "name": "FileX.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Files.esm-B_c9rzf-.js": {
+    "file": "assets/Files.esm-B_c9rzf-.js",
+    "name": "Files.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_GraduationCap.esm-DoEM5e-d.js": {
+    "file": "assets/GraduationCap.esm-DoEM5e-d.js",
+    "name": "GraduationCap.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_GuestLayout-NjcI2IS2.js": {
+    "file": "assets/GuestLayout-NjcI2IS2.js",
+    "name": "GuestLayout",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_House.esm-DtncJelu.js": {
+    "file": "assets/House.esm-DtncJelu.js",
+    "name": "House.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_IconBase.esm-BfEjP1YE.js": {
+    "file": "assets/IconBase.esm-BfEjP1YE.js",
+    "name": "IconBase.esm",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_IdentificationCard.esm-CmvRkb7J.js": {
+    "file": "assets/IdentificationCard.esm-CmvRkb7J.js",
+    "name": "IdentificationCard.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_InputLabel-RkNC9btO.js": {
+    "file": "assets/InputLabel-RkNC9btO.js",
+    "name": "InputLabel",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_ListChecks.esm-hIXO9OxR.js": {
+    "file": "assets/ListChecks.esm-hIXO9OxR.js",
+    "name": "ListChecks.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Lock.esm-BCj-a26Y.js": {
+    "file": "assets/Lock.esm-BCj-a26Y.js",
+    "name": "Lock.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_MagnifyingGlass.esm-C3oRW5eG.js": {
+    "file": "assets/MagnifyingGlass.esm-C3oRW5eG.js",
+    "name": "MagnifyingGlass.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_MapPin.esm-D-yQPgKR.js": {
+    "file": "assets/MapPin.esm-D-yQPgKR.js",
+    "name": "MapPin.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Notebook.esm-CZhGohLE.js": {
+    "file": "assets/Notebook.esm-CZhGohLE.js",
+    "name": "Notebook.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Pencil.esm-DsP1Z9Ow.js": {
+    "file": "assets/Pencil.esm-DsP1Z9Ow.js",
+    "name": "Pencil.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_PencilSimple.esm-JGBEPztR.js": {
+    "file": "assets/PencilSimple.esm-JGBEPztR.js",
+    "name": "PencilSimple.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Phone.esm-DZaQYIu5.js": {
+    "file": "assets/Phone.esm-DZaQYIu5.js",
+    "name": "Phone.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Plus.esm-C_Sc8bcL.js": {
+    "file": "assets/Plus.esm-C_Sc8bcL.js",
+    "name": "Plus.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_PlusCircle.esm-Bv7gnM9Z.js": {
+    "file": "assets/PlusCircle.esm-Bv7gnM9Z.js",
+    "name": "PlusCircle.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_PrimaryButton-CV2RCIo0.js": {
+    "file": "assets/PrimaryButton-CV2RCIo0.js",
+    "name": "PrimaryButton",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_Printer.esm-CLRpyAix.js": {
+    "file": "assets/Printer.esm-CLRpyAix.js",
+    "name": "Printer.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_ProgramHeadLayout-BHRW6MjO.js": {
+    "file": "assets/ProgramHeadLayout-BHRW6MjO.js",
+    "name": "ProgramHeadLayout",
+    "imports": [
+      "resources/js/app.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "_RegistrarLayout-BKn-mq1y.js": {
+    "file": "assets/RegistrarLayout-BKn-mq1y.js",
+    "name": "RegistrarLayout",
+    "imports": [
+      "resources/js/app.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "_ShieldCheck.esm-BXlGoNH6.js": {
+    "file": "assets/ShieldCheck.esm-BXlGoNH6.js",
+    "name": "ShieldCheck.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_SignOut.esm-BT4b-b_s.js": {
+    "file": "assets/SignOut.esm-BT4b-b_s.js",
+    "name": "SignOut.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Sparkle.esm-crOyd3Cq.js": {
+    "file": "assets/Sparkle.esm-crOyd3Cq.js",
+    "name": "Sparkle.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_SpinnerGap.esm-ByYbZsy6.js": {
+    "file": "assets/SpinnerGap.esm-ByYbZsy6.js",
+    "name": "SpinnerGap.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Square.esm-D_1QX59v.js": {
+    "file": "assets/Square.esm-D_1QX59v.js",
+    "name": "Square.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_SquaresFour.esm-O1xw9dxC.js": {
+    "file": "assets/SquaresFour.esm-O1xw9dxC.js",
+    "name": "SquaresFour.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Stack.esm-96ayK67v.js": {
+    "file": "assets/Stack.esm-96ayK67v.js",
+    "name": "Stack.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_StudentLayout-CUBxnRun.js": {
+    "file": "assets/StudentLayout-CUBxnRun.js",
+    "name": "StudentLayout",
+    "imports": [
+      "resources/js/app.jsx",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_House.esm-DtncJelu.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_CaretDown.esm-DHRPUbW6.js"
+    ]
+  },
+  "_TextInput-BOimOXX4.js": {
+    "file": "assets/TextInput-BOimOXX4.js",
+    "name": "TextInput",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_User.esm-D0budAOr.js": {
+    "file": "assets/User.esm-D0budAOr.js",
+    "name": "User.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_UserCircle.esm-B6iwXlLF.js": {
+    "file": "assets/UserCircle.esm-B6iwXlLF.js",
+    "name": "UserCircle.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_UserPlus.esm-DocrCbTM.js": {
+    "file": "assets/UserPlus.esm-DocrCbTM.js",
+    "name": "UserPlus.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_Users.esm-C5TsqWJ5.js": {
+    "file": "assets/Users.esm-C5TsqWJ5.js",
+    "name": "Users.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_UsersThree.esm-7ZNp1c8h.js": {
+    "file": "assets/UsersThree.esm-7ZNp1c8h.js",
+    "name": "UsersThree.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_WarningCircle.esm-CIWKtoRj.js": {
+    "file": "assets/WarningCircle.esm-CIWKtoRj.js",
+    "name": "WarningCircle.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_X.esm-gf_jTb8j.js": {
+    "file": "assets/X.esm-gf_jTb8j.js",
+    "name": "X.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_XCircle.esm-BiIKRb5K.js": {
+    "file": "assets/XCircle.esm-BiIKRb5K.js",
+    "name": "XCircle.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "_arrow-left-EJ7e5Gv5.js": {
+    "file": "assets/arrow-left-EJ7e5Gv5.js",
+    "name": "arrow-left",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_arrow-right-D1XAHMOo.js": {
+    "file": "assets/arrow-right-D1XAHMOo.js",
+    "name": "arrow-right",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_book-open-C8hUT_Nv.js": {
+    "file": "assets/book-open-C8hUT_Nv.js",
+    "name": "book-open",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_browser-DhcdjZmX.js": {
+    "file": "assets/browser-DhcdjZmX.js",
+    "name": "browser"
+  },
+  "_building-2-5f0Pe5lE.js": {
+    "file": "assets/building-2-5f0Pe5lE.js",
+    "name": "building-2",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_calendar-BaGxAjw7.js": {
+    "file": "assets/calendar-BaGxAjw7.js",
+    "name": "calendar",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_calendar-check-Dsgb311L.js": {
+    "file": "assets/calendar-check-Dsgb311L.js",
+    "name": "calendar-check",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_calendar-clock-U1jJySuk.js": {
+    "file": "assets/calendar-clock-U1jJySuk.js",
+    "name": "calendar-clock",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_calendar-days-BdsX1AOR.js": {
+    "file": "assets/calendar-days-BdsX1AOR.js",
+    "name": "calendar-days",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_chevron-right-Dw-wkAVo.js": {
+    "file": "assets/chevron-right-Dw-wkAVo.js",
+    "name": "chevron-right",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_circle-alert-DTd3ShvI.js": {
+    "file": "assets/circle-alert-DTd3ShvI.js",
+    "name": "circle-alert",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_circle-check-CmOvPWOW.js": {
+    "file": "assets/circle-check-CmOvPWOW.js",
+    "name": "circle-check",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_circle-check-big-H6KOV4mD.js": {
+    "file": "assets/circle-check-big-H6KOV4mD.js",
+    "name": "circle-check-big",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_clipboard-list-BInWDlgs.js": {
+    "file": "assets/clipboard-list-BInWDlgs.js",
+    "name": "clipboard-list",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_clock-CYK17qik.js": {
+    "file": "assets/clock-CYK17qik.js",
+    "name": "clock",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_clsx.m-DHulAg21.js": {
+    "file": "assets/clsx.m-DHulAg21.js",
+    "name": "clsx.m"
+  },
+  "_createLucideIcon-DEhOrlju.js": {
+    "file": "assets/createLucideIcon-DEhOrlju.js",
+    "name": "createLucideIcon",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_dayjs.min-CD8oHrmN.js": {
+    "file": "assets/dayjs.min-CD8oHrmN.js",
+    "name": "dayjs.min",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_defineProperty-BJaX1cXx.js": {
+    "file": "assets/defineProperty-BJaX1cXx.js",
+    "name": "defineProperty",
+    "imports": [
+      "_browser-DhcdjZmX.js"
+    ]
+  },
+  "_eye-BOy_U01_.js": {
+    "file": "assets/eye-BOy_U01_.js",
+    "name": "eye",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_eye-off-2iRXlRuI.js": {
+    "file": "assets/eye-off-2iRXlRuI.js",
+    "name": "eye-off",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_file-spreadsheet-BwQ-fkIK.js": {
+    "file": "assets/file-spreadsheet-BwQ-fkIK.js",
+    "name": "file-spreadsheet",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_file-text-CFIStLOb.js": {
+    "file": "assets/file-text-CFIStLOb.js",
+    "name": "file-text",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_graduation-cap-Z1kim-dk.js": {
+    "file": "assets/graduation-cap-Z1kim-dk.js",
+    "name": "graduation-cap",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_index-BgssLrjz.js": {
+    "file": "assets/index-BgssLrjz.js",
+    "name": "index",
+    "imports": [
+      "resources/js/app.jsx",
+      "_proxy-CF65lDRk.js"
+    ]
+  },
+  "_index-xIZ0bSiY.js": {
+    "file": "assets/index-xIZ0bSiY.js",
+    "name": "index",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_jspdf.plugin.autotable-Cgf24j1U.js": {
+    "file": "assets/jspdf.plugin.autotable-Cgf24j1U.js",
+    "name": "jspdf.plugin.autotable",
+    "imports": [
+      "resources/js/app.jsx",
+      "_browser-DhcdjZmX.js"
+    ],
+    "dynamicImports": [
+      "node_modules/html2canvas/dist/html2canvas.esm.js",
+      "node_modules/dompurify/dist/purify.es.js",
+      "node_modules/canvg/lib/index.es.js"
+    ]
+  },
+  "_layers-CS6ziutF.js": {
+    "file": "assets/layers-CS6ziutF.js",
+    "name": "layers",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_loader-circle-CTBRcdL0.js": {
+    "file": "assets/loader-circle-CTBRcdL0.js",
+    "name": "loader-circle",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_lock-fPE33s-t.js": {
+    "file": "assets/lock-fPE33s-t.js",
+    "name": "lock",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_map-pin-CL1idguV.js": {
+    "file": "assets/map-pin-CL1idguV.js",
+    "name": "map-pin",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_minus-D36RsRnv.js": {
+    "file": "assets/minus-D36RsRnv.js",
+    "name": "minus",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_phone-DAYIITnh.js": {
+    "file": "assets/phone-DAYIITnh.js",
+    "name": "phone",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_plus-Cm9MrAO-.js": {
+    "file": "assets/plus-Cm9MrAO-.js",
+    "name": "plus",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_printer-BqeMCR5U.js": {
+    "file": "assets/printer-BqeMCR5U.js",
+    "name": "printer",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_proxy-CF65lDRk.js": {
+    "file": "assets/proxy-CF65lDRk.js",
+    "name": "proxy",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_react-select.esm-mXzfaPNp.js": {
+    "file": "assets/react-select.esm-mXzfaPNp.js",
+    "name": "react-select.esm",
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_browser-DhcdjZmX.js",
+      "_defineProperty-BJaX1cXx.js",
+      "_index-xIZ0bSiY.js"
+    ],
+    "dynamicImports": [
+      "node_modules/html2canvas/dist/html2canvas.esm.js",
+      "node_modules/html2pdf.js/node_modules/dompurify/dist/purify.es.mjs",
+      "node_modules/canvg/lib/index.es.js"
+    ]
+  },
+  "_save-BRbUh7yz.js": {
+    "file": "assets/save-BRbUh7yz.js",
+    "name": "save",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_search-BdJCZqKg.js": {
+    "file": "assets/search-BdJCZqKg.js",
+    "name": "search",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_shield-check-BDFrlIgU.js": {
+    "file": "assets/shield-check-BDFrlIgU.js",
+    "name": "shield-check",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_sun-BNRuewu1.js": {
+    "file": "assets/sun-BNRuewu1.js",
+    "name": "sun",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_sweetalert2.esm.all-DhUVDY3P.js": {
+    "file": "assets/sweetalert2.esm.all-DhUVDY3P.js",
+    "name": "sweetalert2.esm.all"
+  },
+  "_transition-do3TfUEQ.js": {
+    "file": "assets/transition-do3TfUEQ.js",
+    "name": "transition",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_triangle-alert-BYuVPVdv.js": {
+    "file": "assets/triangle-alert-BYuVPVdv.js",
+    "name": "triangle-alert",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_upload-a06s7cy6.js": {
+    "file": "assets/upload-a06s7cy6.js",
+    "name": "upload",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_user-3ZQ-uQlf.js": {
+    "file": "assets/user-3ZQ-uQlf.js",
+    "name": "user",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_users-CmN9x4EI.js": {
+    "file": "assets/users-CmN9x4EI.js",
+    "name": "users",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_x-B13hVPFU.js": {
+    "file": "assets/x-B13hVPFU.js",
+    "name": "x",
+    "imports": [
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "_xlsx-CKN5doRT.js": {
+    "file": "assets/xlsx-CKN5doRT.js",
+    "name": "xlsx"
+  },
+  "node_modules/@fontsource/poppins/files/poppins-devanagari-400-normal.woff": {
+    "file": "assets/poppins-devanagari-400-normal-CqVvlrh5.woff",
+    "src": "node_modules/@fontsource/poppins/files/poppins-devanagari-400-normal.woff"
+  },
+  "node_modules/@fontsource/poppins/files/poppins-devanagari-400-normal.woff2": {
+    "file": "assets/poppins-devanagari-400-normal-CJDn6rn8.woff2",
+    "src": "node_modules/@fontsource/poppins/files/poppins-devanagari-400-normal.woff2"
+  },
+  "node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff": {
+    "file": "assets/poppins-latin-400-normal-BOb3E3N0.woff",
+    "src": "node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff"
+  },
+  "node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff2": {
+    "file": "assets/poppins-latin-400-normal-cpxAROuN.woff2",
+    "src": "node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff2"
+  },
+  "node_modules/@fontsource/poppins/files/poppins-latin-ext-400-normal.woff": {
+    "file": "assets/poppins-latin-ext-400-normal-DaBSavcJ.woff",
+    "src": "node_modules/@fontsource/poppins/files/poppins-latin-ext-400-normal.woff"
+  },
+  "node_modules/@fontsource/poppins/files/poppins-latin-ext-400-normal.woff2": {
+    "file": "assets/poppins-latin-ext-400-normal-by3JarPu.woff2",
+    "src": "node_modules/@fontsource/poppins/files/poppins-latin-ext-400-normal.woff2"
+  },
+  "node_modules/canvg/lib/index.es.js": {
+    "file": "assets/index.es-CuZAak0A.js",
+    "name": "index.es",
+    "src": "node_modules/canvg/lib/index.es.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_defineProperty-BJaX1cXx.js",
+      "_browser-DhcdjZmX.js"
+    ]
+  },
+  "node_modules/dompurify/dist/purify.es.js": {
+    "file": "assets/purify.es-C_uT9hQ1.js",
+    "name": "purify.es",
+    "src": "node_modules/dompurify/dist/purify.es.js",
+    "isDynamicEntry": true
+  },
+  "node_modules/html2canvas/dist/html2canvas.esm.js": {
+    "file": "assets/html2canvas.esm-CBrSDip1.js",
+    "name": "html2canvas.esm",
+    "src": "node_modules/html2canvas/dist/html2canvas.esm.js",
+    "isDynamicEntry": true
+  },
+  "node_modules/html2pdf.js/node_modules/dompurify/dist/purify.es.mjs": {
+    "file": "assets/purify.es-aGzT-_H7.js",
+    "name": "purify.es",
+    "src": "node_modules/html2pdf.js/node_modules/dompurify/dist/purify.es.mjs",
+    "isDynamicEntry": true
+  },
+  "resources/js/Pages/Admin/Academic/Grades.jsx": {
+    "file": "assets/Grades-Cdhk-QS1.js",
+    "name": "Grades",
+    "src": "resources/js/Pages/Admin/Academic/Grades.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_UserCircle.esm-B6iwXlLF.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Academic/Requirements.jsx": {
+    "file": "assets/Requirements-Ch-jyrjz.js",
+    "name": "Requirements",
+    "src": "resources/js/Pages/Admin/Academic/Requirements.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_proxy-CF65lDRk.js",
+      "_index-BgssLrjz.js",
+      "_X.esm-gf_jTb8j.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Academic/StudentGrades.jsx": {
+    "file": "assets/StudentGrades-C9Mv_Jfo.js",
+    "name": "StudentGrades",
+    "src": "resources/js/Pages/Admin/Academic/StudentGrades.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_UserCircle.esm-B6iwXlLF.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Academic/Students.jsx": {
+    "file": "assets/Students-Dzx5xp15.js",
+    "name": "Students",
+    "src": "resources/js/Pages/Admin/Academic/Students.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Academic/SubmittedRequirements.jsx": {
+    "file": "assets/SubmittedRequirements-w98jFVED.js",
+    "name": "SubmittedRequirements",
+    "src": "resources/js/Pages/Admin/Academic/SubmittedRequirements.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_user-3ZQ-uQlf.js",
+      "_users-CmN9x4EI.js",
+      "_circle-check-big-H6KOV4mD.js",
+      "_clock-CYK17qik.js",
+      "_calendar-check-Dsgb311L.js",
+      "_file-text-CFIStLOb.js",
+      "_x-B13hVPFU.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Admin/AcademicSetup/ClassSchedules.jsx": {
+    "file": "assets/ClassSchedules-Bvts3z-U.js",
+    "name": "ClassSchedules",
+    "src": "resources/js/Pages/Admin/AcademicSetup/ClassSchedules.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_calendar-check-Dsgb311L.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_layers-CS6ziutF.js",
+      "_users-CmN9x4EI.js",
+      "_clock-CYK17qik.js",
+      "_map-pin-CL1idguV.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Classrooms/Classrooms.jsx": {
+    "file": "assets/Classrooms-COnGeWVR.js",
+    "name": "Classrooms",
+    "src": "resources/js/Pages/Admin/Classrooms/Classrooms.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_FileX.esm-BKzxnmp9.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Curriculums/Curriculums.jsx": {
+    "file": "assets/Curriculums-D2g9vMYA.js",
+    "name": "Curriculums",
+    "src": "resources/js/Pages/Admin/Curriculums/Curriculums.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_Files.esm-B_c9rzf-.js",
+      "_proxy-CF65lDRk.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_XCircle.esm-BiIKRb5K.js",
+      "_FileX.esm-BKzxnmp9.js",
+      "_index-BgssLrjz.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Curriculums/DeptCurriculums.jsx": {
+    "file": "assets/DeptCurriculums-CpWsl0kR.js",
+    "name": "DeptCurriculums",
+    "src": "resources/js/Pages/Admin/Curriculums/DeptCurriculums.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_xlsx-CKN5doRT.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_SpinnerGap.esm-ByYbZsy6.js",
+      "_FilePdf.esm-B3HPZIWz.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_browser-DhcdjZmX.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Dashboard.jsx": {
+    "file": "assets/Dashboard-dnFCPJbm.js",
+    "name": "Dashboard",
+    "src": "resources/js/Pages/Admin/Dashboard.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_clsx.m-DHulAg21.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Enrollment.jsx": {
+    "file": "assets/Enrollment-BQNO0LxR.js",
+    "name": "Enrollment",
+    "src": "resources/js/Pages/Admin/Enrollment.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Enrollments/EnrollDropStudents.jsx": {
+    "file": "assets/EnrollDropStudents-B_U03Ljm.js",
+    "name": "EnrollDropStudents",
+    "src": "resources/js/Pages/Admin/Enrollments/EnrollDropStudents.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Enrollments/EnrollmentPeriods.jsx": {
+    "file": "assets/EnrollmentPeriods-Dk6ieJfc.js",
+    "name": "EnrollmentPeriods",
+    "src": "resources/js/Pages/Admin/Enrollments/EnrollmentPeriods.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Enrollments/EnrollmentRecords.jsx": {
+    "file": "assets/EnrollmentRecords-Jy07olG3.js",
+    "name": "EnrollmentRecords",
+    "src": "resources/js/Pages/Admin/Enrollments/EnrollmentRecords.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Enrollments/Sections.jsx": {
+    "file": "assets/Sections-DXsYc9HN.js",
+    "name": "Sections",
+    "src": "resources/js/Pages/Admin/Enrollments/Sections.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Programs/Courses.jsx": {
+    "file": "assets/Courses-C7HJhFnN.js",
+    "name": "Courses",
+    "src": "resources/js/Pages/Admin/Programs/Courses.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_book-open-C8hUT_Nv.js",
+      "_building-2-5f0Pe5lE.js",
+      "_layers-CS6ziutF.js",
+      "_chevron-right-Dw-wkAVo.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Programs/Departments.jsx": {
+    "file": "assets/Departments-lFCdDyMA.js",
+    "name": "Departments",
+    "src": "resources/js/Pages/Admin/Programs/Departments.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_building-2-5f0Pe5lE.js",
+      "_users-CmN9x4EI.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_phone-DAYIITnh.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Reports/EnrollmentReport.jsx": {
+    "file": "assets/EnrollmentReport-CfnSVYwy.js",
+    "name": "EnrollmentReport",
+    "src": "resources/js/Pages/Admin/Reports/EnrollmentReport.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_xlsx-CKN5doRT.js",
+      "_printer-BqeMCR5U.js",
+      "_file-text-CFIStLOb.js",
+      "_file-spreadsheet-BwQ-fkIK.js",
+      "_search-BdJCZqKg.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_browser-DhcdjZmX.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Reports/GradeReport.jsx": {
+    "file": "assets/GradeReport-BIuVSZi6.js",
+    "name": "GradeReport",
+    "src": "resources/js/Pages/Admin/Reports/GradeReport.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "resources/js/Pages/ProgramHead/PHreports/GradeReport.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_browser-DhcdjZmX.js",
+      "_xlsx-CKN5doRT.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Users/Faculty.jsx": {
+    "file": "assets/Faculty-FjlQC2jO.js",
+    "name": "Faculty",
+    "src": "resources/js/Pages/Admin/Users/Faculty.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_UserPlus.esm-DocrCbTM.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_EnvelopeSimple.esm-DDpiC-w3.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Users/ProgramHead.jsx": {
+    "file": "assets/ProgramHead-CrIuDOgT.js",
+    "name": "ProgramHead",
+    "src": "resources/js/Pages/Admin/Users/ProgramHead.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_Pencil.esm-DsP1Z9Ow.js",
+      "_EnvelopeSimple.esm-DDpiC-w3.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_House.esm-DtncJelu.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Admin/Users/Registrar.jsx": {
+    "file": "assets/Registrar-CIaB97uu.js",
+    "name": "Registrar",
+    "src": "resources/js/Pages/Admin/Users/Registrar.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_EnvelopeSimple.esm-DDpiC-w3.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Auth/ChangePassword.jsx": {
+    "file": "assets/ChangePassword-C96RHnsZ.js",
+    "name": "ChangePassword",
+    "src": "resources/js/Pages/Auth/ChangePassword.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_lock-fPE33s-t.js",
+      "_eye-off-2iRXlRuI.js",
+      "_eye-BOy_U01_.js",
+      "_circle-check-big-H6KOV4mD.js"
+    ]
+  },
+  "resources/js/Pages/Auth/ConfirmPassword.jsx": {
+    "file": "assets/ConfirmPassword-Cy6iEw0w.js",
+    "name": "ConfirmPassword",
+    "src": "resources/js/Pages/Auth/ConfirmPassword.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_GuestLayout-NjcI2IS2.js",
+      "_TextInput-BOimOXX4.js",
+      "_InputLabel-RkNC9btO.js",
+      "_PrimaryButton-CV2RCIo0.js"
+    ]
+  },
+  "resources/js/Pages/Auth/EditProfile.jsx": {
+    "file": "assets/EditProfile-CT9fjVYh.js",
+    "name": "EditProfile",
+    "src": "resources/js/Pages/Auth/EditProfile.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "resources/js/Pages/Auth/ForgotPassword.jsx": {
+    "file": "assets/ForgotPassword-D9CUOr1O.js",
+    "name": "ForgotPassword",
+    "src": "resources/js/Pages/Auth/ForgotPassword.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_GuestLayout-NjcI2IS2.js",
+      "_TextInput-BOimOXX4.js",
+      "_PrimaryButton-CV2RCIo0.js",
+      "_sun-BNRuewu1.js",
+      "_shield-check-BDFrlIgU.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Auth/Login.jsx": {
+    "file": "assets/Login-D_PREkPS.js",
+    "name": "Login",
+    "src": "resources/js/Pages/Auth/Login.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_arrow-right-D1XAHMOo.js",
+      "_sun-BNRuewu1.js",
+      "_user-3ZQ-uQlf.js",
+      "_lock-fPE33s-t.js",
+      "_eye-off-2iRXlRuI.js",
+      "_eye-BOy_U01_.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Auth/Register.jsx": {
+    "file": "assets/Register-EAgleh59.js",
+    "name": "Register",
+    "src": "resources/js/Pages/Auth/Register.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "resources/js/Pages/Auth/ResetPassword.jsx": {
+    "file": "assets/ResetPassword-CqbXg_JE.js",
+    "name": "ResetPassword",
+    "src": "resources/js/Pages/Auth/ResetPassword.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_GuestLayout-NjcI2IS2.js",
+      "_TextInput-BOimOXX4.js",
+      "_PrimaryButton-CV2RCIo0.js",
+      "_shield-check-BDFrlIgU.js",
+      "_lock-fPE33s-t.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Auth/VerifyEmail.jsx": {
+    "file": "assets/VerifyEmail-DrIQ8XLI.js",
+    "name": "VerifyEmail",
+    "src": "resources/js/Pages/Auth/VerifyEmail.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_GuestLayout-NjcI2IS2.js",
+      "_PrimaryButton-CV2RCIo0.js"
+    ]
+  },
+  "resources/js/Pages/Dashboard.jsx": {
+    "file": "assets/Dashboard-D077ywWI.js",
+    "name": "Dashboard",
+    "src": "resources/js/Pages/Dashboard.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AuthenticatedLayout-1QWsHJiQ.js",
+      "_transition-do3TfUEQ.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Attendance/AddAttendance.jsx": {
+    "file": "assets/AddAttendance-Z6QiJGxf.js",
+    "name": "AddAttendance",
+    "src": "resources/js/Pages/Faculty/Attendance/AddAttendance.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_dayjs.min-CD8oHrmN.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_calendar-days-BdsX1AOR.js",
+      "_users-CmN9x4EI.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Attendance/AttendanceRecord.jsx": {
+    "file": "assets/AttendanceRecord-D1CCQIwa.js",
+    "name": "AttendanceRecord",
+    "src": "resources/js/Pages/Faculty/Attendance/AttendanceRecord.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_dayjs.min-CD8oHrmN.js",
+      "_clipboard-list-BInWDlgs.js",
+      "_calendar-clock-U1jJySuk.js",
+      "_users-CmN9x4EI.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_book-open-C8hUT_Nv.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Attendance/StudentAttendance.jsx": {
+    "file": "assets/StudentAttendance-DbHlEl4_.js",
+    "name": "StudentAttendance",
+    "src": "resources/js/Pages/Faculty/Attendance/StudentAttendance.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_arrow-right-D1XAHMOo.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Attendance/SubjectAttendance.jsx": {
+    "file": "assets/SubjectAttendance-CuO0OZTf.js",
+    "name": "SubjectAttendance",
+    "src": "resources/js/Pages/Faculty/Attendance/SubjectAttendance.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_dayjs.min-CD8oHrmN.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_calendar-clock-U1jJySuk.js",
+      "_users-CmN9x4EI.js",
+      "_eye-BOy_U01_.js",
+      "_printer-BqeMCR5U.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Classroom/ClassView.jsx": {
+    "file": "assets/ClassView-szL3os_t.js",
+    "name": "ClassView",
+    "src": "resources/js/Pages/Faculty/Classroom/ClassView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_UserCircle.esm-B6iwXlLF.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ListChecks.esm-hIXO9OxR.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_CheckCircle.esm-CClbYzKN.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Dashboard.jsx": {
+    "file": "assets/Dashboard-CEaCkB04.js",
+    "name": "Dashboard",
+    "src": "resources/js/Pages/Faculty/Dashboard.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_ArrowUpRight.esm-D8mDRfWB.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_CalendarBlank.esm-Ddy1sGOf.js",
+      "_BarChart-4Knc9qdw.js",
+      "_MapPin.esm-D-yQPgKR.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_index-xIZ0bSiY.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Evaluation/Enrollment.jsx": {
+    "file": "assets/Enrollment-BkTeZ6Qm.js",
+    "name": "Enrollment",
+    "src": "resources/js/Pages/Faculty/Evaluation/Enrollment.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "resources/js/Pages/ProgramHead/Evaluation/Enrollment.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_proxy-CF65lDRk.js",
+      "_Sparkle.esm-crOyd3Cq.js",
+      "_UserCircle.esm-B6iwXlLF.js",
+      "_CalendarBlank.esm-Ddy1sGOf.js",
+      "_IdentificationCard.esm-CmvRkb7J.js",
+      "_ClipboardText.esm-C00gW_jg.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Evaluation/EnrollmentAssessment.jsx": {
+    "file": "assets/EnrollmentAssessment-ClGNrdIz.js",
+    "name": "EnrollmentAssessment",
+    "src": "resources/js/Pages/Faculty/Evaluation/EnrollmentAssessment.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_ArrowRight.esm-B6HPDFNc.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Evaluation/PermissionStatus.jsx": {
+    "file": "assets/PermissionStatus-DPZudP9X.js",
+    "name": "PermissionStatus",
+    "src": "resources/js/Pages/Faculty/Evaluation/PermissionStatus.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Evaluation/SubjectLoad.jsx": {
+    "file": "assets/SubjectLoad-Dqh3rljM.js",
+    "name": "SubjectLoad",
+    "src": "resources/js/Pages/Faculty/Evaluation/SubjectLoad.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_index-xIZ0bSiY.js",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_proxy-CF65lDRk.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_DotsThreeOutlineVertical.esm-CPTX79AG.js",
+      "_Square.esm-D_1QX59v.js",
+      "_WarningCircle.esm-CIWKtoRj.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Grades/Grades.jsx": {
+    "file": "assets/Grades-B2VWrsOS.js",
+    "name": "Grades",
+    "src": "resources/js/Pages/Faculty/Grades/Grades.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_xlsx-CKN5doRT.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/MyClass/AttendanceAdd.jsx": {
+    "file": "assets/AttendanceAdd-CSijAvse.js",
+    "name": "AttendanceAdd",
+    "src": "resources/js/Pages/Faculty/MyClass/AttendanceAdd.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_dayjs.min-CD8oHrmN.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_users-CmN9x4EI.js",
+      "_calendar-days-BdsX1AOR.js",
+      "_triangle-alert-BYuVPVdv.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/MyClass/Classes.jsx": {
+    "file": "assets/Classes-NcXc9Q8l.js",
+    "name": "Classes",
+    "src": "resources/js/Pages/Faculty/MyClass/Classes.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/MyClass/GradesPage.jsx": {
+    "file": "assets/GradesPage-jsNlmGLA.js",
+    "name": "GradesPage",
+    "src": "resources/js/Pages/Faculty/MyClass/GradesPage.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_xlsx-CKN5doRT.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_DotsThreeOutlineVertical.esm-CPTX79AG.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/MyClass/SectionDetails.jsx": {
+    "file": "assets/SectionDetails-Dk_kA_C7.js",
+    "name": "SectionDetails",
+    "src": "resources/js/Pages/Faculty/MyClass/SectionDetails.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_Clock.esm-BpLOpYv2.js",
+      "_IconBase.esm-BfEjP1YE.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/MyClass/SectionDetailsPage.jsx": {
+    "file": "assets/SectionDetailsPage-DXnP5zJO.js",
+    "name": "SectionDetailsPage",
+    "src": "resources/js/Pages/Faculty/MyClass/SectionDetailsPage.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "resources/js/Pages/Faculty/MyClass/SectionDetails.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_Clock.esm-BpLOpYv2.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/MyClass/SubjectStudentsPage.jsx": {
+    "file": "assets/SubjectStudentsPage-atvNLBDP.js",
+    "name": "SubjectStudentsPage",
+    "src": "resources/js/Pages/Faculty/MyClass/SubjectStudentsPage.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_xlsx-CKN5doRT.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ArrowSquareOut.esm-CovKJEg4.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Reports/AttendanceReport.jsx": {
+    "file": "assets/AttendanceReport-DASc7Jks.js",
+    "name": "AttendanceReport",
+    "src": "resources/js/Pages/Faculty/Reports/AttendanceReport.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_xlsx-CKN5doRT.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_browser-DhcdjZmX.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/Reports/GradeReport.jsx": {
+    "file": "assets/GradeReport-Ce53Jz0B.js",
+    "name": "GradeReport",
+    "src": "resources/js/Pages/Faculty/Reports/GradeReport.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_xlsx-CKN5doRT.js",
+      "_dayjs.min-CD8oHrmN.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_browser-DhcdjZmX.js"
+    ]
+  },
+  "resources/js/Pages/Faculty/studentlists/StudentsList.jsx": {
+    "file": "assets/StudentsList-Dd18ExTC.js",
+    "name": "StudentsList",
+    "src": "resources/js/Pages/Faculty/studentlists/StudentsList.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_House.esm-DtncJelu.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Judge/Dashboard.jsx": {
+    "file": "assets/Dashboard-BoTvsH2c.js",
+    "name": "Dashboard",
+    "src": "resources/js/Pages/Judge/Dashboard.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_House.esm-DtncJelu.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_User.esm-D0budAOr.js",
+      "_CaretDown.esm-DHRPUbW6.js"
+    ]
+  },
+  "resources/js/Pages/Profile/ChangePasswordSecure.jsx": {
+    "file": "assets/ChangePasswordSecure-BsjluFtS.js",
+    "name": "ChangePasswordSecure",
+    "src": "resources/js/Pages/Profile/ChangePasswordSecure.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_eye-off-2iRXlRuI.js",
+      "_eye-BOy_U01_.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Profile/Edit.jsx": {
+    "file": "assets/Edit-D5YMi0Xy.js",
+    "name": "Edit",
+    "src": "resources/js/Pages/Profile/Edit.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_AuthenticatedLayout-1QWsHJiQ.js",
+      "resources/js/Pages/Profile/Partials/DeleteUserForm.jsx",
+      "resources/js/Pages/Profile/Partials/UpdatePasswordForm.jsx",
+      "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.jsx",
+      "_transition-do3TfUEQ.js",
+      "_TextInput-BOimOXX4.js",
+      "_InputLabel-RkNC9btO.js",
+      "_index-xIZ0bSiY.js",
+      "_PrimaryButton-CV2RCIo0.js"
+    ]
+  },
+  "resources/js/Pages/Profile/Partials/DeleteUserForm.jsx": {
+    "file": "assets/DeleteUserForm-uPfMAmHj.js",
+    "name": "DeleteUserForm",
+    "src": "resources/js/Pages/Profile/Partials/DeleteUserForm.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_TextInput-BOimOXX4.js",
+      "_InputLabel-RkNC9btO.js",
+      "_transition-do3TfUEQ.js",
+      "_index-xIZ0bSiY.js"
+    ]
+  },
+  "resources/js/Pages/Profile/Partials/UpdatePasswordForm.jsx": {
+    "file": "assets/UpdatePasswordForm-ClgL8QKb.js",
+    "name": "UpdatePasswordForm",
+    "src": "resources/js/Pages/Profile/Partials/UpdatePasswordForm.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_TextInput-BOimOXX4.js",
+      "_InputLabel-RkNC9btO.js",
+      "_PrimaryButton-CV2RCIo0.js",
+      "_transition-do3TfUEQ.js"
+    ]
+  },
+  "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.jsx": {
+    "file": "assets/UpdateProfileInformationForm-BRR-Bxoe.js",
+    "name": "UpdateProfileInformationForm",
+    "src": "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_TextInput-BOimOXX4.js",
+      "_InputLabel-RkNC9btO.js",
+      "_PrimaryButton-CV2RCIo0.js",
+      "_transition-do3TfUEQ.js"
+    ]
+  },
+  "resources/js/Pages/Profile/Profiles.jsx": {
+    "file": "assets/Profiles-cZbl-uB5.js",
+    "name": "Profiles",
+    "src": "resources/js/Pages/Profile/Profiles.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_AdminLayout-nlGm2Ey-.js",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_StudentLayout-CUBxnRun.js",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_EnvelopeSimple.esm-DDpiC-w3.js",
+      "_UserCircle.esm-B6iwXlLF.js",
+      "_proxy-CF65lDRk.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_Lock.esm-BCj-a26Y.js",
+      "_Sparkle.esm-crOyd3Cq.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_Calendar.esm-CM4MSCo0.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Curriculum/Curricula.jsx": {
+    "file": "assets/Curricula-CznhTWGQ.js",
+    "name": "Curricula",
+    "src": "resources/js/Pages/ProgramHead/Curriculum/Curricula.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_PlusCircle.esm-Bv7gnM9Z.js",
+      "_proxy-CF65lDRk.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_FileX.esm-BKzxnmp9.js",
+      "_index-BgssLrjz.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Curriculum/CurriculumPage copy.jsx": {
+    "file": "assets/CurriculumPage copy-YL1x4xos.js",
+    "name": "CurriculumPage copy",
+    "src": "resources/js/Pages/ProgramHead/Curriculum/CurriculumPage copy.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_react-select.esm-mXzfaPNp.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_PlusCircle.esm-Bv7gnM9Z.js",
+      "_Pencil.esm-DsP1Z9Ow.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_browser-DhcdjZmX.js",
+      "_defineProperty-BJaX1cXx.js",
+      "_index-xIZ0bSiY.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Curriculum/CurriculumPage.jsx": {
+    "file": "assets/CurriculumPage-ByWjilpq.js",
+    "name": "CurriculumPage",
+    "src": "resources/js/Pages/ProgramHead/Curriculum/CurriculumPage.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_react-select.esm-mXzfaPNp.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_PlusCircle.esm-Bv7gnM9Z.js",
+      "_Pencil.esm-DsP1Z9Ow.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_browser-DhcdjZmX.js",
+      "_defineProperty-BJaX1cXx.js",
+      "_index-xIZ0bSiY.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Curriculum/curriculum.jsx": {
+    "file": "assets/curriculum-d2m3ONNm.js",
+    "name": "curriculum",
+    "src": "resources/js/Pages/ProgramHead/Curriculum/curriculum.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Circle.esm-B850hmbb.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Dashboard.jsx": {
+    "file": "assets/Dashboard-_eRNCwhp.js",
+    "name": "Dashboard",
+    "src": "resources/js/Pages/ProgramHead/Dashboard.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_UserPlus.esm-DocrCbTM.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Evaluation/AddDrop.jsx": {
+    "file": "assets/AddDrop-CHWKcpHy.js",
+    "name": "AddDrop",
+    "src": "resources/js/Pages/ProgramHead/Evaluation/AddDrop.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_plus-Cm9MrAO-.js",
+      "_minus-D36RsRnv.js",
+      "_x-B13hVPFU.js",
+      "_search-BdJCZqKg.js",
+      "_circle-alert-DTd3ShvI.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Evaluation/CreditingSubjects.jsx": {
+    "file": "assets/CreditingSubjects-CSlDEmak.js",
+    "name": "CreditingSubjects",
+    "src": "resources/js/Pages/ProgramHead/Evaluation/CreditingSubjects.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_proxy-CF65lDRk.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Evaluation/Enrollment copy.jsx": {
+    "file": "assets/Enrollment copy-BonouGUM.js",
+    "name": "Enrollment copy",
+    "src": "resources/js/Pages/ProgramHead/Evaluation/Enrollment copy.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_proxy-CF65lDRk.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_IdentificationCard.esm-CmvRkb7J.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_XCircle.esm-BiIKRb5K.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Evaluation/Enrollment.jsx": {
+    "file": "assets/Enrollment-C_S793gW.js",
+    "name": "Enrollment",
+    "src": "resources/js/Pages/ProgramHead/Evaluation/Enrollment.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_proxy-CF65lDRk.js",
+      "_Sparkle.esm-crOyd3Cq.js",
+      "_UserCircle.esm-B6iwXlLF.js",
+      "_CalendarBlank.esm-Ddy1sGOf.js",
+      "_IdentificationCard.esm-CmvRkb7J.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_CaretDown.esm-DHRPUbW6.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Evaluation/PendingEnrollments.jsx": {
+    "file": "assets/PendingEnrollments-BvfirrrK.js",
+    "name": "PendingEnrollments",
+    "src": "resources/js/Pages/ProgramHead/Evaluation/PendingEnrollments.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_dayjs.min-CD8oHrmN.js",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_ArrowRight.esm-B6HPDFNc.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Evaluation/SubjectLoad.jsx": {
+    "file": "assets/SubjectLoad-CCTS_2zX.js",
+    "name": "SubjectLoad",
+    "src": "resources/js/Pages/ProgramHead/Evaluation/SubjectLoad.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_index-xIZ0bSiY.js",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_proxy-CF65lDRk.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_DotsThreeOutlineVertical.esm-CPTX79AG.js",
+      "_Square.esm-D_1QX59v.js",
+      "_WarningCircle.esm-CIWKtoRj.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Faculty/AssignFaculty copy.jsx": {
+    "file": "assets/AssignFaculty copy-2wCfrm1a.js",
+    "name": "AssignFaculty copy",
+    "src": "resources/js/Pages/ProgramHead/Faculty/AssignFaculty copy.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_PlusCircle.esm-Bv7gnM9Z.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Pencil.esm-DsP1Z9Ow.js",
+      "_XCircle.esm-BiIKRb5K.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Faculty/AssignFaculty.jsx": {
+    "file": "assets/AssignFaculty-WhqPl-CX.js",
+    "name": "AssignFaculty",
+    "src": "resources/js/Pages/ProgramHead/Faculty/AssignFaculty.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_clsx.m-DHulAg21.js",
+      "_index-xIZ0bSiY.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_MapPin.esm-D-yQPgKR.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_XCircle.esm-BiIKRb5K.js",
+      "_Printer.esm-CLRpyAix.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Faculty/Faculties.jsx": {
+    "file": "assets/Faculties-CN1n57rZ.js",
+    "name": "Faculties",
+    "src": "resources/js/Pages/ProgramHead/Faculty/Faculties.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_IdentificationCard.esm-CmvRkb7J.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_User.esm-D0budAOr.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Faculty/FacultyLoad.jsx": {
+    "file": "assets/FacultyLoad-CtdLQgwL.js",
+    "name": "FacultyLoad",
+    "src": "resources/js/Pages/ProgramHead/Faculty/FacultyLoad.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_Printer.esm-CLRpyAix.js",
+      "_Pencil.esm-DsP1Z9Ow.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Faculty/FacultyPermissions.jsx": {
+    "file": "assets/FacultyPermissions-aBD4trcC.js",
+    "name": "FacultyPermissions",
+    "src": "resources/js/Pages/ProgramHead/Faculty/FacultyPermissions.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_ClipboardText.esm-C00gW_jg.js",
+      "_Printer.esm-CLRpyAix.js",
+      "_WarningCircle.esm-CIWKtoRj.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Lock.esm-BCj-a26Y.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Faculty/FacultyProfile.jsx": {
+    "file": "assets/FacultyProfile-rQZYlIEs.js",
+    "name": "FacultyProfile",
+    "src": "resources/js/Pages/ProgramHead/Faculty/FacultyProfile.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_IdentificationCard.esm-CmvRkb7J.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Phone.esm-DZaQYIu5.js",
+      "_MapPin.esm-D-yQPgKR.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_UserCircle.esm-B6iwXlLF.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_CalendarBlank.esm-Ddy1sGOf.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Notifications/Index.jsx": {
+    "file": "assets/Index-Bamvf09F.js",
+    "name": "Index",
+    "src": "resources/js/Pages/ProgramHead/Notifications/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/PHreports/AttendanceReport.jsx": {
+    "file": "assets/AttendanceReport-Ck9oUQ-_.js",
+    "name": "AttendanceReport",
+    "src": "resources/js/Pages/ProgramHead/PHreports/AttendanceReport.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_xlsx-CKN5doRT.js",
+      "_browser-DhcdjZmX.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/PHreports/EnrollmentReport.jsx": {
+    "file": "assets/EnrollmentReport-gxZ_kUuZ.js",
+    "name": "EnrollmentReport",
+    "src": "resources/js/Pages/ProgramHead/PHreports/EnrollmentReport.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_xlsx-CKN5doRT.js",
+      "_browser-DhcdjZmX.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/PHreports/GradeReport.jsx": {
+    "file": "assets/GradeReport-DEhY-n1Q.js",
+    "name": "GradeReport",
+    "src": "resources/js/Pages/ProgramHead/PHreports/GradeReport.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_xlsx-CKN5doRT.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_browser-DhcdjZmX.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Reports/Attendance.jsx": {
+    "file": "assets/Attendance-DSaoTDAY.js",
+    "name": "Attendance",
+    "src": "resources/js/Pages/ProgramHead/Reports/Attendance.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "resources/js/Pages/ProgramHead/PHreports/AttendanceReport.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_browser-DhcdjZmX.js",
+      "_xlsx-CKN5doRT.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Reports/Enrollment.jsx": {
+    "file": "assets/Enrollment-DKmPTjzK.js",
+    "name": "Enrollment",
+    "src": "resources/js/Pages/ProgramHead/Reports/Enrollment.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "resources/js/Pages/ProgramHead/PHreports/EnrollmentReport.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_browser-DhcdjZmX.js",
+      "_xlsx-CKN5doRT.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Reports/Grades.jsx": {
+    "file": "assets/Grades-k3zvvkyg.js",
+    "name": "Grades",
+    "src": "resources/js/Pages/ProgramHead/Reports/Grades.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "resources/js/Pages/ProgramHead/PHreports/GradeReport.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_browser-DhcdjZmX.js",
+      "_xlsx-CKN5doRT.js",
+      "_UsersThree.esm-7ZNp1c8h.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Sections/Section.jsx": {
+    "file": "assets/Section-fZQ47S56.js",
+    "name": "Section",
+    "src": "resources/js/Pages/ProgramHead/Sections/Section.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_SpinnerGap.esm-ByYbZsy6.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Sections/SectionCapacity.jsx": {
+    "file": "assets/SectionCapacity-DGMmkWIH.js",
+    "name": "SectionCapacity",
+    "src": "resources/js/Pages/ProgramHead/Sections/SectionCapacity.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_WarningCircle.esm-CIWKtoRj.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_X.esm-gf_jTb8j.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Students/EnrolledStudents.jsx": {
+    "file": "assets/EnrolledStudents-BC_w2wco.js",
+    "name": "EnrolledStudents",
+    "src": "resources/js/Pages/ProgramHead/Students/EnrolledStudents.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_users-CmN9x4EI.js",
+      "_search-BdJCZqKg.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_circle-check-big-H6KOV4mD.js",
+      "_file-text-CFIStLOb.js",
+      "_layers-CS6ziutF.js",
+      "_calendar-days-BdsX1AOR.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Students/StudentProfile.jsx": {
+    "file": "assets/StudentProfile-Dm3Gzu7m.js",
+    "name": "StudentProfile",
+    "src": "resources/js/Pages/ProgramHead/Students/StudentProfile.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_proxy-CF65lDRk.js",
+      "_User.esm-D0budAOr.js",
+      "_IdentificationCard.esm-CmvRkb7J.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Phone.esm-DZaQYIu5.js",
+      "_MapPin.esm-D-yQPgKR.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Students/StudentRecordDetail.jsx": {
+    "file": "assets/StudentRecordDetail-DHUXn2XP.js",
+    "name": "StudentRecordDetail",
+    "src": "resources/js/Pages/ProgramHead/Students/StudentRecordDetail.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_Stack.esm-96ayK67v.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Students/StudentRecords.jsx": {
+    "file": "assets/StudentRecords-Bej8JEij.js",
+    "name": "StudentRecords",
+    "src": "resources/js/Pages/ProgramHead/Students/StudentRecords.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_FilePdf.esm-B3HPZIWz.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_Stack.esm-96ayK67v.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_ArrowSquareOut.esm-CovKJEg4.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_User.esm-D0budAOr.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/ProgramHead/Students/StudentsList.jsx": {
+    "file": "assets/StudentsList-B2vsxbUx.js",
+    "name": "StudentsList",
+    "src": "resources/js/Pages/ProgramHead/Students/StudentsList.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_ProgramHeadLayout-BHRW6MjO.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_proxy-CF65lDRk.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_User.esm-D0budAOr.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_ShieldCheck.esm-BXlGoNH6.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Curriculum/Courses.jsx": {
+    "file": "assets/Courses-Dw2gnetV.js",
+    "name": "Courses",
+    "src": "resources/js/Pages/Registrar/Curriculum/Courses.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_proxy-CF65lDRk.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_XCircle.esm-BiIKRb5K.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_index-BgssLrjz.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Curriculum/Curriculum.jsx": {
+    "file": "assets/Curriculum-RYB28EXD.js",
+    "name": "Curriculum",
+    "src": "resources/js/Pages/Registrar/Curriculum/Curriculum.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_Files.esm-B_c9rzf-.js",
+      "_FileX.esm-BKzxnmp9.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Curriculum/Majors.jsx": {
+    "file": "assets/Majors-CP_puS4Z.js",
+    "name": "Majors",
+    "src": "resources/js/Pages/Registrar/Curriculum/Majors.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_proxy-CF65lDRk.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_XCircle.esm-BiIKRb5K.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_index-BgssLrjz.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Curriculum/Subjects.jsx": {
+    "file": "assets/Subjects-Vfmc0LWg.js",
+    "name": "Subjects",
+    "src": "resources/js/Pages/Registrar/Curriculum/Subjects.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Curriculum/ViewCurriculum.jsx": {
+    "file": "assets/ViewCurriculum-BtxVx8vt.js",
+    "name": "ViewCurriculum",
+    "src": "resources/js/Pages/Registrar/Curriculum/ViewCurriculum.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_xlsx-CKN5doRT.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_browser-DhcdjZmX.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Dashboard.jsx": {
+    "file": "assets/Dashboard-BNMa-WO9.js",
+    "name": "Dashboard",
+    "src": "resources/js/Pages/Registrar/Dashboard.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_ListChecks.esm-hIXO9OxR.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_BarChart-4Knc9qdw.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_index-xIZ0bSiY.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Departments/Department.jsx": {
+    "file": "assets/Department-BTo9q1kf.js",
+    "name": "Department",
+    "src": "resources/js/Pages/Registrar/Departments/Department.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Departments/ProgramHeads.jsx": {
+    "file": "assets/ProgramHeads-BrCnXfd5.js",
+    "name": "ProgramHeads",
+    "src": "resources/js/Pages/Registrar/Departments/ProgramHeads.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_search-BdJCZqKg.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Enrollment/EnrollmentPeriod.jsx": {
+    "file": "assets/EnrollmentPeriod-D-Yj6doI.js",
+    "name": "EnrollmentPeriod",
+    "src": "resources/js/Pages/Registrar/Enrollment/EnrollmentPeriod.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_dayjs.min-CD8oHrmN.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_plus-Cm9MrAO-.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_x-B13hVPFU.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_browser-DhcdjZmX.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Enrollment/PreEnroll.jsx": {
+    "file": "assets/PreEnroll-DX_spNnC.js",
+    "name": "PreEnroll",
+    "src": "resources/js/Pages/Registrar/Enrollment/PreEnroll.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_users-CmN9x4EI.js",
+      "_search-BdJCZqKg.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_book-open-C8hUT_Nv.js",
+      "_clipboard-list-BInWDlgs.js",
+      "_circle-check-big-H6KOV4mD.js",
+      "_x-B13hVPFU.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Enrollment/RegistrarEnrolledStudents.jsx": {
+    "file": "assets/RegistrarEnrolledStudents-Ce74H--v.js",
+    "name": "RegistrarEnrolledStudents",
+    "src": "resources/js/Pages/Registrar/Enrollment/RegistrarEnrolledStudents.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_users-CmN9x4EI.js",
+      "_search-BdJCZqKg.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Enrollment/Requirements.jsx": {
+    "file": "assets/Requirements-CGdbT68s.js",
+    "name": "Requirements",
+    "src": "resources/js/Pages/Registrar/Enrollment/Requirements.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_proxy-CF65lDRk.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_index-BgssLrjz.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Enrollment/ReviewSubjectLoads.jsx": {
+    "file": "assets/ReviewSubjectLoads-v57zkqF0.js",
+    "name": "ReviewSubjectLoads",
+    "src": "resources/js/Pages/Registrar/Enrollment/ReviewSubjectLoads.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_search-BdJCZqKg.js",
+      "_plus-Cm9MrAO-.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Enrollment/StudentsList.jsx": {
+    "file": "assets/StudentsList-BAGqi50_.js",
+    "name": "StudentsList",
+    "src": "resources/js/Pages/Registrar/Enrollment/StudentsList.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_xlsx-CKN5doRT.js",
+      "_search-BdJCZqKg.js",
+      "_file-text-CFIStLOb.js",
+      "_file-spreadsheet-BwQ-fkIK.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_browser-DhcdjZmX.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Notifications/Index.jsx": {
+    "file": "assets/Index-uVEvRasj.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Registrar/Notifications/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_FacultyLayout-m8Xgtuqg.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Reports/EnrollmentReports.jsx": {
+    "file": "assets/EnrollmentReports-B2nKvszo.js",
+    "name": "EnrollmentReports",
+    "src": "resources/js/Pages/Registrar/Reports/EnrollmentReports.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "resources/js/Pages/ProgramHead/PHreports/EnrollmentReport.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_browser-DhcdjZmX.js",
+      "_xlsx-CKN5doRT.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Reports/GradeReports.jsx": {
+    "file": "assets/GradeReports-DT4UGN0G.js",
+    "name": "GradeReports",
+    "src": "resources/js/Pages/Registrar/Reports/GradeReports.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "resources/js/Pages/ProgramHead/PHreports/GradeReport.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_jspdf.plugin.autotable-Cgf24j1U.js",
+      "_browser-DhcdjZmX.js",
+      "_xlsx-CKN5doRT.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/AddDrop.jsx": {
+    "file": "assets/AddDrop-B2J-dUt0.js",
+    "name": "AddDrop",
+    "src": "resources/js/Pages/Registrar/Students/AddDrop.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_plus-Cm9MrAO-.js",
+      "_minus-D36RsRnv.js",
+      "_search-BdJCZqKg.js",
+      "_x-B13hVPFU.js",
+      "_circle-alert-DTd3ShvI.js",
+      "_calendar-BaGxAjw7.js",
+      "_circle-check-CmOvPWOW.js",
+      "_triangle-alert-BYuVPVdv.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_save-BRbUh7yz.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/AddSubject.jsx": {
+    "file": "assets/AddSubject-Cer_cMbB.js",
+    "name": "AddSubject",
+    "src": "resources/js/Pages/Registrar/Students/AddSubject.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_search-BdJCZqKg.js",
+      "_circle-check-CmOvPWOW.js",
+      "_calendar-BaGxAjw7.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_plus-Cm9MrAO-.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/ApprovedGrades.jsx": {
+    "file": "assets/ApprovedGrades-C5Bk6d-X.js",
+    "name": "ApprovedGrades",
+    "src": "resources/js/Pages/Registrar/Students/ApprovedGrades.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/Dashboard.jsx": {
+    "file": "assets/Dashboard-BNAwJFjg.js",
+    "name": "Dashboard",
+    "src": "resources/js/Pages/Registrar/Students/Dashboard.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_StudentLayout-CUBxnRun.js",
+      "_User.esm-D0budAOr.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_House.esm-DtncJelu.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_CaretDown.esm-DHRPUbW6.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/DropSubject.jsx": {
+    "file": "assets/DropSubject-C0mfM30B.js",
+    "name": "DropSubject",
+    "src": "resources/js/Pages/Registrar/Students/DropSubject.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_search-BdJCZqKg.js",
+      "_circle-alert-DTd3ShvI.js",
+      "_minus-D36RsRnv.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/GradesPage.jsx": {
+    "file": "assets/GradesPage-DVFnnCJo.js",
+    "name": "GradesPage",
+    "src": "resources/js/Pages/Registrar/Students/GradesPage.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_book-open-C8hUT_Nv.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/StudentGrades.jsx": {
+    "file": "assets/StudentGrades-BbdD_ZRH.js",
+    "name": "StudentGrades",
+    "src": "resources/js/Pages/Registrar/Students/StudentGrades.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_GraduationCap.esm-DoEM5e-d.js",
+      "_ArrowRight.esm-B6HPDFNc.js",
+      "_ArrowUpRight.esm-D8mDRfWB.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/StudentGradesCourse.jsx": {
+    "file": "assets/StudentGradesCourse-OdVtnPCY.js",
+    "name": "StudentGradesCourse",
+    "src": "resources/js/Pages/Registrar/Students/StudentGradesCourse.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_SquaresFour.esm-O1xw9dxC.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_ArrowRight.esm-B6HPDFNc.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/StudentGradesList.jsx": {
+    "file": "assets/StudentGradesList-DkWHTh6t.js",
+    "name": "StudentGradesList",
+    "src": "resources/js/Pages/Registrar/Students/StudentGradesList.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_graduation-cap-Z1kim-dk.js",
+      "_eye-BOy_U01_.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/StudentGradesSectionReview.jsx": {
+    "file": "assets/StudentGradesSectionReview-B6LhitbI.js",
+    "name": "StudentGradesSectionReview",
+    "src": "resources/js/Pages/Registrar/Students/StudentGradesSectionReview.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_WarningCircle.esm-CIWKtoRj.js",
+      "_ChalkboardTeacher.esm-oDrJGI81.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_Clock.esm-BpLOpYv2.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_XCircle.esm-BiIKRb5K.js",
+      "_House.esm-DtncJelu.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/StudentGradesSectionSubjects.jsx": {
+    "file": "assets/StudentGradesSectionSubjects-Cighq06z.js",
+    "name": "StudentGradesSectionSubjects",
+    "src": "resources/js/Pages/Registrar/Students/StudentGradesSectionSubjects.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_SquaresFour.esm-O1xw9dxC.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_ArrowRight.esm-B6HPDFNc.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/StudentGradesSections.jsx": {
+    "file": "assets/StudentGradesSections-BYJW2D6c.js",
+    "name": "StudentGradesSections",
+    "src": "resources/js/Pages/Registrar/Students/StudentGradesSections.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_ArrowLeft.esm-CLtYDJqE.js",
+      "_SquaresFour.esm-O1xw9dxC.js",
+      "_UsersThree.esm-7ZNp1c8h.js",
+      "_BookOpen.esm-DReIGavd.js",
+      "_ArrowRight.esm-B6HPDFNc.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/StudentProfile.jsx": {
+    "file": "assets/StudentProfile-B9OAb319.js",
+    "name": "StudentProfile",
+    "src": "resources/js/Pages/Registrar/Students/StudentProfile.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_plus-Cm9MrAO-.js",
+      "_graduation-cap-Z1kim-dk.js",
+      "_search-BdJCZqKg.js",
+      "_user-3ZQ-uQlf.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/StudentProfileCreate.jsx": {
+    "file": "assets/StudentProfileCreate-BR2H6Qz_.js",
+    "name": "StudentProfileCreate",
+    "src": "resources/js/Pages/Registrar/Students/StudentProfileCreate.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_upload-a06s7cy6.js",
+      "_save-BRbUh7yz.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/StudentRecord.jsx": {
+    "file": "assets/StudentRecord-BJcaiPIP.js",
+    "name": "StudentRecord",
+    "src": "resources/js/Pages/Registrar/Students/StudentRecord.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "resources/js/Pages/Registrar/Students/components/AddSubjectModal.jsx",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_eye-BOy_U01_.js",
+      "_user-3ZQ-uQlf.js",
+      "_layers-CS6ziutF.js",
+      "_book-open-C8hUT_Nv.js",
+      "_clock-CYK17qik.js",
+      "_graduation-cap-Z1kim-dk.js",
+      "_file-text-CFIStLOb.js",
+      "_shield-check-BDFrlIgU.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_circle-check-big-H6KOV4mD.js",
+      "_map-pin-CL1idguV.js",
+      "_calendar-clock-U1jJySuk.js",
+      "_phone-DAYIITnh.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_calendar-BaGxAjw7.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_plus-Cm9MrAO-.js",
+      "_chevron-right-Dw-wkAVo.js",
+      "_x-B13hVPFU.js",
+      "_upload-a06s7cy6.js",
+      "_search-BdJCZqKg.js",
+      "_circle-alert-DTd3ShvI.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_circle-check-CmOvPWOW.js",
+      "_triangle-alert-BYuVPVdv.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/StudentsAccount.jsx": {
+    "file": "assets/StudentsAccount-BayrH1ee.js",
+    "name": "StudentsAccount",
+    "src": "resources/js/Pages/Registrar/Students/StudentsAccount.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_UserPlus.esm-DocrCbTM.js",
+      "_MagnifyingGlass.esm-C3oRW5eG.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_Eye.esm-Vu_hkQ5S.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/SubmittedRequirements.jsx": {
+    "file": "assets/SubmittedRequirements-UezQRSdQ.js",
+    "name": "SubmittedRequirements",
+    "src": "resources/js/Pages/Registrar/Students/SubmittedRequirements.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_user-3ZQ-uQlf.js",
+      "_users-CmN9x4EI.js",
+      "_circle-check-big-H6KOV4mD.js",
+      "_clock-CYK17qik.js",
+      "_calendar-check-Dsgb311L.js",
+      "_file-text-CFIStLOb.js",
+      "_x-B13hVPFU.js",
+      "_upload-a06s7cy6.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/Students/components/AddSubjectModal.jsx": {
+    "file": "assets/AddSubjectModal-DgNzGj5F.js",
+    "name": "AddSubjectModal",
+    "src": "resources/js/Pages/Registrar/Students/components/AddSubjectModal.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_x-B13hVPFU.js",
+      "_search-BdJCZqKg.js",
+      "_circle-alert-DTd3ShvI.js",
+      "_circle-check-CmOvPWOW.js",
+      "_calendar-BaGxAjw7.js",
+      "_triangle-alert-BYuVPVdv.js",
+      "_loader-circle-CTBRcdL0.js",
+      "_plus-Cm9MrAO-.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/SySemester/AcademicYearSemester.jsx": {
+    "file": "assets/AcademicYearSemester-Dz_9h8zz.js",
+    "name": "AcademicYearSemester",
+    "src": "resources/js/Pages/Registrar/SySemester/AcademicYearSemester.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_XCircle.esm-BiIKRb5K.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/SySemester/Academic_Year.jsx": {
+    "file": "assets/Academic_Year-CIm8rbly.js",
+    "name": "Academic_Year",
+    "src": "resources/js/Pages/Registrar/SySemester/Academic_Year.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Circle.esm-B850hmbb.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Registrar/SySemester/Semester.jsx": {
+    "file": "assets/Semester-DNEOPmJa.js",
+    "name": "Semester",
+    "src": "resources/js/Pages/Registrar/SySemester/Semester.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_RegistrarLayout-BKn-mq1y.js",
+      "_sweetalert2.esm.all-DhUVDY3P.js",
+      "_Plus.esm-C_Sc8bcL.js",
+      "_CheckCircle.esm-CClbYzKN.js",
+      "_Circle.esm-B850hmbb.js",
+      "_PencilSimple.esm-JGBEPztR.js",
+      "_index-BgssLrjz.js",
+      "_proxy-CF65lDRk.js",
+      "_X.esm-gf_jTb8j.js",
+      "_House.esm-DtncJelu.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_Calendar.esm-CM4MSCo0.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_Clipboard.esm-CKTctxsI.js",
+      "_Notebook.esm-CZhGohLE.js",
+      "_User.esm-D0budAOr.js",
+      "_CalendarCheck.esm-qud0bmfi.js",
+      "_Users.esm-C5TsqWJ5.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_BellSimple.esm-SA1YNnd4.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_SignOut.esm-BT4b-b_s.js"
+    ]
+  },
+  "resources/js/Pages/Students/AcademicRecords/AcademicRecord.jsx": {
+    "file": "assets/AcademicRecord-UK3tgLyA.js",
+    "name": "AcademicRecord",
+    "src": "resources/js/Pages/Students/AcademicRecords/AcademicRecord.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_StudentLayout-CUBxnRun.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_graduation-cap-Z1kim-dk.js",
+      "_layers-CS6ziutF.js",
+      "_User.esm-D0budAOr.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_House.esm-DtncJelu.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_CaretDown.esm-DHRPUbW6.js"
+    ]
+  },
+  "resources/js/Pages/Students/AcademicRecords/RecordDetail.jsx": {
+    "file": "assets/RecordDetail-9Daq7Q90.js",
+    "name": "RecordDetail",
+    "src": "resources/js/Pages/Students/AcademicRecords/RecordDetail.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_StudentLayout-CUBxnRun.js",
+      "_file-text-CFIStLOb.js",
+      "_arrow-left-EJ7e5Gv5.js",
+      "_graduation-cap-Z1kim-dk.js",
+      "_layers-CS6ziutF.js",
+      "_User.esm-D0budAOr.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_House.esm-DtncJelu.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Students/Dashboard.jsx": {
+    "file": "assets/Dashboard-DsELmSox.js",
+    "name": "Dashboard",
+    "src": "resources/js/Pages/Students/Dashboard.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_StudentLayout-CUBxnRun.js",
+      "_clock-CYK17qik.js",
+      "_book-open-C8hUT_Nv.js",
+      "_map-pin-CL1idguV.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_User.esm-D0budAOr.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_House.esm-DtncJelu.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_CaretDown.esm-DHRPUbW6.js"
+    ]
+  },
+  "resources/js/Pages/Students/EnrolledSubjects/MyEnrolledSub.jsx": {
+    "file": "assets/MyEnrolledSub-iuY-MPQV.js",
+    "name": "MyEnrolledSub",
+    "src": "resources/js/Pages/Students/EnrolledSubjects/MyEnrolledSub.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_StudentLayout-CUBxnRun.js",
+      "node_modules/html2canvas/dist/html2canvas.esm.js",
+      "_book-open-C8hUT_Nv.js",
+      "_layers-CS6ziutF.js",
+      "_createLucideIcon-DEhOrlju.js",
+      "_User.esm-D0budAOr.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_House.esm-DtncJelu.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_CaretDown.esm-DHRPUbW6.js"
+    ]
+  },
+  "resources/js/Pages/Students/Grades/Grades.jsx": {
+    "file": "assets/Grades-C-3MRLNw.js",
+    "name": "Grades",
+    "src": "resources/js/Pages/Students/Grades/Grades.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_StudentLayout-CUBxnRun.js",
+      "_book-open-C8hUT_Nv.js",
+      "_calendar-BaGxAjw7.js",
+      "_layers-CS6ziutF.js",
+      "_User.esm-D0budAOr.js",
+      "_IconBase.esm-BfEjP1YE.js",
+      "_CaretLeft.esm-CkcBg5a_.js",
+      "_House.esm-DtncJelu.js",
+      "_Book.esm-B7AH9Dx8.js",
+      "_FileText.esm-CcCeMj1T.js",
+      "_CheckSquare.esm-BrChhV_v.js",
+      "_CaretDown.esm-DHRPUbW6.js",
+      "_createLucideIcon-DEhOrlju.js"
+    ]
+  },
+  "resources/js/Pages/Welcome.jsx": {
+    "file": "assets/Welcome-Dn10-v16.js",
+    "name": "Welcome",
+    "src": "resources/js/Pages/Welcome.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "resources/js/app.jsx": {
+    "file": "assets/app-Ck4DA6Ax.js",
+    "name": "app",
+    "src": "resources/js/app.jsx",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/Pages/Admin/Academic/Grades.jsx",
+      "resources/js/Pages/Admin/Academic/Requirements.jsx",
+      "resources/js/Pages/Admin/Academic/StudentGrades.jsx",
+      "resources/js/Pages/Admin/Academic/Students.jsx",
+      "resources/js/Pages/Admin/Academic/SubmittedRequirements.jsx",
+      "resources/js/Pages/Admin/AcademicSetup/ClassSchedules.jsx",
+      "resources/js/Pages/Admin/Classrooms/Classrooms.jsx",
+      "resources/js/Pages/Admin/Curriculums/Curriculums.jsx",
+      "resources/js/Pages/Admin/Curriculums/DeptCurriculums.jsx",
+      "resources/js/Pages/Admin/Dashboard.jsx",
+      "resources/js/Pages/Admin/Enrollment.jsx",
+      "resources/js/Pages/Admin/Enrollments/EnrollDropStudents.jsx",
+      "resources/js/Pages/Admin/Enrollments/EnrollmentPeriods.jsx",
+      "resources/js/Pages/Admin/Enrollments/EnrollmentRecords.jsx",
+      "resources/js/Pages/Admin/Enrollments/Sections.jsx",
+      "resources/js/Pages/Admin/Programs/Courses.jsx",
+      "resources/js/Pages/Admin/Programs/Departments.jsx",
+      "resources/js/Pages/Admin/Reports/EnrollmentReport.jsx",
+      "resources/js/Pages/Admin/Reports/GradeReport.jsx",
+      "resources/js/Pages/Admin/Users/Faculty.jsx",
+      "resources/js/Pages/Admin/Users/ProgramHead.jsx",
+      "resources/js/Pages/Admin/Users/Registrar.jsx",
+      "resources/js/Pages/Auth/ChangePassword.jsx",
+      "resources/js/Pages/Auth/ConfirmPassword.jsx",
+      "resources/js/Pages/Auth/EditProfile.jsx",
+      "resources/js/Pages/Auth/ForgotPassword.jsx",
+      "resources/js/Pages/Auth/Login.jsx",
+      "resources/js/Pages/Auth/Register.jsx",
+      "resources/js/Pages/Auth/ResetPassword.jsx",
+      "resources/js/Pages/Auth/VerifyEmail.jsx",
+      "resources/js/Pages/Dashboard.jsx",
+      "resources/js/Pages/Faculty/Attendance/AddAttendance.jsx",
+      "resources/js/Pages/Faculty/Attendance/AttendanceRecord.jsx",
+      "resources/js/Pages/Faculty/Attendance/StudentAttendance.jsx",
+      "resources/js/Pages/Faculty/Attendance/SubjectAttendance.jsx",
+      "resources/js/Pages/Faculty/Classroom/ClassView.jsx",
+      "resources/js/Pages/Faculty/Dashboard.jsx",
+      "resources/js/Pages/Faculty/Evaluation/Enrollment.jsx",
+      "resources/js/Pages/Faculty/Evaluation/EnrollmentAssessment.jsx",
+      "resources/js/Pages/Faculty/Evaluation/PermissionStatus.jsx",
+      "resources/js/Pages/Faculty/Evaluation/SubjectLoad.jsx",
+      "resources/js/Pages/Faculty/Grades/Grades.jsx",
+      "resources/js/Pages/Faculty/MyClass/AttendanceAdd.jsx",
+      "resources/js/Pages/Faculty/MyClass/Classes.jsx",
+      "resources/js/Pages/Faculty/MyClass/GradesPage.jsx",
+      "resources/js/Pages/Faculty/MyClass/SectionDetails.jsx",
+      "resources/js/Pages/Faculty/MyClass/SectionDetailsPage.jsx",
+      "resources/js/Pages/Faculty/MyClass/SubjectStudentsPage.jsx",
+      "resources/js/Pages/Faculty/Reports/AttendanceReport.jsx",
+      "resources/js/Pages/Faculty/Reports/GradeReport.jsx",
+      "resources/js/Pages/Faculty/studentlists/StudentsList.jsx",
+      "resources/js/Pages/Judge/Dashboard.jsx",
+      "resources/js/Pages/Profile/ChangePasswordSecure.jsx",
+      "resources/js/Pages/Profile/Edit.jsx",
+      "resources/js/Pages/Profile/Partials/DeleteUserForm.jsx",
+      "resources/js/Pages/Profile/Partials/UpdatePasswordForm.jsx",
+      "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.jsx",
+      "resources/js/Pages/Profile/Profiles.jsx",
+      "resources/js/Pages/ProgramHead/Curriculum/Curricula.jsx",
+      "resources/js/Pages/ProgramHead/Curriculum/CurriculumPage copy.jsx",
+      "resources/js/Pages/ProgramHead/Curriculum/CurriculumPage.jsx",
+      "resources/js/Pages/ProgramHead/Curriculum/curriculum.jsx",
+      "resources/js/Pages/ProgramHead/Dashboard.jsx",
+      "resources/js/Pages/ProgramHead/Evaluation/AddDrop.jsx",
+      "resources/js/Pages/ProgramHead/Evaluation/CreditingSubjects.jsx",
+      "resources/js/Pages/ProgramHead/Evaluation/Enrollment copy.jsx",
+      "resources/js/Pages/ProgramHead/Evaluation/Enrollment.jsx",
+      "resources/js/Pages/ProgramHead/Evaluation/PendingEnrollments.jsx",
+      "resources/js/Pages/ProgramHead/Evaluation/SubjectLoad.jsx",
+      "resources/js/Pages/ProgramHead/Faculty/AssignFaculty copy.jsx",
+      "resources/js/Pages/ProgramHead/Faculty/AssignFaculty.jsx",
+      "resources/js/Pages/ProgramHead/Faculty/Faculties.jsx",
+      "resources/js/Pages/ProgramHead/Faculty/FacultyLoad.jsx",
+      "resources/js/Pages/ProgramHead/Faculty/FacultyPermissions.jsx",
+      "resources/js/Pages/ProgramHead/Faculty/FacultyProfile.jsx",
+      "resources/js/Pages/ProgramHead/Notifications/Index.jsx",
+      "resources/js/Pages/ProgramHead/PHreports/AttendanceReport.jsx",
+      "resources/js/Pages/ProgramHead/PHreports/EnrollmentReport.jsx",
+      "resources/js/Pages/ProgramHead/PHreports/GradeReport.jsx",
+      "resources/js/Pages/ProgramHead/Reports/Attendance.jsx",
+      "resources/js/Pages/ProgramHead/Reports/Enrollment.jsx",
+      "resources/js/Pages/ProgramHead/Reports/Grades.jsx",
+      "resources/js/Pages/ProgramHead/Sections/Section.jsx",
+      "resources/js/Pages/ProgramHead/Sections/SectionCapacity.jsx",
+      "resources/js/Pages/ProgramHead/Students/EnrolledStudents.jsx",
+      "resources/js/Pages/ProgramHead/Students/StudentProfile.jsx",
+      "resources/js/Pages/ProgramHead/Students/StudentRecordDetail.jsx",
+      "resources/js/Pages/ProgramHead/Students/StudentRecords.jsx",
+      "resources/js/Pages/ProgramHead/Students/StudentsList.jsx",
+      "resources/js/Pages/Registrar/Curriculum/Courses.jsx",
+      "resources/js/Pages/Registrar/Curriculum/Curriculum.jsx",
+      "resources/js/Pages/Registrar/Curriculum/Majors.jsx",
+      "resources/js/Pages/Registrar/Curriculum/Subjects.jsx",
+      "resources/js/Pages/Registrar/Curriculum/ViewCurriculum.jsx",
+      "resources/js/Pages/Registrar/Dashboard.jsx",
+      "resources/js/Pages/Registrar/Departments/Department.jsx",
+      "resources/js/Pages/Registrar/Departments/ProgramHeads.jsx",
+      "resources/js/Pages/Registrar/Enrollment/EnrollmentPeriod.jsx",
+      "resources/js/Pages/Registrar/Enrollment/PreEnroll.jsx",
+      "resources/js/Pages/Registrar/Enrollment/RegistrarEnrolledStudents.jsx",
+      "resources/js/Pages/Registrar/Enrollment/Requirements.jsx",
+      "resources/js/Pages/Registrar/Enrollment/ReviewSubjectLoads.jsx",
+      "resources/js/Pages/Registrar/Enrollment/StudentsList.jsx",
+      "resources/js/Pages/Registrar/Notifications/Index.jsx",
+      "resources/js/Pages/Registrar/Reports/EnrollmentReports.jsx",
+      "resources/js/Pages/Registrar/Reports/GradeReports.jsx",
+      "resources/js/Pages/Registrar/Students/AddDrop.jsx",
+      "resources/js/Pages/Registrar/Students/AddSubject.jsx",
+      "resources/js/Pages/Registrar/Students/ApprovedGrades.jsx",
+      "resources/js/Pages/Registrar/Students/Dashboard.jsx",
+      "resources/js/Pages/Registrar/Students/DropSubject.jsx",
+      "resources/js/Pages/Registrar/Students/GradesPage.jsx",
+      "resources/js/Pages/Registrar/Students/StudentGrades.jsx",
+      "resources/js/Pages/Registrar/Students/StudentGradesCourse.jsx",
+      "resources/js/Pages/Registrar/Students/StudentGradesList.jsx",
+      "resources/js/Pages/Registrar/Students/StudentGradesSectionReview.jsx",
+      "resources/js/Pages/Registrar/Students/StudentGradesSectionSubjects.jsx",
+      "resources/js/Pages/Registrar/Students/StudentGradesSections.jsx",
+      "resources/js/Pages/Registrar/Students/StudentProfile.jsx",
+      "resources/js/Pages/Registrar/Students/StudentProfileCreate.jsx",
+      "resources/js/Pages/Registrar/Students/StudentRecord.jsx",
+      "resources/js/Pages/Registrar/Students/StudentsAccount.jsx",
+      "resources/js/Pages/Registrar/Students/SubmittedRequirements.jsx",
+      "resources/js/Pages/Registrar/Students/components/AddSubjectModal.jsx",
+      "resources/js/Pages/Registrar/SySemester/AcademicYearSemester.jsx",
+      "resources/js/Pages/Registrar/SySemester/Academic_Year.jsx",
+      "resources/js/Pages/Registrar/SySemester/Semester.jsx",
+      "resources/js/Pages/Students/AcademicRecords/AcademicRecord.jsx",
+      "resources/js/Pages/Students/AcademicRecords/RecordDetail.jsx",
+      "resources/js/Pages/Students/Dashboard.jsx",
+      "resources/js/Pages/Students/EnrolledSubjects/MyEnrolledSub.jsx",
+      "resources/js/Pages/Students/Grades/Grades.jsx",
+      "resources/js/Pages/Welcome.jsx"
+    ],
+    "css": [
+      "assets/app-CBjPfwA-.css"
+    ],
+    "assets": [
+      "assets/poppins-devanagari-400-normal-CJDn6rn8.woff2",
+      "assets/poppins-devanagari-400-normal-CqVvlrh5.woff",
+      "assets/poppins-latin-ext-400-normal-by3JarPu.woff2",
+      "assets/poppins-latin-ext-400-normal-DaBSavcJ.woff",
+      "assets/poppins-latin-400-normal-cpxAROuN.woff2",
+      "assets/poppins-latin-400-normal-BOb3E3N0.woff"
+    ]
+  }
+}

@@ -9,6 +9,7 @@ export default function Curriculum() {
   const [activeCourseId, setActiveCourseId] = useState('all');
 
   const filtered = curricula.data.filter(c =>
+    c.status === 'approved' &&
     (!search || c.name?.toLowerCase().includes(search.toLowerCase()) || (c.description||'').toLowerCase().includes(search.toLowerCase())) &&
     (activeCourseId === 'all' || c.courses_id?.toString() === activeCourseId.toString())
   );
@@ -71,6 +72,11 @@ export default function Curriculum() {
                 }`}>
                   {curr.status}
                 </span>
+                {curr.status === 'approved' && (
+                  <p className="mt-1 text-[11px] text-gray-400">
+                    Approved {formatDate(curr.updated_at || curr.created_at)}
+                  </p>
+                )}
               </div>
             </div>
           )) : (
@@ -101,4 +107,13 @@ export default function Curriculum() {
       </div>
     </RegistrarLayout>
   );
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+  try {
+    return new Date(value).toLocaleString();
+  } catch (error) {
+    return value;
+  }
 }

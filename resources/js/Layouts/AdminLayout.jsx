@@ -5,7 +5,7 @@ import {
   UsersThree,
   List,
   CaretLeft,
-  UserCircle,
+  CaretDown,
   ClipboardText,
   FileText,
   CalendarCheck,
@@ -15,13 +15,15 @@ import {
   IdentificationBadge,
   ChalkboardTeacher,
   Timer,
+  SignOut,
 } from 'phosphor-react';
 import { Link, usePage, router } from '@inertiajs/react';
 import '@fontsource/poppins/index.css';
 import Swal from 'sweetalert2';
 
 export default function AdminLayout({ children }) {
-  const { url } = usePage(); 
+  const { url, props } = usePage();
+  const { auth } = props; 
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     if (typeof window === 'undefined') {
       return false;
@@ -205,13 +207,13 @@ export default function AdminLayout({ children }) {
             open={sidebarOpen}
             currentUrl={url}
           />
-          <NavItem
+          {/* <NavItem
             href="/admin/students"
             icon={<Student size={16} color="white" />}
             label="Students"
             open={sidebarOpen}
             currentUrl={url}
-          />
+          /> */}
 
           <SidebarLabel label="Reports" open={sidebarOpen} />
         
@@ -229,7 +231,7 @@ export default function AdminLayout({ children }) {
             open={sidebarOpen}
             currentUrl={url}
           />
-          <NavItem
+          {/* <NavItem
             href="/admin/reports/faculty"
             icon={<User size={16} color="white" />}
             label="Faculty Load"
@@ -242,53 +244,82 @@ export default function AdminLayout({ children }) {
             label="Attendance"
             open={sidebarOpen}
             currentUrl={url}
-          />
+          /> */}
         </nav>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6">
-        <div className="flex justify-between items-center mb-4">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="bg-white p-2 rounded shadow hover:bg-gray-100 transition"
-          >
-            {sidebarOpen ? (
-              <CaretLeft size={22} color="black" />
-            ) : (
-              <List size={22} color="black" />
-            )}
-          </button>
-
-          <div className="relative" ref={dropdownRef}>
+      <main className="flex-1 min-h-screen overflow-y-auto bg-slate-50 text-[11px] font-normal [scrollbar-width:thin] [scrollbar-color:rgba(15,23,42,0.2)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300/60 [&::-webkit-scrollbar-track]:bg-transparent">
+        {/* Header */}
+        <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+          <div className="flex justify-between items-center px-6 py-1.5">
+            {/* Sidebar Toggle */}
             <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-1 bg-white/70 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm hover:bg-white/90 transition"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 hover:bg-gray-200 hover:border-gray-400 transition-all duration-200"
+              title="Toggle sidebar"
             >
-              <UserCircle size={18} />
-              <span className="text-[10px] font-semibold">▼</span>
+              {sidebarOpen ? (
+                <CaretLeft size={16} color="currentColor" />
+              ) : (
+                <List size={16} color="currentColor" />
+              )}
             </button>
 
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-32 bg-white/80 backdrop-blur-md rounded shadow text-xs z-50">
-                <Link
-                  href="/profile"
-                  className="block px-3 py-1 text-gray-700 hover:bg-gray-200 rounded-t"
-                >
-                  Profile
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left px-3 py-1 text-red-600 hover:bg-gray-200 rounded-b"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
+            {/* Profile Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                type="button"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-gray-700 transition-all duration-200 hover:bg-gray-200 hover:border-gray-400"
+              >
+                <div className="flex items-center gap-2.5">
+                  {props?.auth?.user?.profile_picture ? (
+                    <img
+                      src={props.auth.user.profile_picture}
+                      alt="Profile"
+                      className="h-7 w-7 rounded-full object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex-shrink-0">
+                      <User size={16} />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px] font-bold text-gray-900 truncate">Administrator</p>
+                    <p className="text-[10px] text-gray-600 font-medium truncate">{props?.auth?.user?.email || 'N/A'}</p>
+                  </div>
+                </div>
+                <CaretDown size={12} />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-3 w-48 rounded-lg border border-gray-300 bg-white shadow-lg overflow-hidden z-50">
+                  {/* Actions */}
+                  <Link
+                    href="/profile"
+                    className="flex items-center gap-3 px-4 py-3 text-[12.5px] font-semibold text-gray-900 hover:bg-gray-100 transition-colors border-b border-gray-200"
+                  >
+                    <User size={16} />
+                    Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-[12.5px] font-semibold text-gray-900 hover:text-red-600 hover:bg-red-50 transition-colors group"
+                  >
+                    <SignOut size={16} className="transition-colors group-hover:text-red-600" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {children}
+        {/* Page Content */}
+        <div className="px-6 py-5">
+          {children}
+        </div>
       </main>
     </div>
   );

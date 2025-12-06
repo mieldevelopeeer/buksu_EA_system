@@ -39,8 +39,9 @@ return new class extends Migration
                 'Shiftee',
             ])->default('Freshman');
 
-            $table->enum('status', ['enrolled', 'pending', 'dropped'])
-                ->default('pending');
+            $table->enum('status', ['enrolled', 'pending', 'dropped', 'unenrolled'])
+            ->default('pending');
+      
 
             $table->date('enrolled_at');
 
@@ -52,25 +53,44 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('majors')
                 ->nullOnDelete();
+$table->foreignId('unenrolled_by')->nullable()->constrained('users')->nullOnDelete();
+$table->timestamp('unenrolled_at')->nullable();
 
             $table->timestamps();
         });
 
-        // Pivot table for subjects/schedules per enrollment
-        Schema::create('enrollment_subjects', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('enrollment_id')
-                ->constrained('enrollments')
-                ->onDelete('cascade');
-            $table->foreignId('class_schedule_id')
-                ->constrained('class_schedules')
-                ->onDelete('cascade');
-            $table->enum('status', ['enrolled', 'dropped'])->default('enrolled');
-            $table->timestamp('dropped_at')->nullable();
-            $table->foreignId('dropped_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->text('drop_reason')->nullable();
-            $table->timestamps();
-        });
+      Schema::create('enrollment_subjects', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('enrollment_id')
+        ->constrained('enrollments')
+        ->onDelete('cascade');
+
+    $table->foreignId('curriculum_subject_id')
+        ->constrained('curriculum_subject')
+        ->onDelete('cascade');
+
+    $table->foreignId('class_schedule_id')
+        ->nullable()
+        ->constrained('class_schedules')
+        ->nullOnDelete();
+
+   $table->enum('status', ['reserved', 'enrolled', 'dropped', 'unenrolled'])->default('enrolled');
+    $table->timestamp('dropped_at')->nullable();
+    $table->foreignId('dropped_by')->nullable()->constrained('users')->nullOnDelete();
+    $table->text('drop_reason')->nullable();
+
+    //Program Head Only
+        $table->foreignId('unenrolled_by')
+        ->nullable()
+        ->constrained('users')
+        ->nullOnDelete();
+
+    $table->timestamp('unenrolled_at')
+        ->nullable();
+
+    $table->timestamps();
+});
+
     }
 
     public function down(): void

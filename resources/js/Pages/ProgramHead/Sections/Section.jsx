@@ -289,40 +289,43 @@ const { auth } = usePage().props;
         <AnimatePresence>
           {showModal && (
             <motion.div
-              className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50"
+              className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
               <motion.div
-                className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg"
+                className="bg-white w-full max-w-sm rounded-2xl border border-slate-100 p-5 shadow-xl"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
               >
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold">
-                    {editMode ? "Edit Section" : "Add Section"}
-                  </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400">Sections</p>
+                    <h2 className="text-lg font-semibold text-slate-800">
+                      {editMode ? "Edit" : "Add"} Section
+                    </h2>
+                  </div>
                   <button
                     onClick={() => setShowModal(false)}
-                    className="text-gray-600 hover:text-red-600"
+                    className="rounded-full border border-slate-200 p-1 text-slate-500 hover:bg-slate-50"
                   >
                     <X size={20} />
                   </button>
                 </div>
 
-                <form onSubmit={submit} className="space-y-4">
+                <form onSubmit={submit} className="space-y-3 text-sm">
                   {/* Section Name */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">
                       Section Name
                     </label>
                     <input
                       type="text"
                       value={form.data.section}
                       onChange={(e) => form.setData("section", e.target.value)}
-                      className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
                       required
                     />
                     {form.errors.section && (
@@ -334,7 +337,7 @@ const { auth } = usePage().props;
 
                   {/* Year Level */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">
                       Year Level
                     </label>
                     <select
@@ -342,7 +345,7 @@ const { auth } = usePage().props;
                       onChange={(e) =>
                         form.setData("year_level_id", e.target.value)
                       }
-                      className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
                       required
                     >
                       <option value="">-- Select Year Level --</option>
@@ -361,7 +364,7 @@ const { auth } = usePage().props;
 
                   {/* Student Limit */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">
                       Student Limit
                     </label>
                     <input
@@ -371,11 +374,11 @@ const { auth } = usePage().props;
                       onChange={(e) =>
                         form.setData("student_limit", e.target.value)
                       }
-                      className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
                       required
                     />
                     {form.errors.student_limit && (
-                      <p className="text-red-600 text-sm">
+                      <p className="text-red-600 text-xs">
                         {form.errors.student_limit}
                       </p>
                     )}
@@ -385,13 +388,9 @@ const { auth } = usePage().props;
                   <button
                     type="submit"
                     disabled={form.processing}
-                    className={`w-full text-white px-4 py-2 rounded-md transition ${
-                      form.processing
-                        ? "bg-blue-400"
-                        : "bg-blue-600 hover:bg-blue-700"
-                    }`}
+                    className="w-full rounded-xl bg-blue-600 py-2 text-sm font-semibold text-white shadow hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-400"
                   >
-                    {form.processing ? "Saving..." : "Save"}
+                    {form.processing ? "Saving..." : "Save Section"}
                   </button>
                 </form>
               </motion.div>

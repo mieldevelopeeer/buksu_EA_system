@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, usePage, router } from "@inertiajs/react";
 import RegistrarLayout from "@/Layouts/RegistrarLayout";
 import {
@@ -18,13 +18,22 @@ export default function AcademicYearsSemesters() {
 
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [yearEditMode, setYearEditMode] = useState(false);
   const [selectedSemester, setSelectedSemester] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
   const [collapsedYears, setCollapsedYears] = useState({});
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // 🔹 Show 5 school years per page
 
-  const form = useForm({ school_year_id: "", semester: "", is_active: false });
+  const [formData, setFormData] = useState({
+    school_year: "",
+    start_date: "",
+    end_date: "",
+    is_active: false,
+  });
+
+  const form = useForm(formData);
 
   const Toast = Swal.mixin({
     toast: true,
@@ -51,29 +60,48 @@ export default function AcademicYearsSemesters() {
     return "Summer";
   };
 
-  const openAddModal = () => {
-    form.reset();
-    setEditMode(false);
-    setSelectedSemester(null);
+  const COLLAPSE_STORAGE_KEY = "ay-semester-collapsed-years";
 
-    const currentYear = academicYears.find(
-      (ay) => ay.school_year === getCurrentSchoolYear()
-    );
-    if (currentYear) {
-      form.setData("school_year_id", currentYear.id);
-    }
-    form.setData("semester", getAutoSemester());
+  const openAddModal = () => {
+    setFormData({
+      school_year: getCurrentSchoolYear(),
+      start_date: "",
+      end_date: "",
+      is_active: false,
+    });
+    setEditMode(false);
+    setYearEditMode(false);
+    setSelectedSemester(null);
+    setSelectedYear(null);
     setShowModal(true);
   };
 
   const openEditModal = (semester) => {
     setEditMode(true);
+    setYearEditMode(false);
     setSelectedSemester(semester);
     const ay = getAcademicYear(semester);
-    form.setData({
-      school_year_id: ay?.id || "",
-      semester: semester.semester,
+    setFormData({
+      school_year: ay?.school_year || "",
+      start_date: semester.start_date || "",
+      end_date: semester.end_date || "",
       is_active: semester.is_active,
+    });
+    setSelectedYear(null);
+    setShowModal(true);
+  };
+
+  const openYearEditModal = (yearObj) => {
+    if (!yearObj) return;
+    setYearEditMode(true);
+    setEditMode(false);
+    setSelectedYear(yearObj);
+    setSelectedSemester(null);
+    setFormData({
+      school_year: yearObj.school_year || "",
+      start_date: yearObj.start_date || "",
+      end_date: yearObj.end_date || "",
+      is_active: yearObj.is_active ?? false,
     });
     setShowModal(true);
   };
@@ -84,23 +112,51 @@ export default function AcademicYearsSemesters() {
   const submit = (e) => {
     e.preventDefault();
     const onSuccess = () => {
-      Toast.fire({ icon: "success", title: editMode ? "Updated!" : "Added!" });
+      Toast.fire({
+        icon: "success",
+        title: yearEditMode ? "School Year updated!" : editMode ? "Updated!" : "Added!",
+      });
       setShowModal(false);
       setEditMode(false);
+      setYearEditMode(false);
       setSelectedSemester(null);
-      form.reset();
+      setSelectedYear(null);
+      setFormData({
+        school_year: "",
+        start_date: "",
+        end_date: "",
+        is_active: false,
+      });
     };
-    const onError = () =>
-      Toast.fire({ icon: "error", title: "Failed to save." });
+    const onError = (errors) => {
+      const duplicateMessage = "Semesters for this school year already exist.";
+      const schoolYearError = Array.isArray(errors?.school_year)
+        ? errors.school_year[0]
+        : typeof errors?.school_year === "string"
+          ? errors.school_year
+          : null;
 
-    if (editMode && selectedSemester) {
+      const title = schoolYearError === duplicateMessage
+        ? "Already Existed"
+        : schoolYearError || "Failed to save.";
+
+      Toast.fire({ icon: "error", title });
+    };
+
+    if (yearEditMode && selectedYear) {
+      router.put(
+        route("registrar.ay-year.update", { id: selectedYear.id }),
+        formData,
+        { onSuccess, onError }
+      );
+    } else if (editMode && selectedSemester) {
       router.put(
         route("registrar.ay-semester.update", { id: selectedSemester.id }),
-        form.data,
+        formData,
         { onSuccess, onError }
       );
     } else {
-      router.post(route("registrar.ay-semester.store"), form.data, {
+      router.post(route("registrar.ay-semester.store"), formData, {
         onSuccess,
         onError,
       });
@@ -154,6 +210,14 @@ export default function AcademicYearsSemesters() {
     });
   };
 
+  const handleInputChange = (e) => {
+    const { name, type, value, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
   // Group by academic year
   const groupedSemesters = semestersData.reduce((acc, sem) => {
     const ay = getAcademicYear(sem);
@@ -182,6 +246,45 @@ export default function AcademicYearsSemesters() {
     }
   );
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.localStorage.getItem(COLLAPSE_STORAGE_KEY);
+    if (!stored) return;
+
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed && typeof parsed === "object") {
+        setCollapsedYears(parsed);
+      }
+    } catch (error) {
+      console.warn("Failed to parse collapse state", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    setCollapsedYears((prev) => {
+      const next = { ...prev };
+      let changed = false;
+
+      sortedGroupedSemesters.forEach(([year]) => {
+        if (!(year in next)) {
+          next[year] = true;
+          changed = true;
+        }
+      });
+
+      return changed ? next : prev;
+    });
+  }, [sortedGroupedSemesters]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(
+      COLLAPSE_STORAGE_KEY,
+      JSON.stringify(collapsedYears)
+    );
+  }, [collapsedYears]);
+
   // 🔹 Pagination
   const totalPages = Math.ceil(sortedGroupedSemesters.length / itemsPerPage);
   const currentItems = sortedGroupedSemesters.slice(
@@ -191,101 +294,157 @@ export default function AcademicYearsSemesters() {
 
   return (
     <RegistrarLayout>
-      <div className="p-6 font-sans text-gray-900">
+      <div className="p-6 font-sans text-gray-900 bg-gray-50 min-h-screen">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-            <CalendarCheck className="text-blue-600" size={22} />
-            Academic Year & Semester
-          </h1>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <CalendarCheck className="text-blue-600" size={24} weight="duotone" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800">Academic Year & Semester</h1>
+              <p className="text-sm text-gray-500">Manage academic years and their semesters</p>
+            </div>
+          </div>
           <button
             onClick={openAddModal}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg shadow-sm text-sm transition-all"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
           >
-            <Plus size={16} /> Add
+            <Plus size={18} weight="bold" /> 
+            <span>Add New</span>
           </button>
         </div>
 
         {/* Semester List */}
         {semestersData.length === 0 ? (
-          <div className="p-4 text-center text-gray-400 text-sm">
-            No semesters found.
+          <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+            <div className="mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
+              <CalendarCheck size={32} className="text-blue-500" weight="duotone" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-700 mb-1">No academic years found</h3>
+            <p className="text-gray-500 mb-4">Get started by adding your first academic year</p>
+            <button
+              onClick={openAddModal}
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            >
+              <Plus size={16} weight="bold" />
+              Add Academic Year
+            </button>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
             {currentItems.map(([year, items]) => {
-              const yearObj = academicYears.find(
-                (ay) => ay.school_year === year
-              );
+              const yearObj = academicYears.find((ay) => ay.school_year === year);
+              const isYearActive = yearObj?.is_active;
+              
               return (
-                <div key={year} className="border-b">
+                <div key={year} className="border-b border-gray-100 last:border-0">
                   <div
-                    className="flex justify-between items-center cursor-pointer bg-gray-50 p-3 hover:bg-gray-100 transition"
+                    className="flex justify-between items-center cursor-pointer p-4 hover:bg-gray-50 transition-colors"
                     onClick={() => toggleCollapse(year)}
                   >
-                    <span className="font-medium">S.Y {year}</span>
                     <div className="flex items-center gap-3">
-                      {yearObj && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleYearStatus(yearObj);
-                          }}
-                          className={`text-xs font-semibold px-2 py-0.5 rounded ${
-                            yearObj.is_active
-                              ? "text-green-600 bg-green-100"
-                              : "text-red-600 bg-red-100"
-                          }`}
-                        >
-                          {yearObj.is_active ? "Active" : "Inactive"}
-                        </button>
-                      )}
-                      <span className="text-gray-500 text-xs">
-                        {collapsedYears[year] ? "Expand" : "Collapse"}
+                      <div className={`w-2 h-8 rounded-full ${isYearActive ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                      <div>
+                        <h3 className="font-semibold text-gray-800">S.Y. {year}</h3>
+                        <p className="text-xs text-gray-500">
+                          {items.length} semester{items.length !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleYearStatus(yearObj);
+                        }}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                          isYearActive
+                            ? "bg-green-100 text-green-700 hover:bg-green-200"
+                            : "bg-red-100 text-red-700 hover:bg-red-200"
+                        }`}
+                      >
+                        <div className={`w-2 h-2 rounded-full ${isYearActive ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                        {isYearActive ? "Active" : "Inactive"}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openYearEditModal(yearObj);
+                        }}
+                        className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"
+                        title="Edit School Year"
+                        disabled={!yearObj}
+                      >
+                        <PencilSimple size={14} weight="bold" />
+                      </button>
+                      <span className="text-gray-400">
+                        {collapsedYears[year] ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                          </svg>
+                        )}
                       </span>
                     </div>
                   </div>
 
-                  {!collapsedYears[year] && (
-                    <div className="p-1.5 space-y-1">
-                      {items.map((s) => (
-                        <div
-                          key={s.id}
-                          className="flex justify-between items-center border rounded-md px-2 py-1 hover:bg-gray-50 transition text-xs"
-                        >
-                          <span className="font-medium text-gray-600">
-                            {s.semester}
-                          </span>
-
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              onClick={() => toggleStatus(s)}
-                              className={`flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded-full transition ${
-                                s.is_active
-                                  ? "text-green-700 bg-green-100 hover:bg-green-200"
-                                  : "text-red-700 bg-red-100 hover:bg-red-200"
-                              }`}
+                  <AnimatePresence>
+                    {!collapsedYears[year] && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="px-4 pb-3"
+                      >
+                        <div className="space-y-2 mt-2">
+                          {items.map((s) => (
+                            <div
+                              key={s.id}
+                              className="flex justify-between items-center bg-gray-50 rounded-lg px-4 py-3 hover:bg-gray-100 transition-colors"
                             >
-                              {s.is_active ? (
-                                <CheckCircle size={12} weight="fill" />
-                              ) : (
-                                <XCircle size={12} weight="fill" />
-                              )}
-                              {s.is_active ? "Active" : "Inactive"}
-                            </button>
+                              <div className="flex items-center gap-3">
+                                <div className={`w-2 h-6 rounded-full ${s.is_active ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                                <span className="font-medium text-gray-700">
+                                  {s.semester}
+                                </span>
+                              </div>
 
-                            <button
-                              onClick={() => openEditModal(s)}
-                              className="p-1 rounded-full hover:bg-blue-100 text-blue-600 transition"
-                              title="Edit"
-                            >
-                              <PencilSimple size={12} weight="bold" />
-                            </button>
-                          </div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => toggleStatus(s)}
+                                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                                    s.is_active
+                                      ? "bg-green-100 text-green-700 hover:bg-green-200"
+                                      : "bg-red-100 text-red-700 hover:bg-red-200"
+                                  }`}
+                                >
+                                  {s.is_active ? (
+                                    <CheckCircle size={14} weight="fill" className="text-green-600" />
+                                  ) : (
+                                    <XCircle size={14} weight="fill" className="text-red-600" />
+                                  )}
+                                  {s.is_active ? "Active" : "Inactive"}
+                                </button>
+
+                                <button
+                                  onClick={() => openEditModal(s)}
+                                  className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"
+                                  title="Edit"
+                                >
+                                  <PencilSimple size={14} weight="bold" />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               );
             })}
@@ -294,109 +453,254 @@ export default function AcademicYearsSemesters() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2 mt-4 text-sm">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              Prev
-            </button>
-
-            <span className="text-gray-600">
-              Page {currentPage} of {totalPages}
-            </span>
-
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              Next
-            </button>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 px-1">
+            <div className="text-sm text-gray-500">
+              Showing <span className="font-medium">{Math.min((currentPage - 1) * itemsPerPage + 1, semestersData.length)}</span> to{' '}
+              <span className="font-medium">
+                {Math.min(currentPage * itemsPerPage, semestersData.length)}
+              </span>{' '}
+              of <span className="font-medium">{semestersData.length}</span> academic years
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                disabled={currentPage === 1}
+                className={`inline-flex items-center justify-center w-9 h-9 rounded-lg border ${
+                  currentPage === 1
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+                } transition-colors`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  // Show pages around current page
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                        currentPage === pageNum
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                
+                {totalPages > 5 && currentPage < totalPages - 2 && (
+                  <span className="px-2 text-gray-500">...</span>
+                )}
+                
+                {totalPages > 5 && currentPage < totalPages - 2 && (
+                  <button
+                    onClick={() => setCurrentPage(totalPages)}
+                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                      currentPage === totalPages
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    {totalPages}
+                  </button>
+                )}
+              </div>
+              
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className={`inline-flex items-center justify-center w-9 h-9 rounded-lg border ${
+                  currentPage === totalPages
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+                } transition-colors`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
         )}
 
       {/* Modal */}
-<AnimatePresence>
-  {showModal && (
-    <motion.div
-      className="fixed inset-0 flex items-center justify-center bg-black/30 z-50"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <motion.div
-        className="bg-white rounded-xl p-5 w-full max-w-xs shadow-md"
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-      >
-        {/* Header */}
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-base font-semibold text-gray-700">
-            {editMode ? "Edit Semester" : "Add Semester"}
-          </h2>
-          <button
-            onClick={() => setShowModal(false)}
-            className="text-gray-400 hover:text-red-500 transition"
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={(e) => e.target === e.currentTarget && setShowModal(false)}
           >
-            <X size={16} />
-          </button>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={submit} className="space-y-2 text-sm">
-          <div>
-            <label className="block mb-1 text-gray-600">School Year</label>
-            <select
-              value={form.data.school_year_id}
-              onChange={(e) => form.setData("school_year_id", e.target.value)}
-              className="w-full border rounded-md px-2 py-1.5 focus:ring-1 focus:ring-blue-500 text-sm"
-              required
+            <motion.div
+              className="bg-white rounded-2xl w-full max-w-sm shadow-lg overflow-hidden"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 20, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 500 }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <option value="" disabled>
-                Select School Year
-              </option>
-              {academicYears.map((year) => (
-                <option key={year.id} value={year.id}>
-                  {year.school_year}
-                </option>
-              ))}
-            </select>
-          </div>
+              {/* Header */}
+              <div className="border-b border-gray-100 px-4 py-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    {yearEditMode
+                      ? "Edit School Year"
+                      : editMode
+                        ? "Edit Semester"
+                        : "Add New Academic Year"}
+                  </h2>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X size={20} weight="bold" />
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {yearEditMode
+                    ? "Update the school year information"
+                    : editMode
+                      ? "Update the semester details"
+                      : "Add a new academic year with semesters"}
+                </p>
+              </div>
 
-          <div>
-            <label className="block mb-1 text-gray-600">Semester</label>
-            <select
-              value={form.data.semester}
-              onChange={(e) => form.setData("semester", e.target.value)}
-              className="w-full border rounded-md px-2 py-1.5 focus:ring-1 focus:ring-blue-500 text-sm"
-              required
-            >
-              <option value="" disabled>
-                Select Semester
-              </option>
-              <option value="First Semester">First Semester</option>
-              <option value="Second Semester">Second Semester</option>
-              <option value="Summer">Summer</option>
-            </select>
-          </div>
+              {/* Form */}
+              <form onSubmit={submit} className="p-4 space-y-3 text-xs">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    School Year <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.school_year}
+                      onChange={handleInputChange}
+                      name="school_year"
+                      list="schoolYearOptions"
+                      placeholder="e.g., 2024-2025"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                      required
+                    />
+                    <datalist id="schoolYearOptions" className="hidden">
+                      {academicYears.map((year) => (
+                        <option key={year.id} value={year.school_year} />
+                      ))}
+                    </datalist>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Format: YYYY-YYYY (e.g., 2024-2025)
+                  </p>
+                </div>
 
-          <button
-            type="submit"
-            disabled={form.processing}
-            className={`w-full bg-blue-600 text-white py-1.5 rounded-md text-sm transition ${
-              form.processing ? "bg-blue-400" : "hover:bg-blue-700"
-            }`}
-          >
-            {form.processing ? "Saving..." : "Save"}
-          </button>
-        </form>
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      name="start_date"
+                      value={formData.start_date}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      End Date
+                    </label>
+                    <input
+                      type="date"
+                      name="end_date"
+                      value={formData.end_date}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                    />
+                  </div>
+                </div>
+
+                {!editMode && !yearEditMode && (
+                  <div>
+                    <p className="block text-xs font-semibold text-gray-700 mb-1.5">
+                      Semesters to create
+                    </p>
+                    <div className="space-y-1.5 text-[11px]">
+                      {['First Semester', 'Second Semester', 'Summer'].map((semester) => (
+                        <div key={semester} className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-800">{semester}</p>
+                            <p className="text-xs text-gray-500">Will be created as inactive</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-1">
+                  <button
+                    type="submit"
+                    disabled={form.processing}
+                    className={`w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-all ${
+                      form.processing ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-md'
+                    }`}
+                  >
+                    {form.processing ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        {yearEditMode ? (
+                          <>
+                            <PencilSimple size={16} weight="bold" />
+                            Update School Year
+                          </>
+                        ) : editMode ? (
+                          <>
+                            <PencilSimple size={16} weight="bold" />
+                            Update Semester
+                          </>
+                        ) : (
+                          <>
+                            <Plus size={16} weight="bold" />
+                            Add Academic Year
+                          </>
+                        )}
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       </div>
     </RegistrarLayout>

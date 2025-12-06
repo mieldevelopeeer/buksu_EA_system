@@ -14,6 +14,14 @@ const statusTone = (summary) => {
 const formatAverage = (value) =>
   typeof value === "number" && Number.isFinite(value) ? value.toFixed(2) : "—";
 
+const statusBadgeClass = (status) => {
+  const value = String(status || "").toLowerCase();
+  if (value === "enrolled") return "text-emerald-600";
+  if (value === "reserved") return "text-amber-500";
+  if (value === "dropped") return "text-rose-500";
+  return "text-slate-500";
+};
+
 export default function AcademicRecord() {
   const { groups = [] } = usePage().props;
 
@@ -65,35 +73,46 @@ export default function AcademicRecord() {
                     </div>
                   </header>
 
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-4">
                     {group.records.map((record) => {
                       const schoolYear = record.school_year || "School Year";
+                      const statusCounts = record.status_counts ?? {};
 
                       return (
-                      <Link
-                        key={record.enrollment_id}
-                        href={route("students.academic-records.show", record.enrollment_id)}
-                        className="block rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm transition hover:border-slate-300 hover:shadow-md"
-                      >
-                        <div className="flex flex-col gap-3">
-                          <div>
-                            <h3 className="text-lg font-semibold text-slate-900">{schoolYear}</h3>
-                            <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-                              {record.subjects_count} subjects · Average {formatAverage(record.average)}
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between text-xs text-slate-500 sm:text-sm">
-                            <div className={`font-semibold ${statusTone(record.remarks_summary)}`}>
-                              {record.remarks_summary}
+                        <div
+                          key={record.enrollment_id}
+                          className="rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm"
+                        >
+                          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                              <h3 className="text-lg font-semibold text-slate-900">{schoolYear}</h3>
+                              <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+                                {record.semester} · {record.subjects_count} subject{record.subjects_count === 1 ? "" : "s"}
+                              </p>
                             </div>
-                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-3 py-1 text-[11px] font-medium text-slate-500">
+                            <div className="flex flex-wrap gap-2 text-[11px] font-semibold">
+                              <span
+                                className={`inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 ${statusBadgeClass("enrolled")}`}
+                              >
+                                Enrolled:
+                                <span className="font-bold text-slate-900">
+                                  {statusCounts.enrolled ?? 0}
+                                </span>
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 flex items-center justify-end">
+                            <Link
+                              href={route("students.academic-records.show", record.enrollment_id)}
+                              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-medium text-slate-600 transition hover:border-blue-200 hover:text-blue-600"
+                            >
                               <Sparkles className="h-3.5 w-3.5" />
                               View Details
-                            </span>
+                            </Link>
                           </div>
                         </div>
-                      </Link>
-                    );
+                      );
                     })}
                   </div>
                 </section>

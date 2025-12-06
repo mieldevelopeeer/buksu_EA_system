@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Users;
 
 
-class registrar extends Model
+class Registrar extends Model
 {
     use HasFactory;
     protected $table = 'registrar';

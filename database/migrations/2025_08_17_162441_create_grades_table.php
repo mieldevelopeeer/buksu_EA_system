@@ -33,16 +33,38 @@ return new class extends Migration
             // 🧮 Grades
             $table->decimal('midterm', 5, 2)->nullable();
             $table->decimal('final', 5, 2)->nullable();
+$table->decimal('summer', 5, 2)->nullable();
 
             // 🏷️ Individual workflow statuses
             $table->enum('midterm_status', ['draft', 'submitted', 'confirmed'])
                   ->default('draft');
             $table->enum('final_status', ['draft', 'submitted', 'confirmed'])
                   ->default('draft');
-
+            $table->enum('summer_status', ['draft', 'submitted', 'confirmed'])
+      ->default('draft');
             // 🗒️ Remarks (overall, optional)
             $table->enum('remarks', ['Passed', 'Failed', 'Incomplete', 'Dropped'])->nullable();
+             
+             $table->enum('midterm_change_status', [
+                'none',
+                'requested',
+                'approved',
+                'denied'
+            ])->default('none');
 
+            $table->enum('final_change_status', [
+                'none',
+                'requested',
+                'approved',
+                'denied'
+            ])->default('none');
+            // 🔄 Summer grade change workflow
+$table->enum('summer_change_status', [
+    'none',
+    'requested',
+    'approved',
+    'denied'
+])->default('none');
             // 🧾 Registrar confirmation
             $table->foreignId('confirmed_by')
                 ->nullable()

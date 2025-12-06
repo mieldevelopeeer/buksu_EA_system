@@ -5,10 +5,10 @@ import Swal from "sweetalert2";
 import {
   PencilSimple,
   UserCircle,
-  FileText,
   IdentificationBadge,
   EnvelopeSimple,
   Lock,
+  Sparkle,
 } from "phosphor-react";
 
 // ✅ Import all layouts
@@ -157,14 +157,15 @@ export default function Profile() {
   };
 
   const Layout = getLayout();
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
 
   const fullName = useMemo(
     () => `${user.fName ?? ""} ${user.mName ?? ""} ${user.lName ?? ""}`.replace(/\s+/g, " ").trim(),
     [user.fName, user.mName, user.lName]
   );
 
-  const quickStats = useMemo(
-    () => [
+  const quickStats = useMemo(() => {
+    const stats = [
       {
         label: "Username",
         value: `@${user.username ?? "unknown"}`,
@@ -175,9 +176,20 @@ export default function Profile() {
         value: user.email ?? "No email on record",
         icon: EnvelopeSimple,
       },
-    ],
-    [user.username, user.email]
-  );
+    ];
+
+    const latestEnrollment = user?.enrollments?.[0];
+    const courseLabel = latestEnrollment?.course?.name || latestEnrollment?.course?.code;
+
+    if (user.role === "student" && courseLabel) {
+      stats.push({
+        label: "Course",
+        value: courseLabel,
+      });
+    }
+
+    return stats;
+  }, [user.username, user.email, user.role, user?.enrollments]);
 
   const departmentName =
     user.role === "program_head"
@@ -263,12 +275,13 @@ export default function Profile() {
           </div>
         </div>
       )}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-slate-100">
-        {/* Cover photo */}
-        <div className="relative h-40 w-full overflow-hidden sm:h-56 lg:h-64">
-          <img src="/images/buksu-cover.png" alt="BukSU" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-transparent" />
-        </div>
+      <div className="max-h-[calc(100vh-2rem)] overflow-y-auto pr-1">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-slate-100">
+          {/* Cover photo */}
+          <div className="relative h-40 w-full overflow-hidden sm:h-56 lg:h-64">
+            <img src="/images/buksu-cover.png" alt="BukSU" className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-transparent" />
+          </div>
 
         <div className="relative mx-auto max-w-6xl px-3 pb-12 sm:px-6">
           {/* Profile header */}
@@ -319,50 +332,41 @@ export default function Profile() {
                 </div>
 
                 <div className="space-y-1">
-                  <h1 className="text-xl font-semibold text-slate-900 sm:text-2xl">{fullName || "User"}</h1>
-                  <p className="text-sm text-slate-500">{(user.role || "Member").split("_").join(" ")}</p>
-                  {departmentName && <p className="text-sm text-slate-400">{departmentName}</p>}
+                  <h1 className="text-lg font-semibold text-slate-900 sm:text-xl">{fullName || "User"}</h1>
+                  <p className="text-xs text-slate-500">{(user.role || "Member").split("_").join(" ")}</p>
+                  {departmentName && <p className="text-[11px] text-slate-400">{departmentName}</p>}
                 </div>
               </div>
 
               <div className="flex w-full flex-col gap-3 sm:w-auto sm:items-end">
                 <button
                   onClick={() => router.visit("/profile/edit")}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300"
                 >
                   <PencilSimple size={16} />
                   Edit Profile
                 </button>
                 <button
                   onClick={() => router.visit(route("profile.password.edit"))}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-sky-200 px-4 py-2 text-sm font-medium text-sky-600 transition hover:border-sky-300"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-sky-200 px-3 py-1.5 text-xs font-medium text-sky-600 transition hover:border-sky-300"
                 >
                   <Lock size={16} />
                   Change Password
                 </button>
 
-                <ul className="flex flex-wrap justify-center gap-2 text-xs text-slate-500 sm:justify-end">
+                <ul className="flex flex-wrap justify-center gap-2 text-[11px] text-slate-500 sm:justify-end">
                   {quickStats.map(({ label, value }) => (
                     <li key={label} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2">
                       <span className="font-semibold uppercase tracking-[0.16em] text-slate-400">{label}</span>
-                      <span className="ml-2 text-sm text-slate-700">{value}</span>
+                      <span className="ml-2 text-xs text-slate-700">{value}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
 
-            <nav className="mt-6 flex flex-wrap gap-2 border-t border-slate-200 pt-4 text-sm font-medium text-slate-500">
-              {['About', 'Files', 'Activity'].map((tab) => (
-                <button
-                  key={tab}
-                  className={`rounded-full px-4 py-2 transition ${
-                    tab === 'About' ? 'bg-slate-900 text-white' : 'hover:bg-slate-100'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+            <nav className="mt-6 flex flex-wrap gap-2 border-t border-slate-200 pt-4 text-xs font-medium text-slate-500">
+              <button className="rounded-full px-3 py-1.5 bg-slate-900 text-white">About</button>
             </nav>
           </section>
 
@@ -371,10 +375,10 @@ export default function Profile() {
             <div className="space-y-6">
               <article className="rounded-3xl bg-white px-6 py-5 shadow-sm">
                 <header className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-slate-900">About</h2>
+                  <h2 className="text-base font-semibold text-slate-900">About</h2>
                   <button
                     onClick={() => router.visit("/profile/edit")}
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 hover:text-slate-600"
+                    className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400 hover:text-slate-600"
                   >
                     Edit info
                   </button>
@@ -382,7 +386,7 @@ export default function Profile() {
 
                 <div className="mt-4 space-y-5">
                   <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Identity</h3>
+                    <h3 className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-400">Identity</h3>
                     <div className="mt-3 grid gap-3 sm:grid-cols-2">
                       {[{
                         label: 'First Name',
@@ -397,15 +401,15 @@ export default function Profile() {
                         value: user.lName ?? '—',
                       }].map((item) => (
                         <div key={item.label} className="rounded-2xl border border-slate-200 px-4 py-3">
-                          <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">{item.label}</span>
-                          <span className="mt-1 block text-sm font-medium text-slate-900">{item.value}</span>
+                          <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">{item.label}</span>
+                          <span className="mt-1 block text-xs font-medium text-slate-900">{item.value}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Academic</h3>
+                    <h3 className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-400">Academic</h3>
                     <div className="mt-3 grid gap-3 sm:grid-cols-2">
                       {[{
                         label: 'Department',
@@ -419,84 +423,49 @@ export default function Profile() {
                         value: (user.role || 'Member').split('_').join(' '),
                       }].map((item) => (
                         <div key={item.label} className="rounded-2xl border border-slate-200 px-4 py-3">
-                          <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">{item.label}</span>
-                          <span className="mt-1 block text-sm font-medium text-slate-900">{item.value}</span>
+                          <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">{item.label}</span>
+                          <span className="mt-1 block text-xs font-medium text-slate-900">{item.value}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">Contact</span>
-                    <p className="mt-1 text-sm font-medium text-slate-900">{user.email || 'No email on record'}</p>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400">Contact</span>
+                    <p className="mt-1 text-xs font-medium text-slate-900">{user.email || 'No email on record'}</p>
                   </div>
                 </div>
               </article>
 
               <article className="rounded-3xl bg-white px-6 py-5 shadow-sm">
                 <header className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-slate-900">Timeline</h2>
-                  <span className="text-xs uppercase tracking-[0.24em] text-slate-400">Recent activity</span>
+                  <h2 className="text-base font-semibold text-slate-900">Status</h2>
+                  <span className="text-[11px] uppercase tracking-[0.24em] text-slate-400">Profile info</span>
                 </header>
-                <div className="mt-4 space-y-4">
-                  {[{
-                    title: 'Profile details reviewed',
-                    description: 'Verified personal and contact information.',
-                    time: '2 days ago',
-                  },
-                  {
-                    title: 'Password updated',
-                    description: 'Improved account security with a new password.',
-                    time: '1 week ago',
-                  }].map((event) => (
-                    <div key={event.title} className="space-y-1 border-l border-slate-200 pl-4">
-                      <p className="text-sm font-semibold text-slate-900">{event.title}</p>
-                      <p className="text-sm text-slate-600">{event.description}</p>
-                      <span className="text-xs uppercase tracking-[0.2em] text-slate-400">{event.time}</span>
-                    </div>
-                  ))}
-                </div>
-              </article>
-
-              <article className="rounded-3xl bg-white px-6 py-5 shadow-sm">
-                <header className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-slate-900">Shared Files</h2>
-                  <button className="text-sm font-medium text-sky-600 transition hover:text-sky-700">View all</button>
-                </header>
-                <div className="mt-4 space-y-3">
-                  {[{
-                    title: 'Curriculum Guide',
-                    meta: 'PDF • Aug 2025',
-                  },
-                  {
-                    title: 'Faculty Handbook',
-                    meta: 'DOCX • Jul 2025',
-                  },
-                  {
-                    title: 'Department Policies',
-                    meta: 'PDF • Jun 2025',
-                  }].map((file) => (
-                    <div key={file.title} className="flex items-center justify-between border-b border-slate-200 pb-3 last:border-b-0 last:pb-0">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-900">{file.title}</p>
-                        <p className="text-xs text-slate-500">{file.meta}</p>
-                      </div>
-                      <FileText size={18} className="text-sky-500" />
-                    </div>
-                  ))}
+                <div className="mt-4 space-y-3 text-xs text-slate-600">
+                  <p>
+                    Keep your personal information up to date so college services can reach you promptly.
+                  </p>
+                  {user.role === "student" && (
+                    <p className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-emerald-700">
+                      {user?.enrollments?.[0]?.course?.name
+                        ? `Currently enrolled in ${user.enrollments[0].course.name}.`
+                        : "No course enrollment found."}
+                    </p>
+                  )}
                 </div>
               </article>
             </div>
 
             <aside className="space-y-6">
               <section className="rounded-3xl bg-white px-6 py-5 shadow-sm">
-                <h3 className="text-base font-semibold text-slate-900">Contact & Settings</h3>
-                <p className="mt-3 text-sm text-slate-600">
+                <h3 className="text-sm font-semibold text-slate-900">Contact & Settings</h3>
+                <p className="mt-3 text-xs text-slate-600">
                   Keep your contact and security preferences updated so we can reach you on time.
                 </p>
                 <button
                   onClick={() => router.visit(route("profile.password.edit"))}
-                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-slate-700"
                 >
                   <Lock size={16} />
                   Change Password
@@ -504,26 +473,35 @@ export default function Profile() {
               </section>
 
               <section className="rounded-3xl bg-white px-6 py-5 shadow-sm">
-                <h3 className="text-base font-semibold text-slate-900">Reminders</h3>
-                <ul className="mt-3 space-y-3 text-sm text-slate-600">
+                <h3 className="text-sm font-semibold text-slate-900">Reminders</h3>
+                <ul className="mt-3 space-y-3 text-xs text-slate-600">
                   <li className="border-b border-slate-200 pb-3 last:border-b-0 last:pb-0">
-                    <p className="font-medium text-slate-900">Refresh your photo</p>
-                    <p className="text-xs text-slate-500">Upload a recent portrait to keep your profile recognizable.</p>
+                    <p className="text-xs font-medium text-slate-900">Refresh your photo</p>
+                    <p className="text-[11px] text-slate-500">Upload a recent portrait to keep your profile recognizable.</p>
                   </li>
                   <li className="border-b border-slate-200 pb-3 last:border-b-0 last:pb-0">
-                    <p className="font-medium text-slate-900">Stay secure</p>
-                    <p className="text-xs text-slate-500">Rotate your password each term for better protection.</p>
+                    <p className="text-xs font-medium text-slate-900">Stay secure</p>
+                    <p className="text-[11px] text-slate-500">Rotate your password each term for better protection.</p>
                   </li>
                   <li className="border-b border-slate-200 pb-3 last:border-b-0 last:pb-0">
-                    <p className="font-medium text-slate-900">Department news</p>
-                    <p className="text-xs text-slate-500">Watch for new announcements from {department?.name || 'your department'}.</p>
+                    <p className="text-xs font-medium text-slate-900">Department news</p>
+                    <p className="text-[11px] text-slate-500">Watch for new announcements from {department?.name || 'your department'}.</p>
                   </li>
                 </ul>
               </section>
             </aside>
           </section>
+          <footer className="mt-10 text-center text-[11.5px] text-slate-500">
+            <span className="inline-flex items-center justify-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 shadow-sm">
+              <Sparkle size={14} className="text-sky-500" />
+              <span>
+                Developed by <span className="font-semibold text-slate-700">Gedeoni Ammiel N. Pairat</span> © {currentYear}
+              </span>
+            </span>
+          </footer>
         </div>
       </motion.div>
+    </div>
     </Layout>
   );
 }

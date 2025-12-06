@@ -8,6 +8,8 @@ use App\Models\Department;
 use App\Models\Enrollments;
 use App\Models\Users;
 use App\Models\YearLevel;
+use App\Models\Semester;
+use App\Models\AcademicYear;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -143,6 +145,10 @@ class AdminDashboardController extends Controller
 
         $adminName = Auth::user()?->fName ?? Auth::user()?->username ?? 'Admin';
 
+        // Get active semester and school year
+        $currentSemester = Semester::where('is_active', 1)->first(['id', 'semester', 'school_year_id']);
+        $currentSchoolYear = AcademicYear::where('is_active', 1)->first(['id', 'school_year', 'start_date', 'end_date']);
+
         return Inertia::render('Admin/Dashboard', [
             'totals' => [
                 'students' => $totalStudents,
@@ -155,6 +161,8 @@ class AdminDashboardController extends Controller
             'activeSchoolYear' => $activeSchoolYear?->school_year,
             'adminName' => $adminName,
             'studentsPerYear' => $studentsPerYear,
+            'currentSemester' => $currentSemester,
+            'currentSchoolYear' => $currentSchoolYear,
         ]);
     }
 }

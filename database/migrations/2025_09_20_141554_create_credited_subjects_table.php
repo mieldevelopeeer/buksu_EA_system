@@ -13,10 +13,41 @@ return new class extends Migration
     {
         Schema::create('credited_subjects', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
-    $table->foreignId('curriculum_subject_id')->constrained('curriculum_subject')->onDelete('cascade');
-    $table->integer('credited_units')->default(0);
-    $table->string('remarks')->nullable()->comment('Reason or basis of crediting');
+
+            // ✅ The student who owns the credited record
+            $table->foreignId('student_id')
+                  ->constrained('users')
+                  ->onDelete('cascade');
+
+            // ✅ The subject in the *current curriculum* that is being credited
+            $table->foreignId('curriculum_subject_id')
+                  ->constrained('curriculum_subject')
+                  ->onDelete('cascade');
+
+            // ✅ The equivalent subject (from old course or school)
+            $table->foreignId('equivalent_subject_id')
+                  ->nullable()
+                  ->constrained('subjects')
+                  ->onDelete('set null');
+
+            // ✅ Number of units credited
+            $table->integer('credited_units')->default(0);
+
+            // ✅ Optional grade if applicable
+            $table->string('grade')->nullable();
+
+            // ✅ Remarks (e.g., "Credited from BSIT 2023 curriculum")
+            $table->string('remarks')->nullable()->comment('Reason or basis of crediting');
+
+            // ✅ Reference to who approved the credit (registrar or program head)
+            $table->foreignId('approved_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->onDelete('set null');
+
+            // ✅ Date of crediting
+            $table->date('credited_date')->nullable();
+
             $table->timestamps();
         });
     }

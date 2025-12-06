@@ -20,8 +20,12 @@ class EnrolledStudController extends Controller
         'schoolYear:id,school_year',
         'semester:id,semester', // ✅ include semester
         'enrollmentSubjects' => function ($q) {
-            $q->select('id', 'enrollment_id', 'class_schedule_id')
+            $q->select('id', 'enrollment_id', 'class_schedule_id', 'curriculum_subject_id')
               ->with([
+                  'curriculumSubject' => function ($curr) {
+                      $curr->select('id', 'subject_id', 'lec_unit', 'lab_unit')
+                           ->with(['subject:id,code,descriptive_title']);
+                  },
                   'classSchedule' => function ($cs) {
                       $cs->select(
                           'id',

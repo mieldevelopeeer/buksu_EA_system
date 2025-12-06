@@ -15,19 +15,37 @@ class Grades extends Model
     protected $fillable = [
         'id',
         'enrollment_id',
+        'enrollment_subject_id',
         'class_schedule_id',
         'faculty_id',
         'grade',
         'midterm',
         'final',
+        'summer',
         'remarks',
-        'status',
         'midterm_status',
         'final_status',
+        'summer_status',
+        'midterm_change_status',
+        'final_change_status',
+        'summer_change_status',
         'confirmed_by',
         'confirmed_at',
+        'status',
+        'created_at',
+        'updated_at'
+    ];
+    
+    protected $casts = [
+        'midterm' => 'float',
+        'final' => 'float',
+        'summer' => 'float',
+        'confirmed_at' => 'datetime',
     ];
 
+    /**
+     * Get the enrollment subject that owns the grade.
+     */
     public function enrollmentSubject()
     {
         return $this->belongsTo(EnrollmentSubject::class, 'enrollment_subject_id');
@@ -48,7 +66,7 @@ class Grades extends Model
 
     public function classSchedule()
     {
-        return $this->belongsTo(class_schedules::class, 'class_schedule_id');
+        return $this->belongsTo(Class_Schedules::class, 'class_schedule_id');
     }
 
 }

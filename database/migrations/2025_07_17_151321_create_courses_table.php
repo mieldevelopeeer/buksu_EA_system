@@ -20,7 +20,8 @@ return new class extends Migration
         $table->string('code')->unique();     // e.g., BSIT
         $table->string('name');               // e.g., Bachelor of Science in IT
         $table->text('description')->nullable();
-        $table->enum('degree_type', ['Bachelor', 'Master', 'Doctorate'])->default('Bachelor');
+       $table->string('degree_type')->nullable(); // Optional degree level
+            
         $table->boolean('status')->default(1);
             $table->timestamps();
         });

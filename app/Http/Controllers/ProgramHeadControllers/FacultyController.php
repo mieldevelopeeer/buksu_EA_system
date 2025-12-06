@@ -10,14 +10,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Section;
+use App\Models\department;
 use App\Models\Semester;
 use App\Models\Class_Schedules;
-use App\Models\subjects;
+use App\Models\Subjects;
 use App\Models\Curriculum_Subject;
-use App\Models\year_level;
+use App\Models\Year_Level;
 use App\Models\Classrooms;
 use App\Models\AcademicYear;
 use App\Models\FacultyLoad;
+use App\Models\Enrollments;
+use App\Models\EnrollmentSubject;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 
 class FacultyController extends Controller
@@ -31,10 +35,192 @@ class FacultyController extends Controller
         ->latest()
         ->get();
 
+    $departments = Department::query()
+        ->when($programHead->department_id, function ($query, $deptId) {
+            return $query->where('id', $deptId);
+        })
+        ->orderBy('name')
+        ->get(['id', 'name']);
+
     return Inertia::render('ProgramHead/Faculty/Faculties', [
         'faculties' => $faculties,
+        'departments' => $departments,
     ]);
 }
+
+public function show(Users $faculty)
+{
+    $programHead = auth()->user();
+
+    if ($faculty->role !== 'faculty' || $faculty->department_id !== $programHead->department_id) {
+        abort(404);
+    }
+
+    $activeSemester = Semester::where('is_active', 1)->first();
+
+    $facultyRecord = Users::query()
+        ->where('id', $faculty->id)
+        ->where('role', 'faculty')
+        ->with([
+            'department:id,name',
+            'facultyLoads' => function ($query) use ($activeSemester) {
+                if ($activeSemester) {
+                    $query->where('semester_id', $activeSemester->id);
+                }
+
+                $query->with([
+                    'curriculumSubject:id,subject_id,lec_unit,lab_unit',
+                    'curriculumSubject.subject:id,code,descriptive_title',
+                    'course:id,name,code',
+                    'semester:id,semester',
+                    'schoolYear:id,school_year',
+                ])->orderByDesc('updated_at');
+            },
+            'class_schedules' => function ($query) use ($activeSemester) {
+                if ($activeSemester) {
+                    $query->where('semester_id', $activeSemester->id);
+                }
+
+                $query->with([
+                    'curriculumSubject:id,subject_id,lec_unit,lab_unit',
+                    'curriculumSubject.subject:id,code,descriptive_title',
+                    'section:id,section,year_level_id',
+                    'section.yearLevel:id,year_level',
+                    'classroom:id,room_number',
+                ])
+                ->withCount([
+                    'enrollmentSubjects as enrolled_students_count' => function ($q) {
+                        $q->where(function ($subQuery) {
+                            $subQuery->whereNull('status')
+                                     ->orWhere('status', '!=', 'dropped');
+                        });
+                    },
+                ]);
+            },
+        ])
+        ->firstOrFail();
+
+    $loadDetails = $facultyRecord->facultyLoads->map(function ($load) {
+        return [
+            'id' => $load->id,
+            'type' => $load->type,
+            'official_load' => $load->official_load,
+            'total_units' => $load->total_units,
+            'student_count' => $load->student_count,
+            'courses_id' => $load->courses_id,
+            'course' => $load->course ? Arr::only($load->course->toArray(), ['id', 'name', 'code']) : null,
+            'curriculum_subject_id' => $load->curriculum_subject_id,
+            'curriculum_subject' => $load->curriculumSubject ? [
+                'id' => $load->curriculumSubject->id,
+                'lec_unit' => $load->curriculumSubject->lec_unit,
+                'lab_unit' => $load->curriculumSubject->lab_unit,
+                'subject' => $load->curriculumSubject->subject ? Arr::only($load->curriculumSubject->subject->toArray(), ['id', 'code', 'descriptive_title']) : null,
+            ] : null,
+            'semester' => $load->semester ? Arr::only($load->semester->toArray(), ['id', 'semester']) : null,
+            'school_year' => $load->schoolYear ? Arr::only($load->schoolYear->toArray(), ['id', 'school_year']) : null,
+            'created_at' => $load->created_at,
+            'updated_at' => $load->updated_at,
+        ];
+    })->values();
+
+    $loadSummary = [
+        'subjects' => $loadDetails->count(),
+        'total_units' => $loadDetails->sum('total_units'),
+        'official_load' => $loadDetails->sum('official_load'),
+        'student_count' => $loadDetails->sum('student_count'),
+    ];
+
+    $dayOrdering = [
+        'monday' => 1,
+        'tuesday' => 2,
+        'wednesday' => 3,
+        'thursday' => 4,
+        'friday' => 5,
+        'saturday' => 6,
+        'sunday' => 7,
+    ];
+
+    $schedules = $facultyRecord->class_schedules
+        ->sortBy(function ($schedule) use ($dayOrdering) {
+            $dayKey = strtolower($schedule->schedule_day ?? '');
+            $dayRank = $dayOrdering[$dayKey] ?? 99;
+            return sprintf('%02d-%s', $dayRank, $schedule->start_time ?? '99:99');
+        })
+        ->map(function ($schedule) {
+            $subject = $schedule->curriculumSubject?->subject ?? $schedule->subject;
+
+            return [
+                'id' => $schedule->id,
+                'curriculum_subject_id' => $schedule->curriculum_subject_id,
+                'day' => $schedule->schedule_day,
+                'start_time' => $schedule->start_time,
+                'end_time' => $schedule->end_time,
+                'color' => $schedule->color,
+                'enrolled_students' => $schedule->enrolled_students_count ?? 0,
+                'subject' => $subject ? Arr::only($subject->toArray(), ['id', 'code', 'descriptive_title']) : null,
+                'section' => $schedule->section ? [
+                    'id' => $schedule->section->id,
+                    'name' => $schedule->section->section,
+                    'year_level' => $schedule->section->yearLevel?->year_level,
+                ] : null,
+                'room' => $schedule->classroom ? Arr::only($schedule->classroom->toArray(), ['id', 'room_number']) : null,
+            ];
+        })
+        ->values();
+
+    $facultyPayload = [
+        'id' => $facultyRecord->id,
+        'fName' => $facultyRecord->fName,
+        'mName' => $facultyRecord->mName,
+        'lName' => $facultyRecord->lName,
+        'suffix' => $facultyRecord->suffix,
+        'id_number' => $facultyRecord->id_number,
+        'email' => $facultyRecord->email,
+        'contact' => $facultyRecord->contact,
+        'address' => $facultyRecord->address,
+        'gender' => $facultyRecord->gender,
+        'profession' => $facultyRecord->profession,
+        'status' => $facultyRecord->status,
+        'profile_picture' => $facultyRecord->profile_picture,
+        'department' => $facultyRecord->department ? Arr::only($facultyRecord->department->toArray(), ['id', 'name']) : null,
+        'facultyLoads' => $loadDetails,
+    ];
+
+    return Inertia::render('ProgramHead/Faculty/FacultyProfile', [
+        'faculty' => $facultyPayload,
+        'teachingSchedules' => $schedules,
+        'loadSummary' => $loadSummary,
+        'activeSemester' => $activeSemester ? Arr::only($activeSemester->toArray(), ['id', 'semester']) : null,
+        'backUrl' => route('program-head.faculties.index'),
+    ]);
+}
+
+    /**
+     * Ensure enrollment subjects without schedules (TBA) are linked to the new schedule.
+     */
+    protected function syncEnrollmentSubjectsWithSchedule(Class_Schedules $schedule): void
+    {
+        if (!$schedule->section_id || !$schedule->curriculum_subject_id) {
+            return;
+        }
+
+        $enrollmentIds = Enrollments::query()
+            ->where('section_id', $schedule->section_id)
+            ->when($schedule->semester_id, fn ($query, $semesterId) => $query->where('semester_id', $semesterId))
+            ->when($schedule->school_year_id, fn ($query, $schoolYearId) => $query->where('school_year_id', $schoolYearId))
+            ->pluck('id');
+
+        if ($enrollmentIds->isEmpty()) {
+            return;
+        }
+
+        EnrollmentSubject::whereIn('enrollment_id', $enrollmentIds)
+            ->where('curriculum_subject_id', $schedule->curriculum_subject_id)
+            ->whereNull('class_schedule_id')
+            ->update([
+                'class_schedule_id' => $schedule->id,
+            ]);
+    }
 
     
 public function facultyLoad()
@@ -278,6 +464,7 @@ public function addSched(Request $request)
         'schedules.*.faculty_id' => 'nullable|exists:users,id',
         'schedules.*.classroom_id' => 'nullable|exists:classrooms,id',
         'schedules.*.section_id' => 'required|exists:sections,id',
+        'schedules.*.color' => 'nullable|string|max:20',
     ]);
 
     // ✅ Active school year & semester
@@ -288,6 +475,16 @@ public function addSched(Request $request)
         return redirect()->back()->withErrors([
             'school_year' => !$activeSchoolYear ? 'No active school year found!' : null,
             'semester'    => !$activeSemester ? 'No active semester found!' : null,
+        ]);
+    }
+    
+    // Get the logged-in program head's department ID
+    $programHead = auth()->user();
+    $departmentId = $programHead->department_id;
+    
+    if (!$departmentId) {
+        return redirect()->back()->withErrors([
+            'department' => 'No department assigned to the program head!',
         ]);
     }
 
@@ -307,19 +504,57 @@ public function addSched(Request $request)
             $end   = \Carbon\Carbon::createFromFormat('H:i', $sched['end_time']);
             $sched['load_hours'] = $end->diffInMinutes($start) / 60;
 
+            // Get the curriculum subject with curriculum and course info
+            $curriculumSubject = Curriculum_Subject::with(['curriculum' => function($query) use ($departmentId) {
+                $query->where('department_id', $departmentId);
+            }, 'curriculum.course'])->find($sched['curriculum_subject_id']);
+            
+            if (!$curriculumSubject || !$curriculumSubject->curriculum) {
+                return response()->json([
+                    'message' => 'No curriculum found for the selected subject in your department',
+                    'errors' => ['curriculum' => 'No curriculum found for the selected subject in your department']
+                ], 422);
+            }
+            
+            $coursesId = $curriculumSubject->curriculum->courses_id ?? null;
+            
+            if (!$coursesId) {
+                return response()->json([
+                    'message' => 'No course assigned to the curriculum',
+                    'errors' => ['course' => 'No course assigned to the curriculum']
+                ], 422);
+            }
+            
+            // Prepare the data for update or create
+            $scheduleData = [
+                'start_time' => $sched['start_time'],
+                'end_time' => $sched['end_time'],
+                'schedule_day' => $sched['schedule_day'],
+                'semester_id' => $sched['semester_id'],
+                'school_year_id' => $sched['school_year_id'],
+                'section_id' => $sched['section_id'],
+                'classroom_id' => $sched['classroom_id'] ?? null,
+                'curriculum_subject_id' => $sched['curriculum_subject_id'],
+                'faculty_id' => $sched['faculty_id'] ?? null,
+                'year_level_id' => $yearLevelId,
+                'courses_id' => $coursesId,
+                'load_hours' => $end->diffInMinutes($start) / 60,
+                'color' => $sched['color'] ?? '#dbeafe',
+            ];
+
             // Update or create schedule
-            Class_Schedules::updateOrCreate(
+            $schedule = Class_Schedules::updateOrCreate(
                 [
-                    'schedule_day'          => $sched['schedule_day'],
-                    'semester_id'           => $sched['semester_id'],
-                    'school_year_id'        => $sched['school_year_id'],
-                    'section_id'            => $sched['section_id'],
-                    'classroom_id'          => $sched['classroom_id'],
+                    'schedule_day' => $sched['schedule_day'],
+                    'semester_id' => $sched['semester_id'],
+                    'school_year_id' => $sched['school_year_id'],
+                    'section_id' => $sched['section_id'],
                     'curriculum_subject_id' => $sched['curriculum_subject_id'],
-                    'faculty_id'            => $sched['faculty_id'],
                 ],
-                $sched
+                $scheduleData
             );
+
+            $this->syncEnrollmentSubjectsWithSchedule($schedule);
 
             // Also reflect to faculty_load table (upsert)
             $cs = Curriculum_Subject::with(['curriculum'])->find($sched['curriculum_subject_id']);

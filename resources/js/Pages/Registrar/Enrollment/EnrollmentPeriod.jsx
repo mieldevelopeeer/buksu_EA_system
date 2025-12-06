@@ -2,7 +2,8 @@
 import React, { useMemo, useState } from "react";
 import RegistrarLayout from "@/Layouts/RegistrarLayout";
 import { Head, router } from "@inertiajs/react";
-import { Plus, Edit2, Loader2, X } from "lucide-react";
+import { Plus, Edit2, Loader2, X, CalendarDays, Clock, Flag } from "lucide-react";
+import Swal from "sweetalert2";
 import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -13,6 +14,21 @@ export default function EnrollmentPeriod({ enrollmentPeriods = [], schoolYears =
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [selectedSchoolYears, setSelectedSchoolYears] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6;
+
+    // Deduplicate semesters by name (semester field)
+    const uniqueSemesters = useMemo(() => {
+        const seen = new Set();
+        return semesters.filter((sem) => {
+            const semesterName = sem.semester || sem.name;
+            if (seen.has(semesterName)) {
+                return false;
+            }
+            seen.add(semesterName);
+            return true;
+        });
+    }, [semesters]);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -23,13 +39,15 @@ export default function EnrollmentPeriod({ enrollmentPeriods = [], schoolYears =
         status: "Open",
     });
 
-    const exportRows = useMemo(() => {
+    const filteredPeriods = useMemo(() => {
         const selectedSet = new Set(selectedSchoolYears);
-        const filtered = selectedSet.size
+        return selectedSet.size
             ? enrollmentPeriods.filter((period) => selectedSet.has(String(period.school_year_id ?? period.school_year?.id ?? "")))
             : enrollmentPeriods;
+    }, [enrollmentPeriods, selectedSchoolYears]);
 
-        return filtered.map((period, index) => {
+    const exportRows = useMemo(() => {
+        return filteredPeriods.map((period, index) => {
             const start = period.start_date ? dayjs(period.start_date).format("MMMM D, YYYY") : "—";
             const end = period.end_date ? dayjs(period.end_date).format("MMMM D, YYYY") : "—";
             const schoolYear = period.school_year?.school_year || "—";
@@ -45,7 +63,35 @@ export default function EnrollmentPeriod({ enrollmentPeriods = [], schoolYears =
                 status,
             };
         });
-    }, [enrollmentPeriods, selectedSchoolYears]);
+    }, [filteredPeriods]);
+
+    const totalPages = Math.max(1, Math.ceil(filteredPeriods.length / itemsPerPage));
+    const paginatedPeriods = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        return filteredPeriods.slice(startIndex, startIndex + itemsPerPage);
+    }, [filteredPeriods, currentPage]);
+
+    const activePeriod = useMemo(() => enrollmentPeriods.find((period) => period.status === "Open"), [enrollmentPeriods]);
+    const totalOpen = useMemo(() => enrollmentPeriods.filter((period) => period.status === "Open").length, [enrollmentPeriods]);
+    const upcomingPeriod = useMemo(() => {
+        const today = dayjs();
+        const upcoming = enrollmentPeriods
+            .filter((period) => dayjs(period.start_date).isAfter(today))
+            .sort((a, b) => dayjs(a.start_date).diff(dayjs(b.start_date)));
+        return upcoming[0];
+    }, [enrollmentPeriods]);
+
+    const toggleSchoolYearFilter = (id) => {
+        setSelectedSchoolYears((prev) => {
+            const exists = prev.includes(String(id));
+            if (exists) {
+                return prev.filter((entry) => entry !== String(id));
+            }
+            return [...prev, String(id)];
+        });
+    };
+
+    const clearSchoolYearFilter = () => setSelectedSchoolYears([]);
 
     const handleExportPDF = () => {
         const doc = new jsPDF();
@@ -110,14 +156,45 @@ export default function EnrollmentPeriod({ enrollmentPeriods = [], schoolYears =
         setShowForm(true);
     };
 
+    const showToast = (title, icon = "success") => {
+        Swal.fire({
+            icon,
+            title,
+            toast: true,
+            position: "top-end",
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+        });
+    };
+
+    const showProcessing = (title = "Processing...") => {
+        Swal.fire({
+            title,
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+    };
+
     const handleToggleStatus = (period) => {
         setLoading(true);
+        showProcessing(period.status === "Open" ? "Closing period..." : "Opening period...");
         router.put(route("registrar.enrollmentperiod.toggle", period.id), {}, {
             preserveScroll: true,
+            onSuccess: () => {
+                showToast(`Enrollment period ${period.status === "Open" ? "closed" : "opened"}.`);
+            },
             onError: (errors) => {
                 console.error("[EnrollmentPeriod] Toggle failed", errors);
+                showToast("Failed to update status.", "error");
             },
-            onFinish: () => setLoading(false),
+            onFinish: () => {
+                Swal.close();
+                setLoading(false);
+            },
         });
     };
 
@@ -131,19 +208,29 @@ export default function EnrollmentPeriod({ enrollmentPeriods = [], schoolYears =
             ? route("registrar.enrollmentperiod.update", editingId)
             : route("registrar.enrollmentperiod.store");
 
-        const submitter = editingId ? router.put : router.post;
-
-        submitter(routeName, formData, {
+        const submitOptions = {
             onSuccess: () => {
                 console.log("[EnrollmentPeriod] Submission succeeded");
                 setShowForm(false);
                 resetForm();
+                showToast(editingId ? "Enrollment period updated." : "Enrollment period created.");
             },
             onError: (errors) => {
                 console.error("[EnrollmentPeriod] Submission failed", errors);
+                showToast("Failed to save enrollment period.", "error");
             },
-            onFinish: () => setLoading(false),
-        });
+            onFinish: () => {
+                Swal.close();
+                setLoading(false);
+            },
+        };
+
+        showProcessing(editingId ? "Updating period..." : "Creating period...");
+        if (editingId) {
+            router.put(routeName, formData, submitOptions);
+        } else {
+            router.post(routeName, formData, submitOptions);
+        }
     };
 
     return (
@@ -159,35 +246,39 @@ export default function EnrollmentPeriod({ enrollmentPeriods = [], schoolYears =
                         <p className="text-[12px] text-slate-500">Monitor opening and closing windows for the enrollment workflow.</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                        <select
-                            multiple
-                            value={selectedSchoolYears}
-                            onChange={(event) => {
-                                const options = Array.from(event.target.selectedOptions);
-                                setSelectedSchoolYears(options.map((option) => option.value));
-                            }}
-                            className="min-w-[160px] rounded-full border border-slate-200 bg-white px-4 py-1.5 text-[11px] text-slate-600 shadow-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                        >
-                            {schoolYears.map((year) => (
-                                <option key={year.id} value={String(year.id)}>
-                                    {year.school_year}
-                                </option>
-                            ))}
-                        </select>
-                        <button
-                            onClick={handleExportPDF}
-                            type="button"
-                            className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-3.5 py-1.75 text-[11px] font-medium text-rose-600 transition hover:bg-rose-100"
-                        >
-                            PDF
-                        </button>
-                        <button
-                            onClick={handleExportExcel}
-                            type="button"
-                            className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1.75 text-[11px] font-medium text-emerald-600 transition hover:bg-emerald-100"
-                        >
-                            Excel
-                        </button>
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                                School Years
+                            </span>
+                            <button
+                                type="button"
+                                onClick={clearSchoolYearFilter}
+                                className={`rounded-full border px-3 py-1 text-[11px] font-medium transition ${
+                                    selectedSchoolYears.length === 0
+                                        ? "border-sky-200 bg-sky-50 text-sky-700"
+                                        : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"
+                                }`}
+                            >
+                                All
+                            </button>
+                            {schoolYears.map((year) => {
+                                const isActive = selectedSchoolYears.includes(String(year.id));
+                                return (
+                                    <button
+                                        key={year.id}
+                                        type="button"
+                                        onClick={() => toggleSchoolYearFilter(year.id)}
+                                        className={`rounded-full border px-3 py-1 text-[11px] font-medium transition ${
+                                            isActive
+                                                ? "border-sky-400 bg-sky-600 text-white shadow"
+                                                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                                        }`}
+                                    >
+                                        {year.school_year}
+                                    </button>
+                                );
+                            })}
+                        </div>
                         <button
                             onClick={handleNew}
                             className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-[12px] font-medium text-white shadow-sm transition hover:bg-sky-500"
@@ -200,55 +291,55 @@ export default function EnrollmentPeriod({ enrollmentPeriods = [], schoolYears =
                 {/* Table */}
                 <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white/80 shadow-xl backdrop-blur">
                     <div className="overflow-x-auto">
-                        <table className="min-w-full text-left text-[12px] md:text-[13px]">
-                            <thead className="bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">
+                        <table className="min-w-full text-left text-[11px] md:text-[12px]">
+                            <thead className="bg-slate-50 text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500">
                                 <tr>
-                                    <th className="px-4 py-2.5 text-slate-600">Start Date</th>
-                                    <th className="px-4 py-2.5 text-slate-600">End Date</th>
-                                    <th className="px-4 py-2.5 text-slate-600">School Year</th>
-                                    <th className="px-4 py-2.5 text-slate-600">Semester</th>
-                                    <th className="px-4 py-2.5 text-slate-600">Status</th>
-                                    <th className="px-4 py-2.5 text-center text-slate-600">Actions</th>
+                                    <th className="px-3 py-2 text-slate-600">Start Date</th>
+                                    <th className="px-3 py-2 text-slate-600">End Date</th>
+                                    <th className="px-3 py-2 text-slate-600">School Year</th>
+                                    <th className="px-3 py-2 text-slate-600">Semester</th>
+                                    <th className="px-3 py-2 text-slate-600">Status</th>
+                                    <th className="px-3 py-2 text-center text-slate-600">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 bg-white text-slate-600">
-                                {enrollmentPeriods.length > 0 ? (
-                                    enrollmentPeriods.map((period) => (
-                                        <tr key={period.id} className="transition hover:bg-slate-50/80">
-                                            <td className="px-4 py-3 font-medium text-slate-800">
+                                {paginatedPeriods.length > 0 ? (
+                                    paginatedPeriods.map((period) => (
+                                        <tr key={period.id} className="transition hover:bg-slate-50/80 text-[11px]">
+                                            <td className="px-3 py-2.5 font-medium text-slate-800">
                                                 {dayjs(period.start_date).format("MMMM D, YYYY")}
                                             </td>
-                                            <td className="px-4 py-3 text-slate-600">{dayjs(period.end_date).format("MMMM D, YYYY")}</td>
-                                            <td className="px-4 py-3 text-slate-600">{period.school_year?.school_year || "-"}</td>
-                                            <td className="px-4 py-3 text-slate-600">{period.semester?.semester || "-"}</td>
-                                            <td className="px-4 py-3">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleToggleStatus(period)}
-                                                    className={`relative inline-flex h-6 w-16 items-center rounded-full transition focus:outline-none focus:ring-2 focus:ring-sky-200 ${
-                                                        period.status === "Open"
-                                                            ? "bg-emerald-500/70"
-                                                            : "bg-slate-300"
-                                                    }`}
-                                                >
+                                            <td className="px-3 py-2.5 text-slate-600">{dayjs(period.end_date).format("MMMM D, YYYY")}</td>
+                                            <td className="px-3 py-2.5 text-slate-600">{period.school_year?.school_year || "-"}</td>
+                                            <td className="px-3 py-2.5 text-slate-600">{period.semester?.semester || "-"}</td>
+                                            <td className="px-3 py-2.5">
+                                                <div className="flex items-center gap-3">
                                                     <span
-                                                        className={`absolute inset-y-1 flex h-4 w-6 items-center justify-center text-[10px] font-medium uppercase tracking-wide text-white ${
-                                                            period.status === "Open" ? "left-2" : "left-7"
+                                                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+                                                            period.status === "Open"
+                                                                ? "bg-emerald-50 text-emerald-600"
+                                                                : "bg-slate-100 text-slate-500"
                                                         }`}
                                                     >
-                                                        {period.status === "Open" ? "Open" : "Off"}
+                                                        {period.status === "Open" ? "Open" : "Closed"}
                                                     </span>
-                                                    <span
-                                                        className={`absolute left-1 inline-flex h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ${
-                                                            period.status === "Open" ? "translate-x-8" : "translate-x-0"
-                                                        }`}
-                                                    />
-                                                </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleToggleStatus(period)}
+                                                        className="inline-flex h-5 w-12 items-center rounded-full border border-slate-200 bg-white transition hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                                                    >
+                                                        <span
+                                                            className={`inline-flex h-4 w-4 transform rounded-full bg-sky-500 shadow transition ${
+                                                                period.status === "Open" ? "translate-x-6" : "translate-x-1"
+                                                            }`}
+                                                        />
+                                                    </button>
+                                                </div>
                                             </td>
-                                            <td className="flex items-center justify-center gap-2 px-4 py-3">
+                                            <td className="flex items-center justify-center gap-2 px-3 py-2.5">
                                                 <button
                                                     onClick={() => handleEdit(period)}
-                                                    className="inline-flex items-center gap-1 rounded-full border border-sky-200 bg-white px-3 py-1 text-[11px] font-medium text-sky-600 transition hover:border-sky-300 hover:bg-sky-50"
+                                                    className="inline-flex items-center gap-1 rounded-full border border-sky-200 bg-white px-2.5 py-0.5 text-[11px] font-medium text-sky-600 transition hover:border-sky-300 hover:bg-sky-50"
                                                 >
                                                     <Edit2 size={12} /> Edit
                                                 </button>
@@ -257,13 +348,51 @@ export default function EnrollmentPeriod({ enrollmentPeriods = [], schoolYears =
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="px-6 py-12 text-center text-[12px] italic text-slate-400">
-                                            No enrollment periods have been created yet. Start by adding one above.
+                                        <td colSpan="6" className="px-6 py-10 text-center text-[12px] italic text-slate-400">
+                                            No enrollment periods match the selected filters. Adjust the filters or create a new period.
                                         </td>
                                     </tr>
                                 )}
                             </tbody>
                         </table>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-between border-t border-slate-100 px-4 py-3 text-[11px] text-slate-500">
+                        <span>
+                            Showing {paginatedPeriods.length ? (currentPage - 1) * itemsPerPage + 1 : 0}–
+                            {(currentPage - 1) * itemsPerPage + paginatedPeriods.length} of {filteredPeriods.length}
+                        </span>
+                        <div className="flex items-center gap-1">
+                            <button
+                                type="button"
+                                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                                disabled={currentPage === 1}
+                                className="rounded-full border border-slate-200 px-2 py-0.5 text-[10px] disabled:opacity-40"
+                            >
+                                Prev
+                            </button>
+                            {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((page) => (
+                                <button
+                                    key={page}
+                                    type="button"
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`rounded-full px-2 py-0.5 text-[10px] ${
+                                        currentPage === page
+                                            ? "bg-sky-600 text-white"
+                                            : "border border-slate-200 text-slate-600"
+                                    }`}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                            <button
+                                type="button"
+                                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                                disabled={currentPage === totalPages}
+                                className="rounded-full border border-slate-200 px-2 py-0.5 text-[10px] disabled:opacity-40"
+                            >
+                                Next
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -348,7 +477,7 @@ export default function EnrollmentPeriod({ enrollmentPeriods = [], schoolYears =
                                         required
                                     >
                                         <option value="">Select Semester</option>
-                                        {semesters.map((sem) => (
+                                        {uniqueSemesters.map((sem) => (
                                             <option key={sem.id} value={sem.id}>
                                                 {sem.semester}
                                             </option>
@@ -395,15 +524,6 @@ export default function EnrollmentPeriod({ enrollmentPeriods = [], schoolYears =
                     </div>
                 )}
 
-                {/* Global Loading Overlay */}
-                {loading && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40">
-                        <div className="flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs shadow-lg">
-                            <Loader2 className="animate-spin text-sky-600" size={16} />
-                            <span>Processing...</span>
-                        </div>
-                    </div>
-                )}
             </div>
         </RegistrarLayout>
     );

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Head, useForm, Link, usePage } from '@inertiajs/react';
 import Swal from 'sweetalert2';
-import { Moon, Sun, User, Lock } from 'lucide-react';
+import { Moon, Sun, User, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export default function Login() {
   const { status, errors: pageErrors } = usePage().props;
@@ -9,6 +9,7 @@ export default function Login() {
   const [animatePanel, setAnimatePanel] = useState(false);
   const [showLoadingBar, setShowLoadingBar] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
   const animationFrameRef = useRef(null);
 
   const triggerPanelAnimation = useCallback(() => {
@@ -114,7 +115,7 @@ export default function Login() {
         if (user) {
           window.location.href = route('dashboard');
           return;
-        }
+        } 
 
         window.location.reload();
       },
@@ -138,10 +139,55 @@ export default function Login() {
     });
   }, [post, reset]);
 
+  useEffect(() => {
+    if (status === 'expired') {
+      Swal.fire({
+        icon: 'info',
+        title: 'Session Expired',
+        text: 'Your session has expired. Please log in again.',
+        confirmButtonText: 'Go to Login',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      }).then(() => {
+        window.location.href = route('login');
+      });
+    }
+  }, [status]);
+
+  const [showExpiryModal, setShowExpiryModal] = useState(status === 'expired');
+
+  useEffect(() => {
+    if (status === 'expired') {
+      setShowExpiryModal(true);
+    }
+  }, [status]);
+
+  const handleExpiredConfirm = useCallback(() => {
+    setShowExpiryModal(false);
+    window.location.href = route('login');
+  }, []);
+
   return (
     <>
       <Head title="Login" />
       <div className="min-h-screen flex items-center justify-center bg-blue-100 dark:bg-[#001d3d] font-[Poppins] relative">
+        {showExpiryModal && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur">
+            <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-xl">
+              <h2 className="text-xl font-semibold text-slate-900">Session Expired</h2>
+              <p className="mt-2 text-sm text-slate-500">
+                Your session has expired due to inactivity. Please log in again to continue.
+              </p>
+              <button
+                onClick={handleExpiredConfirm}
+                className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700"
+              >
+                Return to Login
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
         {showLoadingBar && (
           <div className="absolute top-0 left-0 right-0 h-1">
             <div className="mx-auto h-full w-full max-w-4xl overflow-hidden rounded-full bg-white/60 dark:bg-white/10 backdrop-blur">
@@ -190,10 +236,11 @@ export default function Login() {
             >
             <img src="/images/buksu_logo.png" alt="Logo" className="h-24 mb-6" />
             <h1 className="text-2xl font-semibold">
-              Web-Based Enrollment and Academic Management System
+           Web-Based Enrollment and Academic System
+             
             </h1>
             <p className="max-w-sm text-sm text-slate-600 dark:text-slate-200">
-              Access your enrollment dashboard, track academic records, and manage your progress in one cohesive portal.
+              Access your enrollment d  ashboard, track academic records, and manage your progress in one cohesive portal.
             </p>
             </div>
           </div>
@@ -246,15 +293,23 @@ export default function Login() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   name="password"
                   value={data.password}
                   onChange={(e) => setData('password', e.target.value)}
                   placeholder="Password"
-                  className={`w-full pl-10 pr-4 py-2 rounded-md border bg-white dark:bg-[#001b36] text-black dark:text-white ${
+                  className={`w-full pl-10 pr-11 py-2 rounded-md border bg-white dark:bg-[#001b36] text-black dark:text-white ${
                     pageErrors.password ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
               {pageErrors.password && (
                 <p className="text-red-400 text-sm">{pageErrors.password}</p>

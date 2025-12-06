@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('prerequisite_subjects', function (Blueprint $table) {
             $table->id();
-            $table->string('comment')->nullable()->after('prerequisite_subject_id');
+           $table->string('comment')->nullable();
+            
       // The subject that requires a prerequisite
             $table->foreignId('curriculum_subject_id')
                   ->constrained('curriculum_subject') // ✅ matches your actual table

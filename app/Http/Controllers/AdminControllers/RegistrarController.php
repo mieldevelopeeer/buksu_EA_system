@@ -5,7 +5,6 @@ namespace App\Http\Controllers\AdminControllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Users;
-use App\Models\Registrar;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -29,6 +28,10 @@ public function index()
 
 public function store(Request $request)
 {
+    $request->merge([
+        'password' => $request->filled('password') ? $request->input('password') : null,
+    ]);
+
     $validated = $request->validate([
         'fName'     => 'required|string|max:255',
         'mName'     => 'nullable|string|max:255',

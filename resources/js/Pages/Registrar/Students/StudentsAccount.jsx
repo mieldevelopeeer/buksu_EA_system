@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { usePage, router } from "@inertiajs/react";
 import {
   PencilSimple,
   Eye,
-  EnvelopeSimple,
   MagnifyingGlass,
   UserPlus,
 } from "phosphor-react";
@@ -11,9 +10,58 @@ import RegistrarLayout from "@/Layouts/RegistrarLayout";
 import Swal from "sweetalert2";
 
 export default function StudentsAccount() {
-  const { students = [] } = usePage().props;
+  const { students = [], flash = {}, credentials = null } = usePage().props;
   const [search, setSearch] = useState("");
-  const [emailPending, setEmailPending] = useState(null);
+
+  // 🔔 Surface backend success/error (email send status) via SweetAlert for debugging
+  useEffect(() => {
+    if (credentials?.username && credentials?.password) {
+      const person = credentials.student ?? credentials.user ?? {};
+      const fullName = [
+        person?.fName,
+        person?.mName,
+        person?.lName,
+        person?.suffix,
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      Swal.fire({
+        title: "Credentials Generated",
+        html: `
+          <div class="text-left text-sm">
+            <p class="font-semibold">${fullName || "Account"}</p>
+            <p class="text-gray-500">${person?.email || "No email"}</p>
+            <div class="mt-3 space-y-1 font-mono text-xs">
+              <p><strong>Username:</strong> ${credentials.username}</p>
+              <p><strong>Password:</strong> ${credentials.password}</p>
+            </div>
+          </div>
+        `,
+        icon: "success",
+        confirmButtonText: "Copied",
+        confirmButtonColor: "#2563eb",
+      }).then(() => {
+        navigator.clipboard?.writeText(
+          `Username: ${credentials.username}\nPassword: ${credentials.password}`
+        );
+      });
+    } else if (flash?.success) {
+      Swal.fire({
+        title: "Success",
+        text: flash.success,
+        icon: "success",
+        confirmButtonColor: "#2563eb",
+      });
+    } else if (flash?.error) {
+      Swal.fire({
+        title: "Email Issue",
+        text: flash.error,
+        icon: "error",
+        confirmButtonColor: "#2563eb",
+      });
+    }
+  }, [flash?.success, flash?.error, credentials]);
 
 // ✅ Handle create account
 const handleCreateAccount = (student) => {
@@ -41,10 +89,11 @@ const handleCreateAccount = (student) => {
           onSuccess: () => {
             Swal.close();
 
+            // Actual outcome will re-trigger via flash SweetAlert above
             Swal.fire({
-              title: "Account Created!",
-              text: "The student account has been created successfully.",
-              icon: "success",
+              title: "Request Sent",
+              text: "Waiting for backend confirmation...",
+              icon: "info",
               confirmButtonColor: "#2563eb",
             });
           },
@@ -67,38 +116,6 @@ const handleCreateAccount = (student) => {
     }
   });
 };
-
-  // ✅ Handle send email
-  const handleSendEmail = (student) => {
-    Swal.fire({
-      title: "Send Email?",
-      text: `Send credentials to ${student.fName} ${student.lName}?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#2563eb",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, send it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setEmailPending(student.id);
-        router.post(
-          route("registrar.students.sendEmail", student.id),
-          {},
-          {
-            onSuccess: () =>
-              Swal.fire("Sent!", "Email has been sent.", "success"),
-            onError: () =>
-              Swal.fire(
-                "Error",
-                "Failed to send the email. Please try again.",
-                "error"
-              ),
-            onFinish: () => setEmailPending(null),
-          }
-        );
-      }
-    });
-  };
 
   const handleViewProfile = (student) => {
     router.visit(route("registrar.students.profile"), {
@@ -202,16 +219,6 @@ const handleCreateAccount = (student) => {
                           <Eye size={14} /> View
                         </button>
 
-                        <button
-                          onClick={() => handleSendEmail(s)}
-                          disabled={emailPending === s.id}
-                          className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-indigo-100 text-indigo-700 hover:bg-indigo-200 ${
-                            emailPending === s.id ? "opacity-60 cursor-wait" : ""
-                          }`}
-                        >
-                          <EnvelopeSimple size={14} />
-                          {emailPending === s.id ? "Sending..." : "Resend"}
-                        </button>
                       </td>
                     </tr>
                   ))}

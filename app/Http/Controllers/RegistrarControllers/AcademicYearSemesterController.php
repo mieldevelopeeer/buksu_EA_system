@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AcademicYear;
 use App\Models\Semester;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class AcademicYearSemesterController extends Controller
@@ -25,16 +26,58 @@ class AcademicYearSemesterController extends Controller
     // Store semester (with school_year_id)
     public function store(Request $request)
     {
-        $request->validate([
-            'school_year_id' => 'required|exists:academic_years,id',
-            'semester' => 'required|string|unique:semesters,semester,NULL,id,school_year_id,' . $request->school_year_id,
-            'is_active' => 'required|boolean',
+        $validated = $request->validate([
+            'school_year' => 'required|string',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'is_active' => 'nullable|boolean',
         ]);
 
-        Semester::create($request->only(['school_year_id', 'semester', 'is_active']));
+        $academicYear = AcademicYear::firstOrCreate(
+            ['school_year' => $validated['school_year']],
+            [
+                'is_active' => true,
+                'start_date' => $validated['start_date'] ?? null,
+                'end_date' => $validated['end_date'] ?? null,
+            ]
+        );
 
-        return redirect()->route('registrar.academic-year-semester.index')
-            ->with('success', 'Semester added successfully.');
+        $academicYear->fill([
+            'start_date' => $validated['start_date'] ?? $academicYear->start_date,
+            'end_date' => $validated['end_date'] ?? $academicYear->end_date,
+        ])->save();
+
+        $defaultSemesters = [
+            'First Semester',
+            'Second Semester',
+            'Summer',
+        ];
+
+        $existingSemesters = Semester::where('school_year_id', $academicYear->id)
+            ->whereIn('semester', $defaultSemesters)
+            ->pluck('semester')
+            ->all();
+
+        if (count($existingSemesters) === count($defaultSemesters)) {
+            throw ValidationException::withMessages([
+                'school_year' => ['Semesters for this school year already exist.'],
+            ]);
+        }
+
+        foreach ($defaultSemesters as $semesterName) {
+            Semester::firstOrCreate(
+                [
+                    'school_year_id' => $academicYear->id,
+                    'semester' => $semesterName,
+                ],
+                [
+                    'is_active' => false,
+                ]
+            );
+        }
+
+        return redirect()->route('registrar.ay-semester.index')
+            ->with('success', 'Semesters added successfully.');
     }
 
     // Update semester
@@ -42,14 +85,39 @@ class AcademicYearSemesterController extends Controller
     {
         $semester = Semester::findOrFail($id);
 
-        $request->validate([
-            'school_year_id' => 'required|exists:academic_years,id',
-            'semester' => 'required|string|unique:semesters,semester,' . $id . ',id,school_year_id,' . $request->school_year_id,
+        $validated = $request->validate([
+            'school_year' => 'required|string',
+            'semester' => 'required|string',
+            'is_active' => 'required|boolean',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
 
-        $semester->update($request->only(['school_year_id', 'semester', 'is_active']));
+        $academicYear = AcademicYear::firstOrCreate(
+            ['school_year' => $validated['school_year']],
+            [
+                'is_active' => true,
+                'start_date' => $validated['start_date'] ?? null,
+                'end_date' => $validated['end_date'] ?? null,
+            ]
+        );
 
-        return redirect()->route('registrar.academic-year-semester.index')
+        $academicYear->update([
+            'start_date' => $validated['start_date'] ?? $academicYear->start_date,
+            'end_date' => $validated['end_date'] ?? $academicYear->end_date,
+        ]);
+
+        $request->validate([
+            'semester' => 'unique:semesters,semester,' . $id . ',id,school_year_id,' . $academicYear->id,
+        ]);
+
+        $semester->update([
+            'school_year_id' => $academicYear->id,
+            'semester' => $validated['semester'],
+            'is_active' => $validated['is_active'],
+        ]);
+
+        return redirect()->route('registrar.ay-semester.index')
             ->with('success', 'Semester updated successfully.');
     }
 
@@ -73,5 +141,26 @@ public function toggleSemester($id)
         $year->save();
 
      return back()->with('success', 'School Year status updated successfully.');
+    }
+
+    public function updateAcademicYear(Request $request, $id)
+    {
+        $year = AcademicYear::findOrFail($id);
+
+        $validated = $request->validate([
+            'school_year' => 'required|string',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $year->update([
+            'school_year' => $validated['school_year'],
+            'start_date' => $validated['start_date'] ?? $year->start_date,
+            'end_date' => $validated['end_date'] ?? $year->end_date,
+            'is_active' => $validated['is_active'] ?? $year->is_active,
+        ]);
+
+        return back()->with('success', 'School Year updated successfully.');
     }
 }

@@ -5,19 +5,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
+
         <!-- Favicon -->
-       <link rel="icon" type="image/png" href="{{ asset('images/buksu_logo.png') }}">
- 
+        <link rel="icon" type="image/png" href="{{ asset('images/buksu_logo.png') }}">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @routes
-        @viteReactRefresh
-        @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
+
+        {{-- Only include JS; CSS is imported inside app.jsx --}}
+        @vite(['resources/js/app.jsx'])
+
         @inertiaHead
     </head>
     <body class="font-sans antialiased">

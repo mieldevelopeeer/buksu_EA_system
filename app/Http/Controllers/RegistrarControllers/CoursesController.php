@@ -18,9 +18,15 @@ public function index()
 
     // ✅ Get ENUM values from courses table
     $enumValues = DB::select("SHOW COLUMNS FROM courses LIKE 'degree_type'");
-    $type = $enumValues[0]->Type; // e.g. enum('Bachelor','Master','Doctorate')
-    preg_match("/^enum\('(.*)'\)$/", $type, $matches);
-    $degreeTypes = explode("','", $matches[1]);
+    $degreeTypes = [];
+
+    if (!empty($enumValues)) {
+        $type = $enumValues[0]->Type ?? '';
+
+        if (preg_match("/^enum\('(.*)'\)$/", $type, $matches) && isset($matches[1])) {
+            $degreeTypes = explode("','", $matches[1]);
+        }
+    }
 
     return Inertia::render('Registrar/Curriculum/Courses', [
         'courses' => $courses,

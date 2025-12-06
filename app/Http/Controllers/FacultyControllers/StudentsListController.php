@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\FacultyControllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\class_schedules;
+use App\Models\Class_Schedules;
 use App\Models\EnrollmentSubject;
 use App\Models\Users;
-use App\Models\semester as SemesterModel;
+use App\Models\Semester as SemesterModel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -45,7 +45,7 @@ class StudentsListController extends Controller
             'classroom',
         ];
 
-        $scheduleQuery = class_schedules::query()
+        $scheduleQuery = Class_Schedules::query()
             ->with($relations)
             ->where('faculty_id', $facultyId)
             ->when($activeSemester, function ($query) use ($activeSemester) {
@@ -65,7 +65,7 @@ class StudentsListController extends Controller
                 'active_semester_id' => $activeSemester?->id,
             ]);
 
-            $paginatedSchedules = class_schedules::query()
+            $paginatedSchedules = Class_Schedules::query()
                 ->with($relations)
                 ->orderBy('section_id')
                 ->orderBy('schedule_day')
@@ -81,7 +81,7 @@ class StudentsListController extends Controller
             'per_page' => $paginatedSchedules->perPage(),
         ]);
 
-        $teachingLoads = $paginatedSchedules->through(function (class_schedules $schedule) {
+        $teachingLoads = $paginatedSchedules->through(function (Class_Schedules $schedule) {
             $subjectModel = optional($schedule->curriculumSubject)->subject;
             $courseModel = optional($schedule->curriculumSubject)->course;
             $section = $schedule->section;
@@ -237,7 +237,7 @@ class StudentsListController extends Controller
         ]);
     }
 
-    protected function formatSchedule(class_schedules $schedule): ?string
+    protected function formatSchedule(Class_Schedules $schedule): ?string
     {
         $parts = [];
 
@@ -306,7 +306,17 @@ class StudentsListController extends Controller
             'reason' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $userId = Auth::id();
+        $rawUserId = Auth::id();
+        $userId = null;
+
+        if (is_numeric($rawUserId)) {
+            $userId = (int) $rawUserId;
+        } else {
+            $fallback = Auth::user();
+            if ($fallback && is_numeric($fallback->id)) {
+                $userId = (int) $fallback->id;
+            }
+        }
         $enrollmentSubjectId = (int) request('enrollment_subject_id');
         $reason = request('reason');
 

@@ -20,11 +20,31 @@ class RedirectIfAuthenticated
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+            if (!Auth::guard($guard)->check()) {
+                continue;
             }
+
+            $user = Auth::guard($guard)->user();
+
+            if ($user && method_exists($this, 'resolveRedirectPath')) {
+                return redirect($this->resolveRedirectPath($user));
+            }
+
+            return redirect(RouteServiceProvider::HOME);
         }
 
         return $next($request);
+    }
+
+    protected function resolveRedirectPath($user): string
+    {
+        return match ($user->role) {
+            'admin' => '/admin/dashboard',
+            'registrar' => '/registrar/dashboard',
+            'program_head' => '/program-head/dashboard',
+            'faculty' => '/faculty/dashboard',
+            'student' => '/students/dashboard',
+            default => RouteServiceProvider::HOME,
+        };
     }
 }

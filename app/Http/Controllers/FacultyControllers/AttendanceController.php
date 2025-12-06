@@ -434,6 +434,7 @@ class AttendanceController extends Controller
             'excused' => $records->where('status', 'excused')->count(),
         ];
 
+
         return Inertia::render('Faculty/Attendance/SubjectAttendance', [
             'section' => $section,
             'schedule' => [
@@ -450,4 +451,30 @@ class AttendanceController extends Controller
             'totals' => $totals,
         ]);
     }
+
+    public function updateEntry(Request $request)
+    {
+        $validated = $request->validate([
+            'entry_id' => 'required|integer|exists:attendance,id',
+            'status' => 'required|string|in:present,absent,late,excused',
+            'time_in' => 'nullable|date_format:H:i',
+            'time_out' => 'nullable|date_format:H:i',
+        ]);
+
+        try {
+            $attendance = Attendance::findOrFail($validated['entry_id']);
+
+            // Update the attendance record
+            $attendance->update([
+                'status' => $validated['status'],
+                'time_in' => $validated['time_in'] ? Carbon::createFromFormat('H:i', $validated['time_in']) : null,
+                'time_out' => $validated['time_out'] ? Carbon::createFromFormat('H:i', $validated['time_out']) : null,
+            ]);
+
+            return redirect()->back()->with('success', 'Attendance record updated successfully');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Failed to update attendance record');
+        }
+    }
+
 }

@@ -30,6 +30,8 @@ use App\Http\Controllers\RegistrarControllers\StudentListController;
 use App\Http\Controllers\RegistrarControllers\EnrollmentPeriodController;
 use App\Http\Controllers\RegistrarControllers\EnrollmentReportsController;
 use App\Http\Controllers\RegistrarControllers\GradeReportsController;
+use App\Http\Controllers\RegistrarControllers\NotificationController;
+use App\Http\Controllers\RegistrarControllers\RegistrarDashboardController;
 
 
 use App\Http\Controllers\ProgramHeadControllers\CurriculaController;
@@ -37,6 +39,7 @@ use App\Http\Controllers\ProgramHeadControllers\SectionController;
 use App\Http\Controllers\ProgramHeadControllers\EvaluationEnrollmentController;
 use App\Http\Controllers\ProgramHeadControllers\EnrolledStudentsController;
 use App\Http\Controllers\ProgramHeadControllers\FacultyController;
+use App\Http\Controllers\ProgramHeadControllers\FacultyPermissionController;
 use App\Http\Controllers\ProgramHeadControllers\AcademicRecordsController as ProgramHeadAcademicRecordsController;
 use App\Http\Controllers\ProgramHeadControllers\ReportsController as ProgramHeadReportsController;
 
@@ -44,11 +47,13 @@ use App\Http\Controllers\FacultyControllers\GradeController;
 use App\Http\Controllers\FacultyControllers\FacultyReportsController;
 use App\Http\Controllers\FacultyControllers\ClassController;
 use App\Http\Controllers\FacultyControllers\AttendanceController;
+use App\Http\Controllers\FacultyControllers\EvaluationController;
 
 
 use App\Http\Controllers\StudentControllers\AcademicRecordsController;
 use App\Http\Controllers\StudentControllers\MyEnrolledSubController;
 use App\Http\Controllers\StudentControllers\MyGradesController;
+use App\Http\Controllers\StudentControllers\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -80,6 +85,13 @@ Route::middleware('auth')->group(function () {
         };
     })->name('dashboard');
 
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+    Route::get('/notifications/feed', [NotificationController::class, 'feed'])
+        ->name('notifications.feed');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.read');
+
     // PROFILE ROUTES
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::post('/profile/avatar', [ProfileController::class, 'uploadAvatar'])->name('profile.avatar.upload');
@@ -93,7 +105,7 @@ Route::middleware('auth')->group(function () {
 
     
 //ADMINISTRATOR ROUTES
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware('ensure.portal.role')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\AdminControllers\AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/curriculums', [CurriculumsperDeptController::class, 'index'])->name('curricula.index');
    // Publicly accessible curriculum detail
@@ -113,6 +125,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/program-head',[ProgramHeadController::class, 'index'])->name('programHead.index');
     Route::post('/program-head', [ProgramHeadController::class, 'store'])->name('programHead.store');
     Route::put('/program-head/{id}', [ProgramHeadController::class, 'update'])->name('programHead.update');
+    Route::post('/program-head/send-email', [ProgramHeadController::class, 'sendEmail'])->name('programHead.send.email');
     Route::get('/programs/departments', [DeptandProgController::class, 'index'])->name('programs.departments');
     Route::get('/programs/courses', [DeptandProgController::class, 'courses'])->name('programs.courses');
     Route::get('/reports/enrollment-report', [ReportsController::class, 'enrollment'])->name('reports.enrollmentReport');
@@ -143,9 +156,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/class-schedules', [AdminAcademicRecordsController::class, 'classSchedules'])->name('schedule');
     });
     });
+// PROGRAM HEAD ROUTES
+Route::prefix('program-head')->name('program-head.')->middleware('ensure.portal.role')->group(function () {
+    Route::get('/students/enrolled', [\App\Http\Controllers\ProgramHeadControllers\EnrolledStudentsController::class, 'index'])
+        ->name('students.enrolled');
+});
+
 // REGISTRAR ROUTES
-    Route::prefix('registrar')->name('registrar.')->group(function () {
-        Route::get('/dashboard', fn () => Inertia::render('Registrar/Dashboard'))->name('dashboard');
+    Route::prefix('registrar')->name('registrar.')->middleware('ensure.portal.role')->group(function () {
+        Route::get('/dashboard', [RegistrarDashboardController::class, 'index'])->name('dashboard');
         Route::get('/curriculum', [CurriculumController::class, 'index'])->name('curriculum.index'); 
          Route::get('/curriculum/{id}', [CurriculumController::class, 'show'])->name('curriculum.show');
         Route::get('/courses', [CoursesController::class, 'index'])->name('courses.index'); 
@@ -173,17 +192,28 @@ Route::middleware('auth')->group(function () {
         Route::get('/courses/{courseId}/majors', [CurriculumController::class, 'showMajors'])->name('courses.majors.index');
         Route::post('/courses/{course}/majors', [CurriculumController::class, 'storeMajors'])->name('courses.majors.store');
         Route::put('/courses/majors/{majorId}', [CurriculumController::class, 'updateMajors']) ->name('courses.majors.update');
-// Fetch submitted grades for registrar
-Route::get('/grades', [StudentRecsController::class, 'studentGrades'])
-    ->name('student.grades');
+        // Fetch submitted grades for registrar
+        Route::get('/grades', [StudentRecsController::class, 'studentGrades'])
+            ->name('student.grades');
+        Route::get('/grades/course/{course}', [StudentRecsController::class, 'studentGradesCourseYears'])
+            ->name('student.grades.course');
+        Route::get('/grades/course/{course}/year/{year}', [StudentRecsController::class, 'studentGradesYearSections'])
+            ->name('student.grades.course.year');
+        Route::get('/grades/course/{course}/year/{year}/section/{section}', [StudentRecsController::class, 'studentGradesSectionSubjects'])
+            ->name('student.grades.course.year.section');
+        Route::get(
+            '/grades/course/{course}/year/{year}/section/{section}/subject/{subject}',
+            [StudentRecsController::class, 'studentGradesSectionSubjectReview']
+        )->name('student.grades.course.year.section.subject');
+        Route::post('/grades/confirm', [StudentRecsController::class, 'confirmGrade'])
+            ->name('registrar.grade.confirmGrade');
 Route::post('/students/create-account/{id}', [StudentRecsController::class, 'createAccount'])
     ->name('students.createAccount');
         
 // Confirm or reject a submitted grade
-Route::post('/grades/confirm', [StudentRecsController::class, 'confirmGrade'])
-    ->name('grades.confirmGrade');
-
-   Route::get('/pre-enroll', [PreEnrollController::class, 'index'])->name('preenroll.index');
+// Route::post('/grades/confirm', [StudentRecsController::class, 'confirmGrade'])
+//     ->name('grades.confirmGrade');
+    Route::get('/pre-enroll', [PreEnrollController::class, 'index'])->name('preenroll.index');
     Route::get('/pre-enroll/{id}/review', [PreEnrollController::class, 'review'])->name('preenroll.review');
     Route::post('/pre-enroll/{id}/subjects', [PreEnrollController::class, 'updateSubjects'])->name('preenroll.updateSubjects');
     Route::post('/pre-enroll/{id}/confirm', [PreEnrollController::class, 'confirm'])->name('preenroll.confirm');
@@ -207,10 +237,10 @@ Route::put('/ay-year/{id}/toggle', [AcademicYearSemesterController::class, 'togg
     ->name('ay-year.toggle');
 
 // Semester actions
-Route::post('/ay-semester', [AcademicYearSemesterController::class, 'storeSemester'])
+Route::post('/ay-semester', [AcademicYearSemesterController::class, 'store'])
     ->name('ay-semester.store');
 
-Route::put('/ay-semester/{id}', [AcademicYearSemesterController::class, 'updateSemester'])
+Route::put('/ay-semester/{id}', [AcademicYearSemesterController::class, 'update'])
     ->name('ay-semester.update');
 
 Route::put('/ay-semester/{id}/toggle', [AcademicYearSemesterController::class, 'toggleSemester'])
@@ -219,11 +249,31 @@ Route::put('/ay-semester/{id}/toggle', [AcademicYearSemesterController::class, '
   
         Route::get('/students-profile', [StudentRecsController::class, 'studentProfiles'])
     ->name('students.profile');
+        Route::get('/students-profile/create', [StudentRecsController::class, 'createStudentProfile'])
+    ->name('students.profile.create');
+        Route::post('/students-profile', [StudentRecsController::class, 'storeStudentProfile'])
+    ->name('students.profile.store');
+        Route::get('/students-profile/{id}', [StudentRecsController::class, 'showStudentProfile'])
+    ->name('students.profile.show');
 
     Route::get('/submitted-requirements', [StudentRecsController::class, 'showSubmittedReq'])
     ->name('submitted.requirements');
     Route::post('/submitted-requirements', [StudentRecsController::class, 'storeStudentRequirement'])
     ->name('submitted.requirements.store');
+    Route::get('/students-subjects/{enrollment}/add', [StudentRecsController::class, 'showAddSubjectPage'])
+    ->name('students.subjects.add.page');
+    Route::post('/students-subjects/{enrollment}/add', [StudentRecsController::class, 'addEnrollmentSubject'])
+    ->name('students.subjects.add');
+    Route::post('/students-subjects/{enrollment}/add-batch', [StudentRecsController::class, 'addEnrollmentSubjectsBatch'])
+    ->name('students.subjects.add.batch');
+    Route::get('/students-subjects/{enrollment}/drop', [StudentRecsController::class, 'showDropSubjectPage'])
+    ->name('students.subjects.drop.page');
+    Route::post('/students-subjects/{enrollmentSubject}/drop', [StudentRecsController::class, 'dropEnrollmentSubject'])
+    ->name('students.subjects.drop');
+    Route::post('/students-subjects/{enrollment}/drop-batch', [StudentRecsController::class, 'dropEnrollmentSubjectsBatch'])
+    ->name('students.subjects.drop.batch');
+    Route::post('/students-subjects/{enrollmentSubject}/undo-drop', [StudentRecsController::class, 'undoDropEnrollmentSubject'])
+    ->name('students.subjects.undo-drop');
     Route::get('/students-list', [StudentListController::class, 'index'])->name('registrar.students.list');
     Route::get('/approved-grades',[StudentRecsController::class, 'showApprovedGrades'])->name('approved.grades');
     Route::get('/students-grades', [StudentRecsController::class, 'registrarStudentList'])
@@ -269,7 +319,7 @@ Route::get('/grade-reports/export/excel', [GradeReportsController::class, 'expor
 
 
 //PROGRAM HEAD ROUTES
-        Route::prefix('program-head')->name('program-head.')->group(function () {
+        Route::prefix('program-head')->name('program-head.')->middleware('ensure.portal.role')->group(function () {
             Route::get('/dashboard', [\App\Http\Controllers\ProgramHeadControllers\PHDashboardController::class, 'index'])->name('dashboard');
             Route::get('/curricula',[CurriculaController::class, 'index'])->name('curricula.index');
             Route::post('/curricula', [CurriculaController::class, 'store'])->name('curriculum.store');
@@ -279,7 +329,9 @@ Route::get('curricula/subject/{code}', [CurriculaController::class, 'getSubjectB
 
             Route::get('/curriculum/{id}', [CurriculaController::class, 'show'])->name('curriculum.show');
             Route::post('/curriculum/{id}', [CurriculaController::class, 'storeSubjects'])->name('curriculum.storeSubjects');
+            Route::post('/curriculum/{id}/subject', [CurriculaController::class, 'storeSubject'])->name('curriculum.storeSubject');
             Route::put('/curriculum/{id}', [CurriculaController::class, 'updateSubject'])->name('curriculum.updateSubject');
+            Route::delete('/curriculum/{id}/subject/{subject}', [CurriculaController::class, 'deleteSubject'])->name('curriculum.deleteSubject');
             Route::post('/curricula/{curriculum}/upload-file', [CurriculaController::class, 'uploadFile'])
             ->name('curricula.uploadFile');
             // Save prerequisites for a subject
@@ -297,18 +349,33 @@ Route::get('/evaluation/{enrollment}/subjects', [EvaluationEnrollmentController:
 
 Route::get('/evaluation/{enrollment}/curriculum-subjects', [EvaluationEnrollmentController::class, 'fetchCurriculumSubjects'])
     ->name('curriculum.subjects.index');
+Route::get('/evaluation/other-curricula', [\App\Http\Controllers\ProgramHeadControllers\OtherCurriculaController::class, 'index'])
+    ->name('curriculum.other.index');
  
             
             Route::get('/faculties', [FacultyController::class, 'index'])->name('faculties.index');
-            Route::post('/faculties', [FacultyController::class, 'store'])->name('faculties.store');
-            Route::put('/faculties/{id}', [FacultyController::class, 'update'])->name('faculties.update');
             Route::get('/faculties/facultyload', [FacultyController::class, 'facultyLoad'])->name('faculty.load');
             Route::get('/faculties/assignfaculty', [FacultyController::class, 'assignFaculty'])->name('faculty.assign');
-           Route::post('/faculties/assignfaculty', [FacultyController::class, 'addSched'])
-    ->name('faculty.assign.addSched');
+            Route::get('/faculties/{faculty}', [FacultyController::class, 'show'])
+                ->whereNumber('faculty')
+                ->name('faculties.show');
+            Route::post('/faculties', [FacultyController::class, 'store'])->name('faculties.store');
+            Route::put('/faculties/{id}', [FacultyController::class, 'update'])->name('faculties.update');
+            Route::post('/faculties/assignfaculty', [FacultyController::class, 'addSched'])
+                ->name('faculty.assign.addSched');
+
+            Route::get('/faculty-permissions', [FacultyPermissionController::class, 'index'])
+                ->name('faculty-permissions.index');
+            Route::post('/faculty-permissions', [FacultyPermissionController::class, 'store'])
+                ->name('faculty-permissions.store');
+            Route::patch('/faculty-permissions/{permission}', [FacultyPermissionController::class, 'update'])
+                ->name('faculty-permissions.update');
+            Route::delete('/faculty-permissions/{permission}', [FacultyPermissionController::class, 'destroy'])
+                ->name('faculty-permissions.destroy');
 
 
             Route::get('/section', [SectionController::class, 'index'])->name('sections.index');
+            Route::get('/sections/capacity', [SectionController::class, 'capacityOverview'])->name('sections.capacity');
             Route::post('/section', [SectionController::class, 'store'])->name('sections.store');
             Route::put('/section/{id}', [SectionController::class, 'update'])->name('sections.update');
             Route::get('/enrollment', [EvaluationEnrollmentController::class, 'index'])->name('enrollment.index');
@@ -338,25 +405,53 @@ Route::get('/evaluation/{enrollment}/curriculum-subjects', [EvaluationEnrollment
              ->name('program-head.students.enrolled');
             
               Route::post('/check-student', [EvaluationEnrollmentController::class, 'checkStudent'])
-        ->name('enrollment.checkStudent');
+                ->name('enrollment.checkStudent');
+                
+            // Add/Drop Subjects
+            Route::get('/enrollments/{enrollment}/add-drop', [EvaluationEnrollmentController::class, 'showAddDrop'])
+                ->name('enrollments.add-drop');
+            Route::post('/enrollments/{enrollment}/add-drop', [EvaluationEnrollmentController::class, 'processAddDrop'])
+                ->name('enrollments.add-drop.process');
             Route::post('/check-email', [EvaluationEnrollmentController::class, 'checkEmail'])
         ->name('enrollment.checkEmail');
             Route::post('/check-curriculum', [EvaluationEnrollmentController::class, 'checkCurriculum'])
         ->name('enrollment.checkCurriculum');
             Route::get('students-list',[EnrolledStudentsController::class, 'students'])->name('students.list');
+            Route::get('students/{student}/profile',[EnrolledStudentsController::class, 'profile'])->name('students.profile');
+            Route::post('enrollments/{enrollment}/unenroll',[EnrolledStudentsController::class, 'unenroll'])->name('students.unenroll');
+            Route::post('enrollments/{enrollment}/reenroll',[EnrolledStudentsController::class, 'reenroll'])->name('students.reenroll');
     });
 
-    Route::prefix('faculty')->name('faculty.')->group(function () {
-            Route::get('/dashboard', fn () => Inertia::render('Faculty/Dashboard'))->name('dashboard');
+    Route::prefix('faculty')->name('faculty.')->middleware('ensure.portal.role')->group(function () {
+            Route::get('/dashboard', [\App\Http\Controllers\FacultyControllers\FacultyDashboardController::class, 'index'])->name('dashboard');
+            Route::get('/classroom/{id}', fn ($id) => Inertia::render('Faculty/Classroom/ClassView', ['classData' => [
+                'id' => $id,
+                'name' => 'BS Information Technology 4A',
+                'subject' => 'Capstone Project 2',
+                'section' => 'IT 4A',
+                'room' => 'CS Lab 3',
+                'students' => 35,
+                'code' => 'abc123',
+                'theme' => 'bg-blue-600',
+            ]]))->name('classroom.view');
             Route::get('/grades', [GradeController::class, 'index'])->name('grades');
             Route::get('/reports/attendance', [FacultyReportsController::class, 'attendance'])->name('reports.attendance');
             Route::get('/reports/gradereport', [FacultyReportsController::class, 'grades'])->name('reports.gradereport');
              Route::get('/grades/fetch', [GradeController::class, 'fetchGrades'])->name('grades.fetch');
             Route::post('/grades', [GradeController::class, 'addGrades'])->name('grades.add'); 
+            Route::post('/grades/change-request', [GradeController::class, 'requestChange'])->name('grades.request_change');
             Route::get('/classes', [ClassController::class, 'index'])->name('classes');
+            Route::get('/classes/{section}', [ClassController::class, 'show'])->name('classes.show');
+            Route::get('/classes/subject/{schedule}', [ClassController::class, 'showSubject'])->name('classes.subject');
+            Route::get('/classes/subject/{schedule}/attendance', [ClassController::class, 'attendanceEntrypoint'])->name('classes.subject.attendance');
+            Route::get('/classes/subject/{schedule}/grades', [ClassController::class, 'gradesEntrypoint'])->name('classes.subject.grades');
+            Route::get('/classes/section/{section}', [ClassController::class, 'showSection'])->name('classes.section');
             Route::get('/students-list', [\App\Http\Controllers\FacultyControllers\StudentsListController::class, 'index'])->name('students.list');
             Route::post('/students-list/drop', [\App\Http\Controllers\FacultyControllers\StudentsListController::class, 'dropStudent'])->name('students.drop');
+            Route::post('/students-list/undo-drop', [\App\Http\Controllers\FacultyControllers\StudentsListController::class, 'undoDropStudent'])->name('students.undo_drop');
             Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
+            Route::post('/attendance/update-entry', [AttendanceController::class, 'updateEntry'])
+                ->name('attendance.update-entry');
             Route::get('/attendance/{section}', [AttendanceController::class, 'add'])
                 ->name('attendance.add');
             Route::get('/attendance/{section}/records', [AttendanceController::class, 'showRecords'])
@@ -365,13 +460,74 @@ Route::get('/evaluation/{enrollment}/curriculum-subjects', [EvaluationEnrollment
                 ->name('attendance.subject');
             Route::post('/attendance/{section}', [AttendanceController::class, 'store'])
                 ->name('attendance.store');
+            Route::get('/enrollment-assessment', [EvaluationController::class, 'enrollmentAssessment'])
+                ->name('evaluation.assessment');
+            Route::get('/evaluation/enrollment', [EvaluationController::class, 'enrollmentForm'])
+                ->name('evaluation.enrollment');
+            Route::get('/evaluation/access-snapshot', [EvaluationController::class, 'evaluationAccessSnapshot'])
+                ->name('evaluation.access_snapshot');
+            Route::match(['get', 'post'], '/enrollment/check-student', [\App\Http\Controllers\ProgramHeadControllers\EvaluationEnrollmentController::class, 'checkStudent'])
+                ->name('evaluation.checkStudent');
+            Route::post('/enrollment/submit', [\App\Http\Controllers\ProgramHeadControllers\EvaluationEnrollmentController::class, 'submitEnrollment'])
+                ->name('evaluation.enrollment.submit');
+            Route::get('/evaluation/{id}/subjectload', [\App\Http\Controllers\ProgramHeadControllers\EvaluationEnrollmentController::class, 'showSubjectLoad'])
+                ->name('evaluation.subjectload');
+            Route::post('/evaluation/subjectload/store', [\App\Http\Controllers\ProgramHeadControllers\EvaluationEnrollmentController::class, 'storeSubjectLoad'])
+                ->name('evaluation.subjectload.store');
 // ✅ Route for Excel import
     Route::post('/import', [GradeController::class, 'insertExcel'])->name('grades.import');
     });
+
+    // Temporary route to check all curriculum subjects with details
+Route::get('/debug-curriculum-subjects', function() {
+    // Get all curricula with their subjects
+    $curricula = \App\Models\Curricula::with(['curriculumSubjects.subject', 'course'])->get();
+    
+    if ($curricula->isEmpty()) {
+        return response()->json([
+            'error' => 'No curricula found in the system',
+            'suggestion' => 'Please add curricula first in the admin panel'
+        ]);
+    }
+    
+    $result = [];
+    
+    foreach ($curricula as $curriculum) {
+        $curriculumData = [
+            'curriculum_id' => $curriculum->id,
+            'curriculum_name' => $curriculum->name,
+            'course' => $curriculum->course ? $curriculum->course->name : 'No Course',
+            'course_id' => $curriculum->courses_id,
+            'subject_count' => $curriculum->curriculumSubjects->count(),
+            'subjects' => []
+        ];
+        
+        foreach ($curriculum->curriculumSubjects as $cs) {
+            $curriculumData['subjects'][] = [
+                'curriculum_subject_id' => $cs->id,
+                'subject_id' => $cs->subject_id,
+                'subject_code' => $cs->subject ? $cs->subject->code : 'N/A',
+                'subject_name' => $cs->subject ? $cs->subject->descriptive_title : 'N/A',
+                'year_level' => $cs->yearLevel ? $cs->yearLevel->year_level : 'N/A',
+                'semester' => $cs->semester ? $cs->semester->semester : 'N/A',
+                'lec_unit' => $cs->lec_unit,
+                'lab_unit' => $cs->lab_unit,
+                'type' => $cs->type
+            ];
+        }
+        
+        $result[] = $curriculumData;
+    }
+    
+    return response()->json([
+        'total_curricula' => count($result),
+        'curricula' => $result
+    ]);
+});
     
 
-    Route::prefix('students')->name('students.')->group(function () {
-    Route::get('/dashboard', fn () => Inertia::render('Students/Dashboard'))->name('dashboard');
+    Route::prefix('students')->name('students.')->middleware('ensure.portal.role')->group(function () {
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
           Route::get('/enrolled-subjects', [MyEnrolledSubController::class, 'index'])
         ->name('enrolled-subjects');
             Route::get('/grades', [MyGradesController::class, 'index'])
@@ -382,7 +538,7 @@ Route::get('/evaluation/{enrollment}/curriculum-subjects', [EvaluationEnrollment
         ->name('academic-records.show');
     });
 
-    Route::prefix('judge')->name('judge.')->group(function () {
+    Route::prefix('judge')->name('judge.')->middleware('ensure.portal.role')->group(function () {
         Route::get('/dashboard', fn () => Inertia::render('Judge/Dashboard'))->name('dashboard');
     });
 });

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useForm, usePage, router } from "@inertiajs/react";
 import ProgramHeadLayout from "@/Layouts/ProgramHeadLayout";
-import { ArrowLeft, PlusCircle, Pencil, UploadSimple, Trash, PencilSimple } from "phosphor-react";
+import { ArrowLeft, PlusCircle, Pencil, Trash, UploadSimple } from "phosphor-react";
 import html2pdf from "html2pdf.js";
 import Swal from "sweetalert2";
 import Select from "react-select";
@@ -12,8 +12,6 @@ export default function CurriculumPage() {
   const [showModal, setShowModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [editIndex, setEditIndex] = useState(null);
-  const [subjectList, setSubjectList] = useState([]);
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedSemester, setSelectedSemester] = useState("");
   const [selectedType, setSelectedType] = useState("Old");
@@ -25,7 +23,7 @@ export default function CurriculumPage() {
     title: "",
     lec: 0,
     lab: 0,
-    prerequisites: "",
+    prerequisites: [],
     file: null,
     comment :"",
   });
@@ -47,6 +45,17 @@ export default function CurriculumPage() {
     year: yl.year_level,
     subjects: groupedSubjects[yl.year_level] || {}, // empty object if no subjects yet
   }));
+
+  const semesterOrder = ["First Semester", "Second Semester"];
+  const orderedSemesters = semesterOrder
+    .map((name) => semesters.find((sem) => sem.semester === name))
+    .filter(Boolean);
+  const additionalSemesters = semesters.filter(
+    (sem) => !semesterOrder.includes(sem.semester)
+  );
+  const displaySemesters = orderedSemesters.length
+    ? [...orderedSemesters, ...additionalSemesters]
+    : semesters;
   const isApproved = curriculum?.status === "approved";
 
   const printRef = useRef();
@@ -77,37 +86,14 @@ export default function CurriculumPage() {
     });
   };
 
-// Save subjects to backend
-const handleSaveSubject = () => {
-  router.post(
-    route("program-head.curriculum.storeSubjects", curriculum.id),
-    {
-      subjects: subjectList.map((s) => ({
-        code: s.code,
-        title: s.title,
-        lec: s.lec || 0,
-        lab: s.lab || 0,
-        semester_id: s.semester_id,
-        prerequisites: s.prerequisites?.length ? s.prerequisites : [],
-        type: s.type || "Old",
-        year: s.year,
-        comment: s.comment || "",  // ✅ include comment
-      })),
-    },
-    {
-      preserveScroll: true,
-      onSuccess: () => {
-        Swal.fire("Success", "Subjects saved successfully!", "success");
-        setShowModal(false);
-        setSubjectList([]);
-      },
-      onError: (errors) => {
-        console.error(errors);
-        Swal.fire("Error", "Failed to save subjects.", "error");
-      },
-    }
-  );
-};
+  const handleOpenAddSubject = (year, semesterId) => {
+    setShowModal(true);
+    form.reset();
+    setSelectedYear(year);
+    setSelectedSemester(String(semesterId ?? ""));
+    setSelectedType("Old");
+    setEditMode(false);
+  };
 
 // Edit subject
 const handleEditSubject = (subject, index) => {
@@ -126,13 +112,51 @@ const handleEditSubject = (subject, index) => {
   setSelectedSemester(subject.semesters_id);
   setSelectedType(subject.type || "Old");
   setEditMode(true);
-  setEditIndex(index);
   setShowModal(true);
+};
+
+const handleDeleteSubject = (subjectId) => {
+  if (!subjectId) return;
+
+  Swal.fire({
+    title: "Delete this subject?",
+    text: "This action cannot be undone.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#6b7280",
+    confirmButtonText: "Yes, delete",
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    router.delete(
+      route("program-head.curriculum.deleteSubject", {
+        id: curriculum.id,
+        subject: subjectId,
+      }),
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: "Subject removed!",
+            showConfirmButton: false,
+            timer: 2000,
+          });
+        },
+        onError: () => {
+          Swal.fire("Error", "Failed to delete subject.", "error");
+        },
+      }
+    );
+  });
 };
 
 const handleUpdateSubject = (e) => {
   e.preventDefault();
-  if (editIndex === null) return;
+  if (!form.data.id) return;
 
   const updatedSubject = {
     id: form.data.id,
@@ -152,14 +176,7 @@ const handleUpdateSubject = (e) => {
     updatedSubject,
     {
       onSuccess: () => {
-        setSubjectList((prev) => {
-          const list = [...prev];
-          list[editIndex] = updatedSubject;
-          return list;
-        });
-
         setEditMode(false);
-        setEditIndex(null);
         setShowModal(false);
         form.reset();
         setSelectedYear("");
@@ -287,131 +304,152 @@ const handleUpdateSubject = (e) => {
           {allYears.length > 0 ? (
             allYears.map(({ year, subjects }) => (
               <div key={year} className="mb-4 sm:mb-5">
-                <h2 className="text-sm sm:text-base font-semibold mb-2 sm:mb-3 border-b border-gray-300 pb-1 flex justify-between items-center">
+                <h2 className="text-sm sm:text-base font-semibold mb-2 sm:mb-3 border-b border-gray-300 pb-1">
                   {year}
-                  {!isApproved && (
-                    <button
-                      onClick={() => {
-                        setShowModal(true);
-                        form.reset();
-                        setSelectedYear(year);
-                        setEditMode(false);
-                      }}  
-                      className="text-green-600 hover:text-green-800 flex items-center gap-1 text-xs sm:text-sm font-medium"
-                    >
-                      <PlusCircle size={16} /> Add Subject
-                    </button>
-                  )}
-
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                  {Object.entries(subjects).map(([sem, subs]) => {
+                  {displaySemesters.map((sem) => {
+                    const semesterName = sem.semester || `Semester ${sem.id}`;
+                    const subs = subjects[semesterName] || [];
                     const showLabColumn = subs.some((s) => (s.lab_unit || 0) > 0);
 
                     return (
                       <div
-                        key={sem}
+                        key={sem.id}
                         className="bg-gray-50 border rounded-lg p-3 sm:p-4 shadow-sm overflow-x-auto relative"
                       >
-                        <h3 className="text-sm sm:text-base font-medium mb-2 sm:mb-3 text-blue-700 border-b pb-1">
-                          {sem}
-                        </h3>
-                        <table className="w-full text-[11px] sm:text-xs border border-gray-200 rounded-lg overflow-hidden min-w-[320px] font-[Poppins] shadow-sm">
-                          <thead>
-                            <tr className="bg-gray-50 text-gray-600">
-                              <th className="border px-2 py-1 font-medium">Code</th>
-                              <th className="border px-2 py-1 font-medium text-left">Title</th>
-                              <th className="border px-2 py-1 font-medium text-center">
-                                {showLabColumn ? "Lec" : "Unit"}
-                              </th>
-                              {showLabColumn && (
-                                <th className="border px-2 py-1 font-medium text-center">Lab</th>
-                              )}
-                              <th className="border px-2 py-1 font-medium text-left w-24">Pre-reqs</th>
-                              {showActions && (
-                                <th className="border px-2 py-1 font-medium text-center">Action</th>
-                              )}
-                            </tr>
-                          </thead>
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <h3 className="text-sm sm:text-base font-medium text-blue-700 border-b pb-1 w-full">
+                            {semesterName}
+                          </h3>
+                          {!isApproved && (
+                            <button
+                              onClick={() => handleOpenAddSubject(year, sem.id)}
+                              className="ml-3 inline-flex items-center gap-1 text-[10px] sm:text-xs text-green-600 hover:text-green-800"
+                            >
+                              <PlusCircle size={12} /> Add
+                            </button>
+                          )}
+                        </div>
 
-                          <tbody>
-                            {subs.map((sub, index) => (
-                              <tr
-                                key={sub.id}
-                                className="hover:bg-blue-50/40 transition-colors text-[11px]"
-                              >
-                                <td className="border px-2 py-1 text-center font-semibold text-gray-700">
-                                  {sub.subject?.code || "-"}
-                                </td>
-                                <td className="border px-2 py-1 text-gray-700">
-                                  {sub.subject?.descriptive_title || "-"}
+                        {subs.length > 0 ? (
+                          <table className="w-full text-[11px] sm:text-xs border border-gray-200 rounded-lg overflow-hidden min-w-[320px] font-[Poppins] shadow-sm">
+                            <thead>
+                              <tr className="bg-gray-50 text-gray-600">
+                                <th className="border px-2 py-1 font-medium">Code</th>
+                                <th className="border px-2 py-1 font-medium text-left">Title</th>
+                                <th className="border px-2 py-1 font-medium text-center">
+                                  {showLabColumn ? "Lec" : "Unit"}
+                                </th>
+                                {showLabColumn && (
+                                  <th className="border px-2 py-1 font-medium text-center">Lab</th>
+                                )}
+                                <th className="border px-2 py-1 font-medium text-left w-24">Pre-reqs</th>
+                                {showActions && (
+                                  <th className="border px-2 py-1 font-medium text-center">Action</th>
+                                )}
+                              </tr>
+                            </thead>
+
+                            <tbody>
+                              {subs.map((sub, index) => (
+                                <tr
+                                  key={sub.id}
+                                  className="hover:bg-blue-50/40 transition-colors text-[11px]"
+                                >
+                                  <td className="border px-2 py-1 text-center font-semibold text-gray-700">
+                                    {sub.subject?.code || "-"}
+                                  </td>
+                                  <td className="border px-2 py-1 text-gray-700">
+                                    <div className="flex items-center justify-between gap-2">
+                                      <span>{sub.subject?.descriptive_title || "-"}</span>
+                                      <span
+                                        className={`w-1 h-1 rounded-full inline-block ${
+                                          sub.type === "New" ? "bg-green-500" : "bg-gray-400"
+                                        }`}
+                                        title={sub.type || "Old"}
+                                      />
+                                    </div>
+                                  </td>
+                                  <td className="border px-2 py-1 text-center">
+                                    {sub.lec_unit || 0}
+                                  </td>
+                                  {showLabColumn && (
+                                    <td className="border px-2 py-1 text-center">
+                                      {sub.lab_unit || 0}
+                                    </td>
+                                  )}
+                                  <td className="border px-2 py-1 text-gray-500 whitespace-nowrap truncate max-w-[90px]">
+                                    {sub.prerequisites?.length > 0 ? (
+                                      <ul className="list-disc list-inside space-y-0.5">
+                                        {sub.prerequisites.map((pre, i) => (
+                                          <li key={i} className="text-[10px] text-gray-700">
+                                            {pre.code}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    ) : (
+                                      <span className="text-gray-400 italic">None</span>
+                                    )}
+                                  </td>
+                                  {showActions && (
+                                    <td className="border px-2 py-1 text-center">
+                                      <div className="flex items-center justify-center gap-2">
+                                        <button
+                                          onClick={() => handleEditSubject(sub, index)}
+                                          className="text-blue-600 hover:text-blue-800"
+                                          title="Edit"
+                                        >
+                                          <Pencil size={13} />
+                                        </button>
+                                        <button
+                                          onClick={() => handleDeleteSubject(sub.id)}
+                                          className="text-red-600 hover:text-red-800"
+                                          title="Delete"
+                                        >
+                                          <Trash size={13} />
+                                        </button>
+                                      </div>
+                                    </td>
+                                  )}
+                                </tr>
+                              ))}
+                            </tbody>
+
+                            {/* ✅ Totals Row */}
+                            <tfoot>
+                              <tr className="bg-gray-100 font-semibold text-gray-700 text-[11px]">
+                                <td className="border px-2 py-1 text-center" colSpan={2}>
+                                  Total
                                 </td>
                                 <td className="border px-2 py-1 text-center">
-                                  {sub.lec_unit || 0}
+                                  {subs.reduce((sum, sub) => sum + (Number(sub.lec_unit) || 0), 0)}
                                 </td>
                                 {showLabColumn && (
                                   <td className="border px-2 py-1 text-center">
-                                    {sub.lab_unit || 0}
+                                    {subs.reduce((sum, sub) => sum + (Number(sub.lab_unit) || 0), 0)}
                                   </td>
                                 )}
-                                <td className="border px-2 py-1 text-gray-500 whitespace-nowrap truncate max-w-[90px]">
-                                  {sub.prerequisites?.length > 0 ? (
-                                    <ul className="list-disc list-inside space-y-0.5">
-                                      {sub.prerequisites.map((pre, i) => (
-                                        <li key={i} className="text-[10px] text-gray-700">
-                                          {pre.code}
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  ) : (
-                                    <span className="text-gray-400 italic">None</span>
-                                  )}
+                                <td
+                                  className="border px-2 py-1 text-center text-blue-600"
+                                  colSpan={showActions ? 2 : 1}
+                                >
+                                  {subs.reduce(
+                                    (sum, sub) =>
+                                      sum + (Number(sub.lec_unit) || 0) + (Number(sub.lab_unit) || 0),
+                                    0
+                                  )}{" "}
+                                  units
                                 </td>
-                                {showActions && (
-                                  <td className="border px-2 py-1 text-center">
-                                    <button
-                                      onClick={() => handleEditSubject(sub, index)}
-                                      className="text-blue-600 hover:text-blue-800"
-                                    >
-                                      <Pencil size={13} />
-                                    </button>
-                                  </td>
-                                )}
                               </tr>
-                            ))}
-                          </tbody>
-
-                          {/* ✅ Totals Row */}
-                          <tfoot>
-                            <tr className="bg-gray-100 font-semibold text-gray-700 text-[11px]">
-                              <td className="border px-2 py-1 text-center" colSpan={2}>
-                                Total
-                              </td>
-                              <td className="border px-2 py-1 text-center">
-                                {subs.reduce((sum, sub) => sum + (Number(sub.lec_unit) || 0), 0)}
-                              </td>
-                              {showLabColumn && (
-                                <td className="border px-2 py-1 text-center">
-                                  {subs.reduce((sum, sub) => sum + (Number(sub.lab_unit) || 0), 0)}
-                                </td>
-                              )}
-                              <td
-                                className="border px-2 py-1 text-center text-blue-600"
-                                colSpan={showActions ? 2 : 1}
-                              >
-                                {subs.reduce(
-                                  (sum, sub) =>
-                                    sum + (Number(sub.lec_unit) || 0) + (Number(sub.lab_unit) || 0),
-                                  0
-                                )}{" "}
-                                units
-                              </td>
-                            </tr>
-                          </tfoot>
-                        </table>
-
-
+                            </tfoot>
+                          </table>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center py-12 text-gray-400 text-sm border border-dashed border-gray-300 rounded-lg">
+                            <p className="mb-2">No subjects for this semester yet.</p>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -472,28 +510,41 @@ const handleUpdateSubject = (e) => {
                     return;
                   }
 
-                  const semObj = semesters.find((s) => s.id == selectedSemester);
-
-                  const newSubject = {
-                    code: form.data.code,
-                    title: form.data.title,
-                    lec: Number(form.data.lec) || 0,
-                    lab: Number(form.data.lab) || 0,
-                    prerequisites: Array.isArray(form.data.prerequisites)
-                      ? form.data.prerequisites
-                      : [],
-                    semester_id: selectedSemester,
-                    semesterName: semObj?.semester || `Semester ${selectedSemester}`,
-                    year: selectedYear,
-                    type: selectedType,
-                    comment: form.data.comment || "", 
-                  };
-
-                  setSubjectList((prev) => [...prev, newSubject]); // append
-
-                  // Reset form for next entry
+                  router.post(
+                    route("program-head.curriculum.storeSubject", curriculum.id),
+                    {
+                      code: form.data.code,
+                      title: form.data.title,
+                      lec: Number(form.data.lec) || 0,
+                      lab: Number(form.data.lab) || 0,
+                      semester_id: selectedSemester,
+                      year: selectedYear,
+                      type: selectedType,
+                      prerequisites: Array.isArray(form.data.prerequisites)
+                        ? form.data.prerequisites
+                        : [],
+                      comment: form.data.comment || "",
+                    },
+                    {
+                      preserveScroll: true,
+                      onSuccess: () => {
+                        Swal.fire({
+                          toast: true,
+                          position: "top-end",
+                          icon: "success",
+                          title: "Subject added!",
+                          showConfirmButton: false,
+                          timer: 2000,
+                        });
+                        setShowModal(false);
+                      },
+                      onError: (errors) => {
+                        console.error(errors);
+                        Swal.fire("Error", "Failed to add subject.", "error");
+                      },
+                    }
+                  );
                   form.reset();
-                  setSelectedSemester("");
                   setSelectedType("Old");
                 }}
                 className="space-y-3"
@@ -512,9 +563,10 @@ const handleUpdateSubject = (e) => {
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">Semester</label>
                     <select
-                      className="w-full border border-gray-300 rounded-md px-2 py-1 text-xs"
+                      className="w-full border border-gray-200 rounded-md px-2 py-1 text-xs bg-gray-100 text-gray-600 cursor-not-allowed"
                       value={selectedSemester}
                       onChange={(e) => setSelectedSemester(e.target.value)}
+                      disabled
                     >
                       <option value="">-- Select --</option>
                       {semesters?.map((sem) => (
@@ -642,97 +694,6 @@ const handleUpdateSubject = (e) => {
                   {editMode ? "Update Subject" : "Add Subject"}
                 </button>
               </form>
-
-              {/* Pending List & Save All (Scrollable, compact) */}
-              {subjectList.length > 0 && (
-                <div className="mt-5">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">
-                    Pending Subjects
-                  </h3>
-
-                  <div className="border border-gray-200 rounded-lg overflow-hidden">
-                    {/* Scrollable container */}
-                    <div className="overflow-x-auto overflow-y-auto max-h-36"> {/* Reduced height */}
-                      <table className="w-full text-xs min-w-[480px]"> {/* Slightly smaller min-width */}
-                        <thead className="bg-gray-100 text-gray-600 font-medium sticky top-0 z-10">
-                          <tr>
-                            <th className="text-left px-2 py-1 w-20">Code</th>
-                            <th className="text-left px-2 py-1">Title</th>
-                            <th className="text-left px-2 py-1">Pre-reqs</th>
-                            <th className="px-2 py-1 text-center w-20">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {subjectList.map((s, i) => (
-                            <tr key={i} className="border-t hover:bg-gray-50 transition">
-                              <td className="px-2 py-1 font-medium text-gray-800">{s.code}</td>
-                              <td className="px-2 py-1 text-gray-700">{s.title}</td>
-                              <td className="px-2 py-1 text-gray-600 whitespace-nowrap truncate max-w-[100px]">
-                                {s.prerequisites && s.prerequisites.length > 0 ? (
-                                  <ul className="list-disc list-inside text-xs space-y-0.5">
-                                    {s.prerequisites.map((pre, idx) => (
-                                      <li key={idx} className="font-medium text-gray-700">{pre}</li>
-                                    ))}
-                                  </ul>
-                                ) : (
-                                  <span className="text-gray-400 italic">None</span>
-                                )}
-                              </td>
-                              <td className="px-2 py-1 text-center space-x-1">
-                                <button
-                                  onClick={() => {
-                                    form.setData({
-                                      code: s.code,
-                                      title: s.title,
-                                      lec: s.lec,
-                                      lab: s.lab,
-                                      comment: form.data.comment || "", 
-                                      prerequisites: s.prerequisites || [],
-                                    });
-                                    setSelectedSemester(s.semester_id);
-                                    setSelectedType(s.type);
-                                    setShowModal(true);
-                                    setEditMode(true);
-                                  }}
-                                  className="text-blue-600 hover:text-blue-800"
-                                  title="Edit"
-                                >
-                                  <PencilSimple size={16} weight="bold" />
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    setSubjectList(subjectList.filter((_, idx) => idx !== i))
-                                  }
-                                  className="text-red-500 hover:text-red-700"
-                                  title="Delete"
-                                >
-                                  <Trash size={16} weight="bold" />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="mt-3 flex justify-end gap-2 border-t pt-2">
-                    <button
-                      onClick={() => setShowModal(false)}
-                      className="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded-md hover:bg-gray-300 transition"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleSaveSubject}
-                      className="px-3 py-1 bg-green-600 text-white text-xs rounded-md hover:bg-green-700 transition"
-                    >
-                      Save All
-                    </button>
-                  </div>
-                </div>
-              )}
 
             </div>
           </div>

@@ -20,6 +20,113 @@ const formatFacultyName = (faculty = {}) => {
   return segments.length > 0 ? segments.join(', ') : 'Unassigned';
 };
 
+const formatCourseLabel = (course = {}) => {
+  const code = course.code ?? course.course_code ?? course.abbreviation ?? '';
+  const name = course.name ?? course.course_name ?? course.description ?? '';
+  if (code && name) return `${code} — ${name}`;
+  return code || name || 'Unnamed Course';
+};
+
+const resolveSectionLabel = (schedule = {}) => {
+  const stringCandidates = [
+    schedule.section_label,
+    schedule.section_name,
+    schedule.section_code,
+    typeof schedule.section === 'string' ? schedule.section : null,
+  ];
+
+  const stringMatch = stringCandidates.find((value) => typeof value === 'string' && value.trim().length > 0);
+  if (stringMatch) {
+    return stringMatch.trim();
+  }
+
+  const objectCandidates = [
+    typeof schedule.section === 'object' ? schedule.section : null,
+    schedule.section_info,
+    schedule.sectionDetails,
+  ];
+
+  const objectMatch = objectCandidates.find((value) => value && typeof value === 'object');
+  if (objectMatch) {
+    return formatSectionLabel(objectMatch);
+  }
+
+  return 'Unassigned Section';
+};
+
+const computeUnits = (entry = {}) => {
+  const numericCandidates = [
+    entry.units,
+    entry.total_units,
+    entry.unit,
+    entry.credit_units,
+    entry.creditUnits,
+  ];
+
+  for (const candidate of numericCandidates) {
+    const value = Number(candidate);
+    if (Number.isFinite(value) && value > 0) {
+      return value;
+    }
+  }
+
+  const lecture = Number(entry.lec_unit ?? entry.lecUnits ?? entry.lec ?? 0);
+  const laboratory = Number(entry.lab_unit ?? entry.labUnits ?? entry.lab ?? 0);
+  const total = lecture + laboratory;
+  return total > 0 ? total : null;
+};
+
+const formatUnitsLabel = (entry = {}) => {
+  const total = computeUnits(entry);
+  if (!total) return null;
+  return `${total} unit${total === 1 ? '' : 's'}`;
+};
+
+const formatLoadHoursLabel = (entry = {}) => {
+  const load = Number(entry.load_hours ?? entry.loadHours ?? entry.hours ?? 0);
+  if (!Number.isFinite(load) || load <= 0) return null;
+  return `${load} hr${load === 1 ? '' : 's'} load`;
+};
+
+const resolveTimeLabel = (entry = {}) => {
+  const start = entry.start_time ?? entry.startTime ?? entry.start ?? entry.begin_time;
+  const end = entry.end_time ?? entry.endTime ?? entry.end ?? entry.finish_time;
+  const fallback = entry.time ?? entry.schedule_time ?? entry.slot ?? '';
+  return formatTimeRange(start, end, fallback);
+};
+
+const resolveRoomLabel = (entry = {}) => {
+  const candidates = [entry.classroom, entry.room, entry.room_number, entry.roomName, entry.building_room];
+  const match = candidates.find((value) => typeof value === 'string' && value.trim().length > 0);
+  return match ? match.trim() : 'Room TBA';
+};
+
+const resolveFaculty = (entry = {}) => {
+  const faculty = entry.faculty ?? entry.instructor ?? entry.professor;
+  return formatFacultyName(faculty);
+};
+
+const resolveCourseBadge = (entry = {}) => {
+  const label = entry.course ?? entry.course_code ?? entry.course_name ?? entry.courseCode;
+  return typeof label === 'string' && label.trim().length > 0 ? label.trim() : null;
+};
+
+const SUBJECT_BADGE_STYLES = [
+  'border-sky-200 bg-sky-50 text-sky-700',
+  'border-emerald-200 bg-emerald-50 text-emerald-700',
+  'border-amber-200 bg-amber-50 text-amber-700',
+  'border-violet-200 bg-violet-50 text-violet-700',
+  'border-rose-200 bg-rose-50 text-rose-700',
+  'border-cyan-200 bg-cyan-50 text-cyan-700',
+];
+
+const getSubjectBadgeClass = (code = '') => {
+  const normalized = typeof code === 'string' ? code.trim().toLowerCase() : '';
+  if (!normalized) return SUBJECT_BADGE_STYLES[0];
+  const hash = normalized.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return SUBJECT_BADGE_STYLES[hash % SUBJECT_BADGE_STYLES.length];
+};
+
 const formatSectionLabel = (section = {}) => {
   const candidates = [section.section, section.name, section.label, section.code, section.section_name];
   const resolved = candidates.find((value) => typeof value === 'string' && value.trim().length > 0);
@@ -379,6 +486,24 @@ export default function ClassSchedules({ groupedSchedules = {}, filters = {}, op
 
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 text-[11px] font-semibold text-gray-600">
+              <Layers size={14} /> Course
+            </label>
+            <select
+              value={courseId}
+              onChange={(event) => setCourseId(event.target.value)}
+              className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            >
+              <option value="">All Courses</option>
+              {courses.map((course) => (
+                <option key={course.id ?? course.code ?? course.name} value={course.id}>
+                  {formatCourseLabel(course)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="flex items-center gap-2 text-[11px] font-semibold text-gray-600">
               <Users size={14} /> Section
             </label>
             <select
@@ -481,7 +606,7 @@ export default function ClassSchedules({ groupedSchedules = {}, filters = {}, op
                                   <div className="space-y-2">
                                     {(() => {
                                       const sectionGroups = schedules.reduce((acc, schedule) => {
-                                        const sectionLabel = schedule.section ?? 'Unassigned Section';
+                                        const sectionLabel = resolveSectionLabel(schedule);
                                         if (!acc[sectionLabel]) {
                                           acc[sectionLabel] = [];
                                         }
@@ -550,28 +675,53 @@ export default function ClassSchedules({ groupedSchedules = {}, filters = {}, op
                                                                     —
                                                                   </div>
                                                                 ) : (
-                                                                  <div className="space-y-1.5">
-                                                                    {entries.map((entry) => (
-                                                                      <div key={entry.id} className="space-y-1.5 rounded-lg border border-gray-200 bg-white px-2 py-2 shadow-sm">
-                                                                        <div className="flex flex-wrap items-center justify-between gap-1.5">
-                                                                          <span className="text-[10px] font-semibold uppercase tracking-wide text-blue-500">{entry.subject_code}</span>
-                                                                          <span className="rounded-md bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-600">{entry.course}</span>
+                                                                  <div className="space-y-2">
+                                                                    {entries.map((entry) => {
+                                                                      const subjectCode = entry.subject_code ?? entry.subjectCode ?? entry.subject?.code ?? '—';
+                                                                      const subjectTitle = entry.subject ?? entry.subject_title ?? entry.subject?.descriptive_title ?? 'Untitled Subject';
+                                                                      const courseBadge = resolveCourseBadge(entry);
+                                                                      const timeLabel = resolveTimeLabel(entry);
+                                                                      const facultyLabel = resolveFaculty(entry);
+                                                                      const roomLabel = resolveRoomLabel(entry);
+                                                                      const unitsLabel = formatUnitsLabel(entry);
+                                                                      const loadLabel = formatLoadHoursLabel(entry);
+                                                                      const badgeClass = getSubjectBadgeClass(subjectCode);
+
+                                                                      return (
+                                                                        <div key={entry.id ?? `${subjectCode}-${timeLabel}`} className="space-y-2 rounded-xl border border-gray-200 bg-white/95 p-3 shadow-sm">
+                                                                          <div className="flex flex-wrap items-center justify-between gap-2">
+                                                                            <span className={classNames('inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide', badgeClass)}>
+                                                                              {subjectCode}
+                                                                            </span>
+                                                                            {courseBadge && (
+                                                                              <span className="rounded-md bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
+                                                                                {courseBadge}
+                                                                              </span>
+                                                                            )}
+                                                                          </div>
+                                                                          <p className="text-[11px] font-semibold text-gray-900">{subjectTitle}</p>
+                                                                          <div className="grid gap-1 text-[10px] text-gray-600">
+                                                                            <span className="flex items-center gap-1 font-semibold text-gray-700">
+                                                                              <Clock size={12} className="text-blue-500" /> {timeLabel}
+                                                                            </span>
+                                                                            <span className="flex items-center gap-1">
+                                                                              <Users size={12} className="text-indigo-500" /> {facultyLabel}
+                                                                            </span>
+                                                                            <span className="flex items-center gap-1">
+                                                                              <MapPin size={12} className="text-amber-500" /> {roomLabel}
+                                                                            </span>
+                                                                            <div className="flex flex-wrap gap-2 text-[10px] text-gray-500">
+                                                                              {unitsLabel && (
+                                                                                <span className="rounded-full bg-gray-100 px-2 py-0.5 font-semibold text-gray-600">{unitsLabel}</span>
+                                                                              )}
+                                                                              {loadLabel && (
+                                                                                <span className="rounded-full bg-gray-100 px-2 py-0.5 font-semibold text-gray-600">{loadLabel}</span>
+                                                                              )}
+                                                                            </div>
+                                                                          </div>
                                                                         </div>
-                                                                        <p className="text-[11px] font-semibold text-gray-800">{entry.subject}</p>
-                                                                        <div className="grid gap-0.5 text-[10px] text-gray-600">
-                                                                          <span className="flex items-center gap-1 font-medium text-gray-700">
-                                                                            <Clock size={12} className="text-blue-500" /> {entry.time}
-                                                                          </span>
-                                                                          <span className="flex items-center gap-1">
-                                                                            <Users size={12} className="text-indigo-500" /> {formatFacultyName(entry.faculty)}
-                                                                          </span>
-                                                                          <span className="flex items-center gap-1">
-                                                                            <MapPin size={12} className="text-amber-500" /> {entry.classroom}
-                                                                          </span>
-                                                                          <span className="flex items-center gap-1 text-gray-500">Load: {entry.load_hours} hrs</span>
-                                                                        </div>
-                                                                      </div>
-                                                                    ))}
+                                                                      );
+                                                                    })}
                                                                   </div>
                                                                 )}
                                                               </td>

@@ -34,6 +34,8 @@ class AcademicRecordsController extends Controller
                 'enrollmentSubjects.classSchedule.curriculumSubject.subject:id,code,descriptive_title',
                 'enrollmentSubjects.classSchedule.classroom:id,room_number',
                 'enrollmentSubjects.classSchedule.faculty:id,fName,lName',
+                'enrollmentSubjects.curriculumSubject',
+                'enrollmentSubjects.curriculumSubject.subject:id,code,descriptive_title',
             ])
             ->where('status', 'enrolled')
             ->orderByDesc('enrolled_at')
@@ -129,6 +131,7 @@ class AcademicRecordsController extends Controller
         $enrollment = Enrollments::with([
                 'student:id,fName,mName,lName,id_number,email,profile_picture',
                 'course:id,code,name',
+                'major:id,code,name',
                 'yearLevel:id,year_level',
                 'section:id,section',
                 'semester:id,semester',
@@ -144,7 +147,12 @@ class AcademicRecordsController extends Controller
         $subjects = $enrollment->enrollmentSubjects;
         $scheduleIds = $subjects->pluck('class_schedule_id')->filter()->unique();
 
-        $grades = Grades::where('enrollment_id', $enrollment->id)
+        $grades = Grades::with([
+                'classSchedule.curriculumSubject.subject:id,code,descriptive_title',
+                'classSchedule.yearLevel:id,year_level',
+                'classSchedule.semester:id,semester',
+            ])
+            ->where('enrollment_id', $enrollment->id)
             ->whereIn('class_schedule_id', $scheduleIds)
             ->get()
             ->keyBy('class_schedule_id');
@@ -160,6 +168,7 @@ class AcademicRecordsController extends Controller
         return Inertia::render('Admin/Academic/StudentGrades', [
             'student' => $enrollment->student,
             'course' => $enrollment->course,
+            'major' => $enrollment->major,
             'yearLevel' => $enrollment->yearLevel,
             'section' => $enrollment->section,
             'semester' => $enrollment->semester,
