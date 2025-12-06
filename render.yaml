@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: my-laravel-app
+    name: eBuksu
     env: docker
     plan: free
     dockerfilePath: ./Dockerfile
